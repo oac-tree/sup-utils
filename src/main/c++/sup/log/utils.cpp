@@ -22,16 +22,41 @@
 #include "utils.h"
 
 #include <iostream>
+#include <map>
 #include <sstream>
 
 #include <syslog.h>
 #include <unistd.h>
 
+namespace
+{
+const std::map<int, std::string>& GetSeverityMap();
+}
+
 namespace sup
 {
 namespace log
 {
-std::string SeverityString(int severity);
+const std::string EmergencyString = "EMERGENCY";
+const std::string AlertString = "ALERT";
+const std::string CriticalString = "CRITICAL";
+const std::string ErrorString = "ERROR";
+const std::string WarningString = "WARNING";
+const std::string NoticeString = "NOTICE";
+const std::string InfoString = "INFO";
+const std::string DebugString = "DEBUG";
+const std::string TraceString = "TRACE";
+
+std::string SeverityString(int severity)
+{
+  const auto& sev_map = GetSeverityMap();
+  auto it = sev_map.find(severity);
+  if (it == sev_map.end())
+  {
+    return "UNKNOWN";
+  }
+  return it->second;
+}
 
 std::string LogMessage(int severity, const std::string& source, const std::string& message)
 {
@@ -56,3 +81,22 @@ void StdoutLog(int severity, const std::string& source, const std::string& messa
 }  // namespace log
 
 }  // namespace sup
+
+namespace
+{
+const std::map<int, std::string>& GetSeverityMap()
+{
+  static std::map<int, std::string> severity_map = {
+    { sup::log::SUP_LOG_EMERG, sup::log::EmergencyString},
+    { sup::log::SUP_LOG_ALERT, sup::log::AlertString},
+    { sup::log::SUP_LOG_CRIT, sup::log::CriticalString},
+    { sup::log::SUP_LOG_ERR, sup::log::ErrorString},
+    { sup::log::SUP_LOG_WARNING, sup::log::WarningString},
+    { sup::log::SUP_LOG_NOTICE, sup::log::NoticeString},
+    { sup::log::SUP_LOG_INFO, sup::log::InfoString},
+    { sup::log::SUP_LOG_DEBUG, sup::log::DebugString},
+    { sup::log::SUP_LOG_TRACE, sup::log::TraceString}
+  };
+  return severity_map;
+}
+}

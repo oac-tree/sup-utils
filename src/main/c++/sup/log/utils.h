@@ -28,6 +28,20 @@ namespace sup
 {
 namespace log
 {
+enum Severity
+{
+  SUP_LOG_EMERG = 0,
+  SUP_LOG_ALERT,
+  SUP_LOG_CRIT,
+  SUP_LOG_ERR,
+  SUP_LOG_WARNING,
+  SUP_LOG_NOTICE,
+  SUP_LOG_INFO,
+  SUP_LOG_DEBUG,
+  SUP_LOG_TRACE,
+  NUMBER_OF_LOG_LEVELS
+};
+
 std::string SeverityString(int severity);
 
 std::string LogMessage(int severity, const std::string& source, const std::string& message);
