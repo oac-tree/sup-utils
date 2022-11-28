@@ -77,9 +77,7 @@
                             </include>
                             <!-- Programs -->
                             <!-- Package dependencies -->
-                            <requires version="current">libxml2</requires>
                             <requires version="current" buildOnly="true">cmake</requires>
-                            <requires version="current" buildOnly="true">libxml2-devel</requires>
                             <!-- RPM scriptlet -->
                             <scriptlet type="posttrans">
                                 <![CDATA[ ldconfig ]]>
@@ -91,7 +89,7 @@
                                 <include>*.so</include>
                             </include>
                             <!-- Public API headers -->
-                            <include type="file" source="include/sup/utils" target="include/sup/utils">
+                            <include type="file" source="include/sup/log" target="include/sup/log">
                                 <include>*.h</include>
                             </include>
                             <!-- Package dependencies -->
