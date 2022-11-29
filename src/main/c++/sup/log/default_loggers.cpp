@@ -23,22 +23,36 @@
 
 #include "utils.h"
 
+#include <sstream>
+
+#include <unistd.h>
+
 namespace sup
 {
 namespace log
 {
 
+std::string DefaultLogMessage(int severity, const std::string& source, const std::string& message)
+{
+  std::ostringstream oss;
+  oss << "sup-log-lib:" << getpid() << "]";
+  oss << "[" << source << "]";
+  oss << "[" << SeverityString(severity) << "] ";
+  oss << message;
+  return oss.str();
+}
+
 DefaultLogger CreateDefaultStdoutLogger(const std::string& source)
 {
   return DefaultLogger([](int severity, const std::string& source, const std::string& message){
-                         StdoutLog(StandardLogMessage(severity, source, message));
+                         StdoutLog(DefaultLogMessage(severity, source, message));
                        }, source, SUP_LOG_INFO);
 }
 
 DefaultLogger CreateDefaultSysLogger(const std::string& source)
 {
   return DefaultLogger([](int severity, const std::string& source, const std::string& message){
-                         SysLog(severity, StandardLogMessage(severity, source, message));
+                         SysLog(severity, DefaultLogMessage(severity, source, message));
                        }, source, SUP_LOG_INFO);
 }
 

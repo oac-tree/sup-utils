@@ -30,8 +30,6 @@ namespace sup
 namespace log
 {
 
-std::string StandardLogMessage(int severity, const std::string& source, const std::string& message);
-
 void SysLog(int severity, const std::string& message);
 
 void StdoutLog(const std::string& message);

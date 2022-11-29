@@ -33,6 +33,8 @@ constexpr int kDefaultMaxEnabledSeverity = SUP_LOG_INFO;
 
 using DefaultLogger = LoggerT<kDefaultMaxEnabledSeverity>;
 
+std::string DefaultLogMessage(int severity, const std::string& source, const std::string& message);
+
 DefaultLogger CreateDefaultStdoutLogger(const std::string& source);
 DefaultLogger CreateDefaultSysLogger(const std::string& source);
 

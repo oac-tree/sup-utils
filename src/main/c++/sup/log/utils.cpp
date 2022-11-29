@@ -24,25 +24,13 @@
 #include "log_severity.h"
 
 #include <iostream>
-#include <sstream>
 
 #include <syslog.h>
-#include <unistd.h>
 
 namespace sup
 {
 namespace log
 {
-
-std::string StandardLogMessage(int severity, const std::string& source, const std::string& message)
-{
-  std::ostringstream oss;
-  oss << "sup-log-lib:" << getpid() << "]";
-  oss << "[" << source << "]";
-  oss << "[" << SeverityString(severity) << "] ";
-  oss << message;
-  return oss.str();
-}
 
 void SysLog(int severity, const std::string& message)
 {
