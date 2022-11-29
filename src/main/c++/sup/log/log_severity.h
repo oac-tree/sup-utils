@@ -19,35 +19,33 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_LOG_UTILS_H_
-#define SUP_LOG_UTILS_H_
+#ifndef SUP_LOG_LOG_SEVERITY_H_
+#define SUP_LOG_LOG_SEVERITY_H_
 
-#include <stdio.h>
 #include <string>
 
 namespace sup
 {
 namespace log
 {
-
-std::string StandardLogMessage(int severity, const std::string& source, const std::string& message);
-
-void SysLog(int severity, const std::string& message);
-
-void StdoutLog(const std::string& message);
-
-constexpr size_t kBufferSize = 1024;
-
-template <typename... Args>
-std::string FormatMessage(const std::string& format, Args&&... args)
+enum Severity
 {
-  char buffer[kBufferSize];
-  (void)snprintf(buffer, kBufferSize, format.c_str(), std::forward<Args>(args)...);
-  return std::string(buffer);
-}
+  SUP_LOG_EMERG = 0,
+  SUP_LOG_ALERT,
+  SUP_LOG_CRIT,
+  SUP_LOG_ERR,
+  SUP_LOG_WARNING,
+  SUP_LOG_NOTICE,
+  SUP_LOG_INFO,
+  SUP_LOG_DEBUG,
+  SUP_LOG_TRACE,
+  NUMBER_OF_LOG_LEVELS
+};
+
+std::string SeverityString(int severity);
 
 }  // namespace log
 
 }  // namespace sup
 
-#endif  // SUP_LOG_UTILS_H_
+#endif  // SUP_LOG_LOG_SEVERITY_H_

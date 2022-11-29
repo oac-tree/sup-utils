@@ -19,35 +19,25 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_LOG_UTILS_H_
-#define SUP_LOG_UTILS_H_
+#ifndef SUP_LOG_DEFAULT_LOGGERS_H_
+#define SUP_LOG_DEFAULT_LOGGERS_H_
 
-#include <stdio.h>
-#include <string>
+#include "basic_logger.h"
+#include "logger_t.h"
 
 namespace sup
 {
 namespace log
 {
+constexpr int kDefaultDisabledSeverity = SUP_LOG_DEBUG;
 
-std::string StandardLogMessage(int severity, const std::string& source, const std::string& message);
+using DefaultLogger = LoggerT<BasicLogger, kDefaultDisabledSeverity>;
 
-void SysLog(int severity, const std::string& message);
-
-void StdoutLog(const std::string& message);
-
-constexpr size_t kBufferSize = 1024;
-
-template <typename... Args>
-std::string FormatMessage(const std::string& format, Args&&... args)
-{
-  char buffer[kBufferSize];
-  (void)snprintf(buffer, kBufferSize, format.c_str(), std::forward<Args>(args)...);
-  return std::string(buffer);
-}
+DefaultLogger CreateDefaultStdoutLogger(const std::string& source);
+DefaultLogger CreateDefaultSysLogger(const std::string& source);
 
 }  // namespace log
 
 }  // namespace sup
 
-#endif  // SUP_LOG_UTILS_H_
+#endif  // SUP_LOG_DEFAULT_LOGGERS_H_

@@ -19,39 +19,43 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "utils.h"
-
-#include "log_severity.h"
-
-#include <iostream>
-#include <sstream>
-
-#include <syslog.h>
-#include <unistd.h>
+#include "basic_logger.h"
 
 namespace sup
 {
 namespace log
 {
 
-std::string StandardLogMessage(int severity, const std::string& source, const std::string& message)
+BasicLogger::BasicLogger(std::function<void(int, const std::string&, const std::string&)> log_func,
+                         const std::string& source, int max_severity)
+  : m_log_function{log_func}
+  , m_source{source}
+  , m_max_severity{max_severity}
+{}
+
+BasicLogger::~BasicLogger() = default;
+
+int BasicLogger::SetMaxSeverity(int max_severity)
 {
-  std::ostringstream oss;
-  oss << "sup-log-lib:" << getpid() << "]";
-  oss << "[" << source << "]";
-  oss << "[" << SeverityString(severity) << "] ";
-  oss << message;
-  return oss.str();
+  auto current_max_severity = m_max_severity;
+  m_max_severity = max_severity;
+  return current_max_severity;
 }
 
-void SysLog(int severity, const std::string& message)
+std::string BasicLogger::SetSource(const std::string& source)
 {
-  syslog(severity, message.c_str());
+  auto current_source = m_source;
+  m_source = source;
+  return current_source;
 }
 
-void StdoutLog(const std::string& message)
+void BasicLogger::LogMessage(int severity, const std::string& message) const
 {
-  std::cout << message << std::endl;
+  if (severity > m_max_severity)
+  {
+    return;
+  }
+  m_log_function(severity, m_source, message);
 }
 
 }  // namespace log
