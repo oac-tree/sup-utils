@@ -1,0 +1,18 @@
+add_executable(unit-tests)
+
+target_sources(unit-tests
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/basic_logger_tests.cpp
+)
+
+find_package(GTest REQUIRED)
+
+target_link_libraries(unit-tests
+    PRIVATE
+        GTest::GTest
+        GTest::Main
+        gmock
+        sup-log
+)
+
+gtest_discover_tests(unit-tests)

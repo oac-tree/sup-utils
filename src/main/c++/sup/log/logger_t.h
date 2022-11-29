@@ -66,6 +66,28 @@ private:
 };
 
 template <int max_enabled>
+LoggerT<max_enabled>::LoggerT(
+  std::function<void(int, const std::string&, const std::string&)> log_func,
+  const std::string& source, int max_severity)
+  : m_logger_impl(log_func, source, max_severity)
+{}
+
+template <int max_enabled>
+LoggerT<max_enabled>::~LoggerT() = default;
+
+template <int max_enabled>
+int LoggerT<max_enabled>::SetMaxSeverity(int max_severity)
+{
+  return m_logger_impl.SetMaxSeverity(max_severity);
+}
+
+template <int max_enabled>
+std::string LoggerT<max_enabled>::SetSource(const std::string& source)
+{
+  return m_logger_impl.SetSource(source);
+}
+
+template <int max_enabled>
 void LoggerT<max_enabled>::Emergency(const std::string& message) const
 {
   ConditionalLog<(max_enabled >= SUP_LOG_EMERG)>(SUP_LOG_EMERG, message);
