@@ -30,6 +30,9 @@ set_target_properties(sup-log PROPERTIES
 install(TARGETS sup-log EXPORT sup-utils-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES
-        sup/log/utils.h
+        sup/log/basic_logger.h
+        sup/log/default_loggers.h
+        sup/log/log_severity.h
+        sup/log/logger_t.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/log
 )
