@@ -32,7 +32,8 @@ namespace log
 {
 /**
  * @brief BasicLogger encapsulates a basic logging function, a source string and a maximum severity
- * to log. It uses this maximum severity to discard logging for calls with less severity.
+ * to log. It uses this maximum severity to discard logging for calls with higher severity,
+ * i.e. less severe.
  */
 class BasicLogger
 {

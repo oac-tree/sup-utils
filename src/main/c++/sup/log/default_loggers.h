@@ -29,9 +29,9 @@ namespace sup
 {
 namespace log
 {
-constexpr int kDefaultDisabledSeverity = SUP_LOG_DEBUG;
+constexpr int kDefaultMaxEnabledSeverity = SUP_LOG_INFO;
 
-using DefaultLogger = LoggerT<BasicLogger, kDefaultDisabledSeverity>;
+using DefaultLogger = LoggerT<kDefaultMaxEnabledSeverity>;
 
 DefaultLogger CreateDefaultStdoutLogger(const std::string& source);
 DefaultLogger CreateDefaultSysLogger(const std::string& source);

@@ -23,6 +23,7 @@
 #define SUP_LOG_LOGGER_T_H_
 
 #include "log_severity.h"
+#include "basic_logger.h"
 
 #include <functional>
 #include <string>
@@ -33,10 +34,10 @@ namespace log
 {
 
 /**
- * @brief LoggerT encapsulates a logger implementation and disables at compile all log messages
- * with a severity of disable_level and lower.
+ * @brief LoggerT encapsulates a BasicLogger and disables at compile time all log messages
+ * with a severity higher than max_enabled (i.e. less severe).
  */
-template <typename TLog, int disable_level>
+template <int max_enabled>
 class LoggerT
 {
 public:
@@ -61,13 +62,13 @@ private:
   void ConditionalLog(int, const std::string&) const
   {}
 
-  TLog m_logger_impl;
+  BasicLogger m_logger_impl;
 };
 
-template <typename TLog, int disable_level>
-void LoggerT<TLog, disable_level>::Emergency(const std::string& message) const
+template <int max_enabled>
+void LoggerT<max_enabled>::Emergency(const std::string& message) const
 {
-  ConditionalLog<(disable_level > SUP_LOG_EMERG)>(SUP_LOG_EMERG, message);
+  ConditionalLog<(max_enabled >= SUP_LOG_EMERG)>(SUP_LOG_EMERG, message);
 }
 
 }  // namespace log
