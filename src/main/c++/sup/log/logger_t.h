@@ -50,6 +50,14 @@ public:
   std::string SetSource(const std::string& source);
 
   void Emergency(const std::string& message) const;
+  void Alert(const std::string& message) const;
+  void Critical(const std::string& message) const;
+  void Error(const std::string& message) const;
+  void Warning(const std::string& message) const;
+  void Notice(const std::string& message) const;
+  void Info(const std::string& message) const;
+  void Debug(const std::string& message) const;
+  void Trace(const std::string& message) const;
 
 private:
   template <bool b, typename std::enable_if<b, bool>::type = true>
@@ -91,6 +99,54 @@ template <int max_enabled>
 void LoggerT<max_enabled>::Emergency(const std::string& message) const
 {
   ConditionalLog<(max_enabled >= SUP_LOG_EMERG)>(SUP_LOG_EMERG, message);
+}
+
+template <int max_enabled>
+void LoggerT<max_enabled>::Alert(const std::string& message) const
+{
+  ConditionalLog<(max_enabled >= SUP_LOG_ALERT)>(SUP_LOG_ALERT, message);
+}
+
+template <int max_enabled>
+void LoggerT<max_enabled>::Critical(const std::string& message) const
+{
+  ConditionalLog<(max_enabled >= SUP_LOG_CRIT)>(SUP_LOG_CRIT, message);
+}
+
+template <int max_enabled>
+void LoggerT<max_enabled>::Error(const std::string& message) const
+{
+  ConditionalLog<(max_enabled >= SUP_LOG_ERR)>(SUP_LOG_ERR, message);
+}
+
+template <int max_enabled>
+void LoggerT<max_enabled>::Warning(const std::string& message) const
+{
+  ConditionalLog<(max_enabled >= SUP_LOG_WARNING)>(SUP_LOG_WARNING, message);
+}
+
+template <int max_enabled>
+void LoggerT<max_enabled>::Notice(const std::string& message) const
+{
+  ConditionalLog<(max_enabled >= SUP_LOG_NOTICE)>(SUP_LOG_NOTICE, message);
+}
+
+template <int max_enabled>
+void LoggerT<max_enabled>::Info(const std::string& message) const
+{
+  ConditionalLog<(max_enabled >= SUP_LOG_INFO)>(SUP_LOG_INFO, message);
+}
+
+template <int max_enabled>
+void LoggerT<max_enabled>::Debug(const std::string& message) const
+{
+  ConditionalLog<(max_enabled >= SUP_LOG_DEBUG)>(SUP_LOG_DEBUG, message);
+}
+
+template <int max_enabled>
+void LoggerT<max_enabled>::Trace(const std::string& message) const
+{
+  ConditionalLog<(max_enabled >= SUP_LOG_TRACE)>(SUP_LOG_TRACE, message);
 }
 
 }  // namespace log

@@ -172,8 +172,9 @@ BasicLoggerTest::~BasicLoggerTest() = default;
 
 BasicLogger BasicLoggerTest::CreateBasicLogger(const std::string& source, int max_severity)
 {
-  auto log_func = [this](int severity, const std::string& source, const std::string& message){
-    m_log_entries.emplace_back(severity, source, message);
-  };
+  auto log_func = [this](int severity, const std::string& source, const std::string& message)
+                  {
+                    m_log_entries.emplace_back(severity, source, message);
+                  };
   return BasicLogger(log_func, source, max_severity);
 }
