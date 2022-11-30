@@ -42,7 +42,7 @@ class LoggerT
 {
 public:
   LoggerT(std::function<void(int, const std::string&, const std::string&)> log_func,
-          const std::string& source, int max_severity);
+          const std::string& source, int max_severity = max_enabled);
   ~LoggerT();
 
   int SetMaxSeverity(int max_severity);

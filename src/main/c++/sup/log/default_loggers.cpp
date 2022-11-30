@@ -46,14 +46,14 @@ DefaultLogger CreateDefaultStdoutLogger(const std::string& source)
 {
   return DefaultLogger([](int severity, const std::string& source, const std::string& message){
                          StdoutLog(DefaultLogMessage(severity, source, message));
-                       }, source, SUP_LOG_INFO);
+                       }, source);
 }
 
 DefaultLogger CreateDefaultSysLogger(const std::string& source)
 {
   return DefaultLogger([](int severity, const std::string& source, const std::string& message){
                          SysLog(severity, DefaultLogMessage(severity, source, message));
-                       }, source, SUP_LOG_INFO);
+                       }, source);
 }
 
 }  // namespace log
