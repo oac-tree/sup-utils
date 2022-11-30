@@ -4,6 +4,7 @@ target_sources(unit-tests
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/basic_logger_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/default_loggers_tests.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/log_severity_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/logger_t_tests.cpp
 )
 

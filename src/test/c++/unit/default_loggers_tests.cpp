@@ -22,9 +22,6 @@
 #include <sup/log/default_loggers.h>
 #include <sup/log/log_severity.h>
 
-#include <tuple>
-#include <vector>
-
 #include <gtest/gtest.h>
 
 using namespace sup::log;
