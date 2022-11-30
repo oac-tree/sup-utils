@@ -42,6 +42,9 @@ enum Severity
   NUMBER_OF_LOG_LEVELS
 };
 
+/**
+ * @brief Retrieve a string representation of the given severity level.
+ */
 std::string SeverityString(int severity);
 
 }  // namespace log

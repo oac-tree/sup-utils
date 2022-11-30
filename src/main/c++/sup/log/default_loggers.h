@@ -31,11 +31,32 @@ namespace log
 {
 constexpr int kDefaultMaxEnabledSeverity = SUP_LOG_INFO;
 
+/**
+ * @brief Define the DefaultLogger class as a logger that discards log messages with severity higher
+ * than 'kDefaultMaxEnabledSeverity' at compile time.
+ */
 using DefaultLogger = LoggerT<kDefaultMaxEnabledSeverity>;
 
-std::string DefaultLogMessage(int severity, const std::string& source, const std::string& message);
+/**
+ * @brief Create a default formatted log message from the given parameters, intended for output
+ * to a regular string stream (e.g. std::out).
+ */
+std::string DefaultStdoutLogMessage(int severity, const std::string& source, const std::string& message);
+/**
+ * @brief Create a default formatted log message from the given parameters, intended for output
+ * to a system log.
+ */
+std::string DefaultSysLogMessage(int severity, const std::string& source, const std::string& message);
 
+/**
+ * @brief Create a default logger with the given source identifier that outputs a default formatted
+ * log message directly to std::out.
+ */
 DefaultLogger CreateDefaultStdoutLogger(const std::string& source);
+/**
+ * @brief Create a default logger with the given source identifier that outputs a default formatted
+ * log message directly to the system log.
+ */
 DefaultLogger CreateDefaultSysLogger(const std::string& source);
 
 }  // namespace log

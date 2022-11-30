@@ -36,27 +36,131 @@ namespace log
 /**
  * @brief LoggerT encapsulates a BasicLogger and disables at compile time all log messages
  * with a severity higher than max_enabled (i.e. less severe).
+ *
+ * @details This class template also supports runtime log filtering through its constructor
+ * parameter 'max_severity'. The runtime filter level can be changed by calling the member function
+ * 'SetMaxSeverity'.
+ *
+ * @details This class does not use any semaphores to ensure thread-safety. Thread-safety depends
+ * on the thread-safety of the logging function passed in the constructor. Note also that the
+ * non-const member functions should never be called concurrently with any other member function.
  */
 template <int max_enabled>
 class LoggerT
 {
 public:
+  /**
+   * @brief Constructor.
+   *
+   * @param log_func Function to call for each logging member function.
+   * @param source Source identifier (will be passed to the logging function).
+   * @param max_severity Maximum severity to log (used during runtime filtering).
+   */
   LoggerT(std::function<void(int, const std::string&, const std::string&)> log_func,
           const std::string& source, int max_severity = max_enabled);
+  /**
+   * @brief Destructor.
+   */
   ~LoggerT();
 
+  /**
+   * @brief Change the maximum severity for filtering.
+   *
+   * @param max_severity Maximum severity to log (used during runtime filtering).
+   *
+   * @return Previous maximum severity.
+   */
   int SetMaxSeverity(int max_severity);
 
+  /**
+   * @brief Change the source identifier for logging.
+   *
+   * @param source New source identifier to use for logging.
+   *
+   * @return Previous source identifier.
+   */
   std::string SetSource(const std::string& source);
 
+  /**
+   * @brief Log a message with the severity: EMERGENCY.
+   *
+   * @param message Log message.
+   *
+   * @note The log message may be discarded when its severity level is higher than the current
+   * maximum severity level.
+   */
   void Emergency(const std::string& message) const;
+  /**
+   * @brief Log a message with the severity: ALERT.
+   *
+   * @param message Log message.
+   *
+   * @note The log message may be discarded when its severity level is higher than the current
+   * maximum severity level.
+   */
   void Alert(const std::string& message) const;
+  /**
+   * @brief Log a message with the severity: CRITICAL.
+   *
+   * @param message Log message.
+   *
+   * @note The log message may be discarded when its severity level is higher than the current
+   * maximum severity level.
+   */
   void Critical(const std::string& message) const;
+  /**
+   * @brief Log a message with the severity: ERROR.
+   *
+   * @param message Log message.
+   *
+   * @note The log message may be discarded when its severity level is higher than the current
+   * maximum severity level.
+   */
   void Error(const std::string& message) const;
+  /**
+   * @brief Log a message with the severity: WARNING.
+   *
+   * @param message Log message.
+   *
+   * @note The log message may be discarded when its severity level is higher than the current
+   * maximum severity level.
+   */
   void Warning(const std::string& message) const;
+  /**
+   * @brief Log a message with the severity: NOTICE.
+   *
+   * @param message Log message.
+   *
+   * @note The log message may be discarded when its severity level is higher than the current
+   * maximum severity level.
+   */
   void Notice(const std::string& message) const;
+  /**
+   * @brief Log a message with the severity: INFO.
+   *
+   * @param message Log message.
+   *
+   * @note The log message may be discarded when its severity level is higher than the current
+   * maximum severity level.
+   */
   void Info(const std::string& message) const;
+  /**
+   * @brief Log a message with the severity: DEBUG.
+   *
+   * @param message Log message.
+   *
+   * @note The log message may be discarded when its severity level is higher than the current
+   * maximum severity level.
+   */
   void Debug(const std::string& message) const;
+  /**
+   * @brief Log a message with the severity: TRACE.
+   *
+   * @param message Log message.
+   *
+   * @note The log message may be discarded when its severity level is higher than the current
+   * maximum severity level.
+   */
   void Trace(const std::string& message) const;
 
 private:

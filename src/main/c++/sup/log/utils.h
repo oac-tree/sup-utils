@@ -30,19 +30,15 @@ namespace sup
 namespace log
 {
 
+/**
+ * @brief Send the given log message to the system log with the given severity level.
+ */
 void SysLog(int severity, const std::string& message);
 
+/**
+ * @brief Print the given log message directly to std::out.
+ */
 void StdoutLog(const std::string& message);
-
-constexpr size_t kBufferSize = 1024;
-
-template <typename... Args>
-std::string FormatMessage(const std::string& format, Args&&... args)
-{
-  char buffer[kBufferSize];
-  (void)snprintf(buffer, kBufferSize, format.c_str(), std::forward<Args>(args)...);
-  return std::string(buffer);
-}
 
 }  // namespace log
 

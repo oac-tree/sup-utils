@@ -34,18 +34,55 @@ namespace log
  * @brief BasicLogger encapsulates a basic logging function, a source string and a maximum severity
  * to log. It uses this maximum severity to discard logging for calls with higher severity,
  * i.e. less severe.
+ *
+ * @details This class does not use any semaphores to ensure thread-safety. Thread-safety depends
+ * on the thread-safety of the logging function passed in the constructor. Note also that the
+ * non-const member functions should never be called concurrently with any other member function.
  */
 class BasicLogger
 {
 public:
+  /**
+   * @brief Constructor.
+   *
+   * @param log_func Function to call for each logging member function.
+   * @param source Source identifier (will be passed to the logging function).
+   * @param max_severity Maximum severity to log (used during runtime filtering).
+   */
   BasicLogger(std::function<void(int, const std::string&, const std::string&)> log_func,
               const std::string& source, int max_severity);
+  /**
+   * @brief Destructor.
+   */
   ~BasicLogger();
 
+  /**
+   * @brief Change the maximum severity for filtering.
+   *
+   * @param max_severity Maximum severity to log (used during runtime filtering).
+   *
+   * @return Previous maximum severity.
+   */
   int SetMaxSeverity(int max_severity);
 
+  /**
+   * @brief Change the source identifier for logging.
+   *
+   * @param source New source identifier to use for logging.
+   *
+   * @return Previous source identifier.
+   */
   std::string SetSource(const std::string& source);
 
+  /**
+   * @brief Log a message with the given severity.
+   *
+   * @param severity Severity level of the log message.
+   * @param message Log message.
+   *
+   * @note The log message may be discarded when its severity level is higher than the current
+   * maximum severity level.
+   */
   void LogMessage(int severity, const std::string& message) const;
 
 private:

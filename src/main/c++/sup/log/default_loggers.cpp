@@ -32,11 +32,20 @@ namespace sup
 namespace log
 {
 
-std::string DefaultLogMessage(int severity, const std::string& source, const std::string& message)
+std::string DefaultStdoutLogMessage(int severity, const std::string& source, const std::string& message)
 {
   std::ostringstream oss;
-  oss << "sup-log-lib:" << getpid() << "]";
+  oss << "sup-log[" << getpid() << "]: ";
   oss << "[" << source << "]";
+  oss << "[" << SeverityString(severity) << "] ";
+  oss << message;
+  return oss.str();
+}
+
+std::string DefaultSysLogMessage(int severity, const std::string& source, const std::string& message)
+{
+  std::ostringstream oss;
+  oss << "sup-log[" << source << "]";
   oss << "[" << SeverityString(severity) << "] ";
   oss << message;
   return oss.str();
@@ -45,14 +54,14 @@ std::string DefaultLogMessage(int severity, const std::string& source, const std
 DefaultLogger CreateDefaultStdoutLogger(const std::string& source)
 {
   return DefaultLogger([](int severity, const std::string& source, const std::string& message){
-                         StdoutLog(DefaultLogMessage(severity, source, message));
+                         StdoutLog(DefaultStdoutLogMessage(severity, source, message));
                        }, source);
 }
 
 DefaultLogger CreateDefaultSysLogger(const std::string& source)
 {
   return DefaultLogger([](int severity, const std::string& source, const std::string& message){
-                         SysLog(severity, DefaultLogMessage(severity, source, message));
+                         SysLog(severity, DefaultSysLogMessage(severity, source, message));
                        }, source);
 }
 
