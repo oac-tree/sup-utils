@@ -14,7 +14,7 @@ install(EXPORT sup-utils-targets FILE sup-utils-targets.cmake NAMESPACE sup-util
 # -----------------------------------------------------------------------------
 
 # Add all targets to the build-tree export set
-export(TARGETS sup-log NAMESPACE sup-utils:: FILE "${PROJECT_BINARY_DIR}/sup-utils-targets.cmake")
+export(TARGETS sup-log sup-xml NAMESPACE sup-utils:: FILE "${PROJECT_BINARY_DIR}/sup-utils-targets.cmake")
 
 # Export the package for use from the build-tree (goes to $HOME/.cmake)
 if(SUP_UTILS_EXPORT_BUILDTREE)

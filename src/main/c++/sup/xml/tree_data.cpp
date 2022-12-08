@@ -1,0 +1,146 @@
+/******************************************************************************
+ * $HeadURL: $
+ * $Id: $
+ *
+ * Project       : Supervision and Automation System Utilities
+ *
+ * Description   : SUP XML utilities
+ *
+ * Author        : Walter Van Herck (IO)
+ *
+ * Copyright (c) : 2010-2022 ITER Organization,
+ *                 CS 90 046
+ *                 13067 St. Paul-lez-Durance Cedex
+ *                 France
+ *
+ * This file is part of ITER CODAC software.
+ * For the terms and conditions of redistribution or use of this software
+ * refer to the file ITER-LICENSE.TXT located in the top level directory
+ * of the distribution package.
+ ******************************************************************************/
+
+#include <sup/xml/tree_data.h>
+
+#include <sup/xml/exceptions.h>
+
+namespace sup
+{
+namespace xml
+{
+
+TreeData::TreeData(const std::string& node_name)
+  : m_node_name{node_name}
+  , m_content{}
+  , m_attributes{}
+  , m_children{}
+{}
+
+TreeData::~TreeData() = default;
+
+TreeData::TreeData(const TreeData& other) = default;
+TreeData::TreeData(TreeData&& other) = default;
+
+TreeData& TreeData::operator=(const TreeData& other) = default;
+TreeData& TreeData::operator=(TreeData&& other) = default;
+
+bool TreeData::operator==(const TreeData& other) const
+{
+  bool result = (m_node_name == other.m_node_name) && (m_content == other.m_content)
+                && (m_attributes == other.m_attributes) && (m_children == other.m_children);
+  return result;
+}
+
+bool TreeData::operator!=(const TreeData& other) const
+{
+  return !this->operator==(other);
+}
+
+std::string TreeData::GetNodeName() const
+{
+  return m_node_name;
+}
+
+size_t TreeData::GetNumberOfAttributes() const
+{
+  return m_attributes.size();
+}
+
+bool TreeData::HasAttribute(const std::string& name) const
+{
+  auto it = m_attributes.find(name);
+  return it != m_attributes.end();
+}
+
+std::string TreeData::GetAttribute(const std::string& name) const
+{
+  auto it = m_attributes.find(name);
+  if (it == m_attributes.end())
+  {
+    std::string message = "TreeData::GetAttribute(): attribute with name [" +
+      name + "] does not exist";
+    throw InvalidOperationException(message);
+  }
+  return it->second;
+}
+
+const TreeData::AttributeMap& TreeData::Attributes() const
+{
+  return m_attributes;
+}
+
+void TreeData::AddAttribute(const std::string& name, const std::string& value)
+{
+  if (HasAttribute(name))
+  {
+    std::string message = "TreeData::AddAttribute(): attribute with name [" +
+      name + "] already exists";
+    throw InvalidOperationException(message);
+  }
+  m_attributes[name] = value;
+}
+
+void TreeData::SetAttribute(const std::string& name, const std::string& value)
+{
+  m_attributes[name] = value;
+}
+
+void TreeData::RemoveAttribute(const std::string& name)
+{
+  auto it = m_attributes.find(name);
+  if (it == m_attributes.end())
+  {
+    std::string message = "TreeData::AddAttribute(): attribute with name [" +
+      name + "] does not exist";
+    throw InvalidOperationException(message);
+  }
+  m_attributes.erase(it);
+}
+
+size_t TreeData::GetNumberOfChildren() const
+{
+  return m_children.size();
+}
+
+void TreeData::AddChild(const TreeData& child)
+{
+  m_children.push_back(child);
+}
+
+const std::vector<TreeData>& TreeData::Children() const
+{
+  return m_children;
+}
+
+void TreeData::SetContent(const std::string& content)
+{
+  m_content = content;
+}
+
+std::string TreeData::GetContent() const
+{
+  return m_content;
+}
+
+}  // namespace xml
+
+}  // namespace sup

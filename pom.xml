@@ -92,6 +92,9 @@
                             <include type="file" source="include/sup/log" target="include/sup/log">
                                 <include>*.h</include>
                             </include>
+                            <include type="file" source="include/sup/xml" target="include/sup/xml">
+                                <include>*.h</include>
+                            </include>
                             <!-- Package dependencies -->
                             <requires version="current">%{codac_rpm_prefix}-${project.artifactId}</requires>
                         </package>
