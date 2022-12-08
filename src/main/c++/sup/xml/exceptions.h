@@ -59,6 +59,15 @@ public:
   ParseException(const std::string& message);
 };
 
+/**
+ * @brief Exception thrown when serializing an object failed.
+ */
+class SerializeException : public MessageException
+{
+public:
+  SerializeException(const std::string& message);
+};
+
 }  // namespace xml
 
 }  // namespace sup

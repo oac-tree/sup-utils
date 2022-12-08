@@ -43,6 +43,10 @@ ParseException::ParseException(const std::string& message)
   : MessageException{message}
 {}
 
+SerializeException::SerializeException(const std::string& message)
+  : MessageException{message}
+{}
+
 }  // namespace xml
 
 }  // namespace sup

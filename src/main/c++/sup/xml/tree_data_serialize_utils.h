@@ -30,9 +30,9 @@ namespace xml
 {
 class TreeData;
 
-void WriteToXMLFile(const std::string& file_name, const TreeData& tree_data);
+void TreeDataToFile(const std::string& file_name, const TreeData& tree_data);
 
-std::string GetXMLString(const TreeData& tree_data);
+std::string TreeDataToString(const TreeData& tree_data);
 
 }  // namespace xml
 

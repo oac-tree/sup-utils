@@ -19,7 +19,7 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include <sup/xml/tree_data.h>
+#include "tree_data.h"
 
 #include <sup/xml/exceptions.h>
 
