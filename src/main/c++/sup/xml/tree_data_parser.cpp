@@ -19,15 +19,14 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "sequence_parser_impl.h"
+#include "tree_data_parser.h"
 
-#include "xml_utils.h"
-
-#include <sup/sequencer/generic_utils.h>
-#include <sup/sequencer/log.h>
+#include <sup/xml/exceptions.h>
+#include <sup/xml/xml_utils.h>
 
 #include <libxml/parser.h>
 
+#include <fstream>
 #include <stdio.h>
 #include <string.h>
 
@@ -35,42 +34,52 @@ namespace sup
 {
 namespace xml
 {
+static bool FileExists(const std::string& filename);
+
 static std::unique_ptr<TreeData> ParseXMLDoc(xmlDocPtr doc);
 
 static std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, xmlNodePtr node);
 
-static void AddXMLAttributes(TreeData *tree, xmlNodePtr node);
+static void AddXMLAttributes(TreeData* tree, xmlNodePtr node);
 
-static void AddXMLChildren(TreeData *tree, xmlDocPtr doc, xmlNodePtr node);
+static void AddXMLChildren(TreeData* tree, xmlDocPtr doc, xmlNodePtr node);
 
-std::unique_ptr<TreeData> ParseXMLDataFile(const std::string &filename)
+std::unique_ptr<TreeData> TreeDataFromFile(const std::string& filename)
 {
   // Read file into xmlDocPtr
-  if (!utils::FileExists(filename))
+  if (!FileExists(filename))
   {
-    log::Warning("ParseXMLDataFile('%s') - file not found", filename.c_str());
-    return {};
+    std::string message = "sup::xml::TreeDataFromFile(): file not found [" + filename + "]";
+    throw ParseException(message);
   }
   xmlDocPtr doc = xmlParseFile(filename.c_str());
   if (doc == nullptr)
   {
-    log::Warning("ParseXMLDataFile('%s') - Couldn't parse file", filename.c_str());
-    return {};
+    std::string message = "sup::xml::TreeDataFromFile(): used xml library could not parse file [" +
+    filename + "]";
+    throw ParseException(message);
   }
   return ParseXMLDoc(doc);
 }
 
-std::unique_ptr<TreeData> ParseXMLDataString(const std::string &xml_str)
+std::unique_ptr<TreeData> TreeDataFromString(const std::string& xml_str)
 {
   // Read the string into xmlDocPtr
-  xmlDocPtr doc = xmlParseDoc(reinterpret_cast<const xmlChar *>(xml_str.c_str()));
-  auto xml_head = xml_str.substr(0, 1024);
+  xmlDocPtr doc = xmlParseDoc(FromString(xml_str));
   if (doc == nullptr)
   {
-    log::Warning("ParseXMLDataString('%s') - Couldn't parse file", xml_head.c_str());
-    return {};
+    auto xml_head = xml_str.substr(0, 1024);
+    std::string message = "sup::xml::TreeDataFromString(): used xml library could not parse string "
+    "[" + xml_head + "]";
+    throw ParseException(message);
   }
   return ParseXMLDoc(doc);
+}
+
+static bool FileExists(const std::string& filename)
+{
+  std::ifstream file_stream(filename);
+  return file_stream.is_open();
 }
 
 static std::unique_ptr<TreeData> ParseXMLDoc(xmlDocPtr doc)
@@ -79,9 +88,9 @@ static std::unique_ptr<TreeData> ParseXMLDoc(xmlDocPtr doc)
   xmlNodePtr root_node = xmlDocGetRootElement(doc);
   if (root_node == nullptr)
   {
-    log::Warning("ParseXMLDoc() - Couldn't retrieve root element");
     xmlFreeDoc(doc);
-    return {};
+    std::string message = "sup::xml::ParseXMLDoc(): could not retrieve root element";
+    throw ParseException(message);
   }
   auto data_tree = ParseDataTree(doc, root_node);
   xmlFreeDoc(doc);
@@ -94,7 +103,6 @@ static std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, xmlNodePtr node)
   std::unique_ptr<TreeData> result(new TreeData(node_name));
 
   AddXMLAttributes(result.get(), node);
-
   AddXMLChildren(result.get(), doc, node);
 
   return result;
@@ -123,12 +131,11 @@ static void AddXMLChildren(TreeData *tree, xmlDocPtr doc, xmlNodePtr node)
     {
       auto xml_content = xmlNodeListGetString(doc, child_node, 1);
       auto content = ToString(xml_content);
-      tree->SetContent(content);
       xmlFree(xml_content);
+      tree->SetContent(content);
     }
     else if (child_node->type == XML_ELEMENT_NODE)
     {
-      log::Debug("Add child Data: %s", reinterpret_cast<const char *>(child_node->name));
       auto child_data = ParseDataTree(doc, child_node);
       tree->AddChild(*child_data);
     }

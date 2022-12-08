@@ -30,11 +30,11 @@ namespace sup
 {
 namespace xml
 {
-//! Converts xmlChar to std::string.
-std::string ToString(const xmlChar *xml_name);
+//! Converts xmlChar array to std::string.
+std::string ToString(const xmlChar* xml_name);
 
-//! Converts std::string to xmlChar.
-const xmlChar *FromString(const std::string &str);
+//! Converts std::string to xmlChar array. The result array is still owned by the input string.
+const xmlChar* FromString(const std::string& str);
 
 }  // namespace xml
 

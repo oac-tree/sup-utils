@@ -1,3 +1,5 @@
+find_package(LibXml2 REQUIRED)
+
 add_library(sup-xml SHARED "")
 add_library(sup-utils::sup-xml ALIAS sup-xml) # alias for build-tree usage
 
@@ -17,11 +19,13 @@ target_include_directories(sup-xml PUBLIC
 target_sources(sup-xml
   PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/exceptions.cpp
-    # ${CMAKE_CURRENT_LIST_DIR}/tree_data_parser.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/tree_data_parser.cpp
     # ${CMAKE_CURRENT_LIST_DIR}/tree_data_serialize_utils.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tree_data.cpp
-    # ${CMAKE_CURRENT_LIST_DIR}/xml_utils.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/xml_utils.cpp
 )
+
+target_link_libraries(sup-xml PRIVATE LibXml2::LibXml2)
 
 # -- Installation --
 

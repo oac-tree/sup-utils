@@ -22,7 +22,7 @@
 #ifndef SUP_XML_TREEDATA_PARSER_H_
 #define SUP_XML_TREEDATA_PARSER_H_
 
-#include <sup/sequencer/tree_data.h>
+#include <sup/xml/tree_data.h>
 
 #include <memory>
 
@@ -30,9 +30,10 @@ namespace sup
 {
 namespace xml
 {
-std::unique_ptr<TreeData> ParseXMLDataFile(const std::string& filename);
+std::unique_ptr<TreeData> TreeDataFromFile(const std::string& filename);
 
-std::unique_ptr<TreeData> ParseXMLDataString(const std::string& xml_str);
+std::unique_ptr<TreeData> TreeDataFromString(const std::string& xml_str);
+
 }  // namespace xml
 
 }  // namespace sup
