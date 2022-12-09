@@ -52,7 +52,7 @@ std::unique_ptr<TreeData> TreeDataFromFile(const std::string& filename)
     std::string message = "sup::xml::TreeDataFromFile(): file not found [" + filename + "]";
     throw ParseException(message);
   }
-  xmlDocPtr doc = xmlParseFile(filename.c_str());
+  xmlDocPtr doc = xmlReadFile(filename.c_str(), nullptr, XML_PARSE_NOBLANKS);
   if (doc == nullptr)
   {
     std::string message = "sup::xml::TreeDataFromFile(): used xml library could not parse file [" +
@@ -65,7 +65,7 @@ std::unique_ptr<TreeData> TreeDataFromFile(const std::string& filename)
 std::unique_ptr<TreeData> TreeDataFromString(const std::string& xml_str)
 {
   // Read the string into xmlDocPtr
-  xmlDocPtr doc = xmlParseDoc(FromString(xml_str));
+  xmlDocPtr doc = xmlReadDoc(FromString(xml_str), nullptr, nullptr, XML_PARSE_NOBLANKS);
   if (doc == nullptr)
   {
     auto xml_head = xml_str.substr(0, 1024);
