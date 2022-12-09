@@ -52,7 +52,7 @@ class XMLBufferHandle
 {
 public:
   XMLBufferHandle() : m_buffer{xmlBufferCreate()} {}
-  ~XMLBufferHandle() { xmlBufferFree(m_buffer); }
+  ~XMLBufferHandle() { if (m_buffer) xmlBufferFree(m_buffer); }
 
   XMLBufferHandle(const XMLBufferHandle&) = delete;
   XMLBufferHandle& operator=(const XMLBufferHandle&) = delete;
@@ -66,7 +66,7 @@ class XMLTextWriterHandle
 {
 public:
   XMLTextWriterHandle(xmlTextWriterPtr writer) : m_writer{writer} {}
-  ~XMLTextWriterHandle() { xmlFreeTextWriter(m_writer); }
+  ~XMLTextWriterHandle() { if (m_writer) xmlFreeTextWriter(m_writer); }
 
   XMLTextWriterHandle(const XMLTextWriterHandle&) = delete;
   XMLTextWriterHandle& operator=(const XMLTextWriterHandle&) = delete;
