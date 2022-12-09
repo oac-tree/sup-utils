@@ -30,8 +30,8 @@
 
 namespace
 {
-//! Serialize the TreeData to the given writer and release the writer
-void SerializeAndFree(xmlTextWriterPtr writer, const sup::xml::TreeData& tree_data);
+//! Serialize the TreeData to the given writer
+void SerializeUsingWriter(xmlTextWriterPtr writer, const sup::xml::TreeData& tree_data);
 
 //! Set-up indentation.
 void SetupWriterIndentation(xmlTextWriterPtr writer);
@@ -48,28 +48,53 @@ namespace sup
 {
 namespace xml
 {
+class XMLBufferHandle
+{
+public:
+  XMLBufferHandle() : m_buffer{xmlBufferCreate()} {}
+  ~XMLBufferHandle() { xmlBufferFree(m_buffer); }
+
+  XMLBufferHandle(const XMLBufferHandle&) = delete;
+  XMLBufferHandle& operator=(const XMLBufferHandle&) = delete;
+
+  xmlBufferPtr Buffer() const { return m_buffer; }
+private:
+  xmlBufferPtr m_buffer;
+};
+
+class XMLTextWriterHandle
+{
+public:
+  XMLTextWriterHandle(xmlTextWriterPtr writer) : m_writer{writer} {}
+  ~XMLTextWriterHandle() { xmlFreeTextWriter(m_writer); }
+
+  XMLTextWriterHandle(const XMLTextWriterHandle&) = delete;
+  XMLTextWriterHandle& operator=(const XMLTextWriterHandle&) = delete;
+
+  xmlTextWriterPtr Writer() const { return m_writer; }
+private:
+  xmlTextWriterPtr m_writer;
+};
+
 void TreeDataToFile(const std::string& file_name, const TreeData& tree_data)
 {
-  xmlTextWriterPtr writer;
-
   // Create a new XmlWriter for uri, with no compression.
-  writer = xmlNewTextWriterFilename(file_name.c_str(), 0);
+  XMLTextWriterHandle h_writer(xmlNewTextWriterFilename(file_name.c_str(), 0));
+  auto writer = h_writer.Writer();
   if (!writer)
   {
     std::string message = "sup::xml::TreeDataToFile(): could not create an XML writer for file [" +
     file_name;
     throw SerializeException(message);
   }
-  SerializeAndFree(writer, tree_data);
+  SerializeUsingWriter(writer, tree_data);
 }
 
 std::string TreeDataToString(const TreeData& tree_data)
 {
-  xmlTextWriterPtr writer;
-  xmlBufferPtr buf;
-
   // Create a new XML buffer, to which the XML document will be written
-  buf = xmlBufferCreate();
+  XMLBufferHandle h_buffer{};
+  auto buf = h_buffer.Buffer();
   if (!buf)
   {
     std::string message = "sup::xml::TreeDataToString(): could not create an XML buffer";
@@ -77,24 +102,15 @@ std::string TreeDataToString(const TreeData& tree_data)
   }
 
   // Create a new XmlWriter for memory, with no compression.
-  writer = xmlNewTextWriterMemory(buf, 0);
+  XMLTextWriterHandle h_writer(xmlNewTextWriterMemory(buf, 0));
+  auto writer = h_writer.Writer();
   if (!writer)
   {
     std::string message = "sup::xml::TreeDataToString(): could not create an XML writer";
     throw SerializeException(message);
   }
-  try
-  {
-    SerializeAndFree(writer, tree_data);
-  }
-  catch(const SerializeException&)
-  {
-    xmlBufferFree(buf);
-    throw;
-  }
-  auto result = ToString(buf->content);
-  xmlBufferFree(buf);
-  return result;
+  SerializeUsingWriter(writer, tree_data);
+  return ToString(buf->content);
 }
 
 }  // namespace xml
@@ -103,24 +119,14 @@ std::string TreeDataToString(const TreeData& tree_data)
 
 namespace
 {
-void SerializeAndFree(xmlTextWriterPtr writer, const sup::xml::TreeData& tree_data)
+void SerializeUsingWriter(xmlTextWriterPtr writer, const sup::xml::TreeData& tree_data)
 {
   SetupWriterIndentation(writer);
   xmlTextWriterStartDocument(writer, nullptr, "UTF-8", nullptr);
 
-  try
-  {
-    AddTreeData(writer, tree_data);
-  }
-  catch(const sup::xml::SerializeException&)
-  {
-    xmlTextWriterEndDocument(writer);
-    xmlFreeTextWriter(writer);
-    throw;
-  }
+  AddTreeData(writer, tree_data);
 
   xmlTextWriterEndDocument(writer);
-  xmlFreeTextWriter(writer);
 }
 
 void SetupWriterIndentation(xmlTextWriterPtr writer)
