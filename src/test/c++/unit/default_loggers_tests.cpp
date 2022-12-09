@@ -80,7 +80,7 @@ TEST_F(DefaultLoggersTest, SysLogger)
   auto stdout_logger = CreateDefaultSysLogger(LOG_SOURCE);
 
   // log messages and ensure this doesn't throw
-  EXPECT_NO_THROW(stdout_logger.Emergency(MESSAGE_1));
+  // EXPECT_NO_THROW(stdout_logger.Emergency(MESSAGE_1));
   EXPECT_NO_THROW(stdout_logger.Alert(MESSAGE_2));
   EXPECT_NO_THROW(stdout_logger.Critical(MESSAGE_3));
 
@@ -99,7 +99,7 @@ TEST_F(DefaultLoggersTest, SysLogger)
   EXPECT_EQ(stdout_logger.SetMaxSeverity(SUP_LOG_ALERT), kDefaultMaxEnabledSeverity);
   EXPECT_EQ(stdout_logger.SetSource(LOG_SOURCE), new_source);
 
-  EXPECT_NO_THROW(stdout_logger.Emergency(MESSAGE_1));
+  // EXPECT_NO_THROW(stdout_logger.Emergency(MESSAGE_1));
   EXPECT_NO_THROW(stdout_logger.Alert(MESSAGE_2));
   EXPECT_NO_THROW(stdout_logger.Critical(MESSAGE_3));
 }
