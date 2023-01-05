@@ -36,6 +36,8 @@ const std::string MESSAGE_4 = "message 4";
 const std::string MESSAGE_5 = "message 5";
 const std::string MESSAGE_6 = "message 6";
 const std::string MESSAGE_7 = "message 7";
+const std::string MESSAGE_8 = "message 8";
+const std::string MESSAGE_9 = "message 9";
 
 class LoggerTTest : public ::testing::Test
 {
@@ -45,6 +47,9 @@ protected:
 
   using WarningFilterLogger = LoggerT<SUP_LOG_WARNING>;
   WarningFilterLogger CreateFilteredLogger(const std::string& source, int max_severity);
+
+  using FilterNoneLogger = LoggerT<SUP_LOG_TRACE>;
+  FilterNoneLogger CreateNoFilterLogger(const std::string& source);
 
   using LogEntry = std::tuple<int, std::string, std::string>;
   std::vector<LogEntry> m_log_entries;
@@ -148,6 +153,51 @@ TEST_F(LoggerTTest, SetMaxSeverity)
   EXPECT_EQ(m_log_entries.size(), 5);
 }
 
+TEST_F(LoggerTTest, FilterNone)
+{
+  EXPECT_TRUE(m_log_entries.empty());
+
+  // Create logger
+  auto logger = CreateNoFilterLogger(LOG_SOURCE);
+
+  // Send log messages
+  EXPECT_NO_THROW(logger.Emergency(MESSAGE_1));
+  EXPECT_EQ(m_log_entries.size(), 1);
+  EXPECT_EQ(m_log_entries.back(), LogEntry(SUP_LOG_EMERG, LOG_SOURCE, MESSAGE_1));
+
+  EXPECT_NO_THROW(logger.Alert(MESSAGE_2));
+  EXPECT_EQ(m_log_entries.size(), 2);
+  EXPECT_EQ(m_log_entries.back(), LogEntry(SUP_LOG_ALERT, LOG_SOURCE, MESSAGE_2));
+
+  EXPECT_NO_THROW(logger.Critical(MESSAGE_3));
+  EXPECT_EQ(m_log_entries.size(), 3);
+  EXPECT_EQ(m_log_entries.back(), LogEntry(SUP_LOG_CRIT, LOG_SOURCE, MESSAGE_3));
+
+  EXPECT_NO_THROW(logger.Error(MESSAGE_4));
+  EXPECT_EQ(m_log_entries.size(), 4);
+  EXPECT_EQ(m_log_entries.back(), LogEntry(SUP_LOG_ERR, LOG_SOURCE, MESSAGE_4));
+
+  EXPECT_NO_THROW(logger.Warning(MESSAGE_5));
+  EXPECT_EQ(m_log_entries.size(), 5);
+  EXPECT_EQ(m_log_entries.back(), LogEntry(SUP_LOG_WARNING, LOG_SOURCE, MESSAGE_5));
+
+  EXPECT_NO_THROW(logger.Notice(MESSAGE_6));
+  EXPECT_EQ(m_log_entries.size(), 6);
+  EXPECT_EQ(m_log_entries.back(), LogEntry(SUP_LOG_NOTICE, LOG_SOURCE, MESSAGE_6));
+
+  EXPECT_NO_THROW(logger.Info(MESSAGE_7));
+  EXPECT_EQ(m_log_entries.size(), 7);
+  EXPECT_EQ(m_log_entries.back(), LogEntry(SUP_LOG_INFO, LOG_SOURCE, MESSAGE_7));
+
+  EXPECT_NO_THROW(logger.Debug(MESSAGE_8));
+  EXPECT_EQ(m_log_entries.size(), 8);
+  EXPECT_EQ(m_log_entries.back(), LogEntry(SUP_LOG_DEBUG, LOG_SOURCE, MESSAGE_8));
+
+  EXPECT_NO_THROW(logger.Trace(MESSAGE_9));
+  EXPECT_EQ(m_log_entries.size(), 9);
+  EXPECT_EQ(m_log_entries.back(), LogEntry(SUP_LOG_TRACE, LOG_SOURCE, MESSAGE_9));
+}
+
 LoggerTTest::LoggerTTest()
   : m_log_entries{}
 {}
@@ -162,4 +212,14 @@ LoggerTTest::CreateFilteredLogger(const std::string& source, int max_severity)
                     m_log_entries.emplace_back(severity, source, message);
                   };
   return WarningFilterLogger(log_func, source, max_severity);
+}
+
+LoggerTTest::FilterNoneLogger
+LoggerTTest::CreateNoFilterLogger(const std::string& source)
+{
+  auto log_func = [this](int severity, const std::string& source, const std::string& message)
+                  {
+                    m_log_entries.emplace_back(severity, source, message);
+                  };
+  return FilterNoneLogger(log_func, source, SUP_LOG_TRACE);
 }
