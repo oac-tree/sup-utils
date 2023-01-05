@@ -99,11 +99,6 @@ void TreeData::AddAttribute(const std::string& name, const std::string& value)
   m_attributes[name] = value;
 }
 
-void TreeData::SetAttribute(const std::string& name, const std::string& value)
-{
-  m_attributes[name] = value;
-}
-
 void TreeData::RemoveAttribute(const std::string& name)
 {
   auto it = m_attributes.find(name);
