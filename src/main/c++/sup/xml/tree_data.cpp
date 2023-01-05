@@ -99,18 +99,6 @@ void TreeData::AddAttribute(const std::string& name, const std::string& value)
   m_attributes[name] = value;
 }
 
-void TreeData::RemoveAttribute(const std::string& name)
-{
-  auto it = m_attributes.find(name);
-  if (it == m_attributes.end())
-  {
-    std::string message = "TreeData::AddAttribute(): attribute with name [" +
-      name + "] does not exist";
-    throw InvalidOperationException(message);
-  }
-  m_attributes.erase(it);
-}
-
 size_t TreeData::GetNumberOfChildren() const
 {
   return m_children.size();

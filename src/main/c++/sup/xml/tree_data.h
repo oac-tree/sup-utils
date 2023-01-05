@@ -119,25 +119,6 @@ public:
   void AddAttribute(const std::string& name, const std::string& value);
 
   /**
-   * @brief Set attribute with given name and value.
-   *
-   * @param name Attribute name.
-   * @param value Attribute value.
-   *
-   * @details This method will overwrite an existing attribute or create a new one.
-   */
-  void SetAttribute(const std::string& name, const std::string& value);
-
-  /**
-   * @brief Remove attribute with given name.
-   *
-   * @param name Name of attribute to remove.
-   *
-   * @throw InvalidOperationException when no attribute with the given name exists.
-   */
-  void RemoveAttribute(const std::string& name);
-
-  /**
    * @brief Get number of children.
    *
    * @return Number of children.
