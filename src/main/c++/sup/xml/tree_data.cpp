@@ -23,6 +23,8 @@
 
 #include <sup/xml/exceptions.h>
 
+#include <algorithm>
+
 namespace sup
 {
 namespace xml
@@ -67,13 +69,21 @@ size_t TreeData::GetNumberOfAttributes() const
 
 bool TreeData::HasAttribute(const std::string& name) const
 {
-  auto it = m_attributes.find(name);
+  auto it = std::find_if(m_attributes.begin(), m_attributes.end(),
+                         [name](const Attribute& attr)
+                         {
+                           return attr.first == name;
+                         });
   return it != m_attributes.end();
 }
 
 std::string TreeData::GetAttribute(const std::string& name) const
 {
-  auto it = m_attributes.find(name);
+  auto it = std::find_if(m_attributes.begin(), m_attributes.end(),
+                         [name](const Attribute& attr)
+                         {
+                           return attr.first == name;
+                         });
   if (it == m_attributes.end())
   {
     std::string message = "TreeData::GetAttribute(): attribute with name [" +
@@ -83,7 +93,7 @@ std::string TreeData::GetAttribute(const std::string& name) const
   return it->second;
 }
 
-const TreeData::AttributeMap& TreeData::Attributes() const
+const std::vector<TreeData::Attribute>& TreeData::Attributes() const
 {
   return m_attributes;
 }
@@ -96,7 +106,7 @@ void TreeData::AddAttribute(const std::string& name, const std::string& value)
       name + "] already exists";
     throw InvalidOperationException(message);
   }
-  m_attributes[name] = value;
+  m_attributes.emplace_back(name, value);
 }
 
 size_t TreeData::GetNumberOfChildren() const

@@ -24,6 +24,7 @@
 
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace sup
@@ -36,7 +37,7 @@ namespace xml
 class TreeData
 {
 public:
-  using AttributeMap = std::map<std::string, std::string>;
+  using Attribute = std::pair<std::string, std::string>;
 
   /**
    * @brief Constructor.
@@ -102,9 +103,9 @@ public:
   /**
    * @brief Retrieve map of all attributes.
    *
-   * @return Map of all attributes.
+   * @return List of all attributes.
    */
-  const AttributeMap& Attributes() const;
+  const std::vector<Attribute>& Attributes() const;
 
   /**
    * @brief Add attribute with given name and value.
@@ -158,7 +159,7 @@ public:
 private:
   std::string m_node_name;
   std::string m_content;
-  AttributeMap m_attributes;
+  std::vector<Attribute> m_attributes;
   std::vector<TreeData> m_children;
 };
 
