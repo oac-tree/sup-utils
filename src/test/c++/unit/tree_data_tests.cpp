@@ -21,32 +21,35 @@
 
 #include "unit_test_helper.h"
 
+#include <sup/xml/exceptions.h>
 #include <sup/xml/tree_data.h>
 
 #include <gtest/gtest.h>
 
 using namespace sup::xml;
 
+const std::string MAIN_NODE_NAME = "MainNode";
 const std::string NODE_NAME_1 = "DATA_1";
 const std::string NODE_NAME_2 = "DATA_2";
 const std::string CHILD_NODE_NAME = "ChildNode";
+
+const std::string NAME_ATTRIBUTE = "Name";
+const std::string ID_ATTRIBUTE = "ID";
+const std::string NAME_ATTRIBUTE_VALUE = "Some Name";
+const std::string ID_ATTRIBUTE_VALUE = "1234";
 
 class TreeDataTest : public ::testing::Test
 {
 protected:
   TreeDataTest();
   virtual ~TreeDataTest();
-
-  TreeData m_data_1;
 };
 
 TEST_F(TreeDataTest, Construction)
 {
-  const std::string node_name = "MainNode";
-
   // Construct from name
-  TreeData tree_data{node_name};
-  EXPECT_EQ(tree_data.GetNodeName(), node_name);
+  TreeData tree_data{MAIN_NODE_NAME};
+  EXPECT_EQ(tree_data.GetNodeName(), MAIN_NODE_NAME);
   EXPECT_EQ(tree_data.GetNumberOfAttributes(), 0);
   EXPECT_EQ(tree_data.GetNumberOfChildren(), 0);
   auto attributes = tree_data.Attributes();
@@ -57,7 +60,7 @@ TEST_F(TreeDataTest, Construction)
 
   // Copy construct
   TreeData tree_data_copy{tree_data};
-  EXPECT_EQ(tree_data_copy.GetNodeName(), node_name);
+  EXPECT_EQ(tree_data_copy.GetNodeName(), MAIN_NODE_NAME);
   EXPECT_EQ(tree_data_copy.GetNumberOfAttributes(), 0);
   EXPECT_EQ(tree_data_copy.GetNumberOfChildren(), 0);
   attributes = tree_data_copy.Attributes();
@@ -68,7 +71,7 @@ TEST_F(TreeDataTest, Construction)
 
   // Move construct
   TreeData tree_data_move{std::move(tree_data_copy)};
-  EXPECT_EQ(tree_data_move.GetNodeName(), node_name);
+  EXPECT_EQ(tree_data_move.GetNodeName(), MAIN_NODE_NAME);
   EXPECT_EQ(tree_data_move.GetNumberOfAttributes(), 0);
   EXPECT_EQ(tree_data_move.GetNumberOfChildren(), 0);
   attributes = tree_data_move.Attributes();
@@ -124,22 +127,22 @@ TEST_F(TreeDataTest, Equality)
     TreeData tree_2{NODE_NAME_1};
     EXPECT_EQ(tree_1, tree_2);
 
-    tree_1.AddAttribute("Name", "My name");
+    tree_1.AddAttribute(NAME_ATTRIBUTE, NAME_ATTRIBUTE_VALUE);
     EXPECT_NE(tree_1, tree_2);
     EXPECT_TRUE(tree_1 != tree_2);
     EXPECT_FALSE(tree_1 == tree_2);
 
-    tree_2.AddAttribute("ID", "1234");
+    tree_2.AddAttribute(ID_ATTRIBUTE, ID_ATTRIBUTE_VALUE);
     EXPECT_NE(tree_1, tree_2);
     EXPECT_TRUE(tree_1 != tree_2);
     EXPECT_FALSE(tree_1 == tree_2);
 
-    tree_2.AddAttribute("Name", "My name");
+    tree_2.AddAttribute(NAME_ATTRIBUTE, NAME_ATTRIBUTE_VALUE);
     EXPECT_NE(tree_1, tree_2);
     EXPECT_TRUE(tree_1 != tree_2);
     EXPECT_FALSE(tree_1 == tree_2);
 
-    tree_1.AddAttribute("ID", "1234");
+    tree_1.AddAttribute(ID_ATTRIBUTE, ID_ATTRIBUTE_VALUE);
     EXPECT_EQ(tree_1, tree_2);
     EXPECT_FALSE(tree_1 != tree_2);
     EXPECT_TRUE(tree_1 == tree_2);
@@ -176,19 +179,102 @@ TEST_F(TreeDataTest, Equality)
   }
 }
 
-TreeDataTest::TreeDataTest()
-  : m_data_1{NODE_NAME_1}
+TEST_F(TreeDataTest, Assignment)
 {
-  const std::string child_node_name = "ChildNode";
-  TreeData child_1{child_node_name};
-  child_1.SetContent("child1");
-  m_data_1.AddChild(child_1);
-  TreeData child_2{child_node_name};
-  child_2.AddAttribute("name", "child2");
-  m_data_1.AddChild(child_2);
-  m_data_1.AddAttribute("id", "1234");
-  m_data_1.AddAttribute("name", "root");
-  m_data_1.SetContent("Main content");
+  TreeData tree_1{NODE_NAME_1};
+  TreeData child_1{CHILD_NODE_NAME};
+  child_1.AddAttribute(NAME_ATTRIBUTE, NAME_ATTRIBUTE_VALUE);
+  tree_1.AddChild(child_1);
+  TreeData child_2{CHILD_NODE_NAME};
+  child_2.SetContent("child 2 content");
+  tree_1.AddChild(child_2);
+
+  // Copy assignment
+  TreeData tree_2{NODE_NAME_2};
+  EXPECT_NE(tree_1, tree_2);
+  tree_2 = tree_1;
+  EXPECT_EQ(tree_1, tree_2);
+
+  // Move assignment
+  TreeData tree_3{NODE_NAME_2};
+  EXPECT_NE(tree_1, tree_3);
+  tree_3 = std::move(tree_2);
+  EXPECT_EQ(tree_1, tree_3);
 }
+
+TEST_F(TreeDataTest, NodeName)
+{
+  TreeData tree_1{NODE_NAME_1};
+  TreeData tree_2{NODE_NAME_2};
+  EXPECT_EQ(tree_1.GetNodeName(), NODE_NAME_1);
+  EXPECT_NE(tree_1.GetNodeName(), NODE_NAME_2);
+  EXPECT_EQ(tree_2.GetNodeName(), NODE_NAME_2);
+  EXPECT_NE(tree_2.GetNodeName(), NODE_NAME_1);
+}
+
+TEST_F(TreeDataTest, Attributes)
+{
+  // No attributes
+  TreeData tree{NODE_NAME_1};
+  EXPECT_EQ(tree.GetNumberOfAttributes(), 0);
+  EXPECT_EQ(tree.Attributes().size(), 0);
+  EXPECT_FALSE(tree.HasAttribute(NAME_ATTRIBUTE));
+  EXPECT_FALSE(tree.HasAttribute(ID_ATTRIBUTE));
+  EXPECT_THROW(tree.GetAttribute(NAME_ATTRIBUTE), InvalidOperationException);
+  EXPECT_THROW(tree.GetAttribute(ID_ATTRIBUTE), InvalidOperationException);
+
+  // Add name attribute
+  EXPECT_NO_THROW(tree.AddAttribute(NAME_ATTRIBUTE, NAME_ATTRIBUTE_VALUE));
+  EXPECT_EQ(tree.GetNumberOfAttributes(), 1);
+  EXPECT_TRUE(tree.HasAttribute(NAME_ATTRIBUTE));
+  EXPECT_FALSE(tree.HasAttribute(ID_ATTRIBUTE));
+  auto name_val = tree.GetAttribute(NAME_ATTRIBUTE);
+  EXPECT_EQ(name_val, NAME_ATTRIBUTE_VALUE);
+  EXPECT_THROW(tree.GetAttribute(ID_ATTRIBUTE), InvalidOperationException);
+
+  // Add id attribute
+  EXPECT_NO_THROW(tree.AddAttribute(ID_ATTRIBUTE, ID_ATTRIBUTE_VALUE));
+  EXPECT_EQ(tree.GetNumberOfAttributes(), 2);
+  EXPECT_TRUE(tree.HasAttribute(NAME_ATTRIBUTE));
+  EXPECT_TRUE(tree.HasAttribute(ID_ATTRIBUTE));
+  name_val = tree.GetAttribute(NAME_ATTRIBUTE);
+  EXPECT_EQ(name_val, NAME_ATTRIBUTE_VALUE);
+  auto id_val = tree.GetAttribute(ID_ATTRIBUTE);
+  EXPECT_EQ(id_val, ID_ATTRIBUTE_VALUE);
+
+  // Try to add attribute with existing name
+  EXPECT_THROW(tree.AddAttribute(NAME_ATTRIBUTE, "does not matter"), InvalidOperationException);
+  EXPECT_THROW(tree.AddAttribute(ID_ATTRIBUTE, "does not matter"), InvalidOperationException);
+  EXPECT_EQ(tree.GetNumberOfAttributes(), 2);
+}
+
+TEST_F(TreeDataTest, Children)
+{
+  // No attributes
+  TreeData tree{NODE_NAME_1};
+  EXPECT_EQ(tree.GetNumberOfChildren(), 0);
+  EXPECT_EQ(tree.Children().size(), 0);
+
+  // Add first child
+  TreeData child_1{CHILD_NODE_NAME};
+  child_1.AddAttribute(NAME_ATTRIBUTE, NAME_ATTRIBUTE_VALUE);
+  tree.AddChild(child_1);
+  EXPECT_EQ(tree.GetNumberOfChildren(), 1);
+  auto children = tree.Children();
+  ASSERT_EQ(children.size(), 1);
+  EXPECT_EQ(children[0], child_1);
+
+  // Add second child
+  TreeData child_2{CHILD_NODE_NAME};
+  child_2.SetContent("child 2 content");
+  tree.AddChild(child_2);
+  EXPECT_EQ(tree.GetNumberOfChildren(), 2);
+  children = tree.Children();
+  ASSERT_EQ(children.size(), 2);
+  EXPECT_EQ(children[0], child_1);
+  EXPECT_EQ(children[1], child_2);
+}
+
+TreeDataTest::TreeDataTest() = default;
 
 TreeDataTest::~TreeDataTest() = default;
