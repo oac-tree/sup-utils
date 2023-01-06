@@ -21,6 +21,7 @@
 
 #include "unit_test_helper.h"
 
+#include <sup/xml/exceptions.h>
 #include <sup/xml/tree_data_parser.h>
 #include <sup/xml/tree_data_serialize_utils.h>
 
@@ -228,6 +229,30 @@ TEST_F(TreeDataParserTest, FromFile)
   EXPECT_EQ(mem2_details.GetAttribute("membership"), "platina");
   EXPECT_EQ(mem2_details.GetNumberOfChildren(), 0);
   EXPECT_TRUE(ContentEmpty(mem2_details.GetContent()));
+}
+
+TEST_F(TreeDataParserTest, FromStringError)
+{
+  std::string wrong_xml = R"RAW(
+    <MemberList>
+  )RAW";
+  EXPECT_THROW(TreeDataFromString(wrong_xml), ParseException);
+
+  std::string empty_xml = AddXMLHeader("");
+  EXPECT_THROW(TreeDataFromString(empty_xml), ParseException);
+}
+
+TEST_F(TreeDataParserTest, FromFileError)
+{
+  const std::string non_existing_filename = "File_does_not_exist";
+  EXPECT_THROW(TreeDataFromFile(non_existing_filename), ParseException);
+
+  std::string wrong_xml = R"RAW(
+    <MemberList>
+  )RAW";
+  const std::string bad_xml_filename = "TreeDataParserTest_BadXML";
+  sup::unit_test_helper::TemporaryTestFile xml_file(bad_xml_filename, wrong_xml);
+  EXPECT_THROW(TreeDataFromFile(bad_xml_filename), ParseException);
 }
 
 TEST_F(TreeDataParserTest, FromStringAndRoundtrip)
