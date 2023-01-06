@@ -22,14 +22,14 @@
 #ifndef SUP_XML_TREE_DATA_SERIALIZE_UTILS_H_
 #define SUP_XML_TREE_DATA_SERIALIZE_UTILS_H_
 
+#include <sup/xml/tree_data.h>
+
 #include <string>
 
 namespace sup
 {
 namespace xml
 {
-class TreeData;
-
 void TreeDataToFile(const std::string& file_name, const TreeData& tree_data);
 
 std::string TreeDataToString(const TreeData& tree_data);

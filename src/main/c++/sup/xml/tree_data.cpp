@@ -25,6 +25,12 @@
 
 #include <algorithm>
 
+namespace
+{
+bool EqualAttributes(const std::vector<sup::xml::TreeData::Attribute>& left,
+                     const std::vector<sup::xml::TreeData::Attribute>& right);
+}  // unnamed namespace
+
 namespace sup
 {
 namespace xml
@@ -47,8 +53,10 @@ TreeData& TreeData::operator=(TreeData&& other) = default;
 
 bool TreeData::operator==(const TreeData& other) const
 {
-  bool result = (m_node_name == other.m_node_name) && (m_content == other.m_content)
-                && (m_attributes == other.m_attributes) && (m_children == other.m_children);
+  bool result = (m_node_name == other.m_node_name)
+                && (m_content == other.m_content)
+                && EqualAttributes(m_attributes, other.m_attributes)
+                && (m_children == other.m_children);
   return result;
 }
 
@@ -137,3 +145,12 @@ std::string TreeData::GetContent() const
 }  // namespace xml
 
 }  // namespace sup
+
+namespace
+{
+bool EqualAttributes(const std::vector<sup::xml::TreeData::Attribute>& left,
+                     const std::vector<sup::xml::TreeData::Attribute>& right)
+{
+  return std::is_permutation(left.begin(), left.end(), right.begin(), right.end());
+}
+}  // unnamed namespace

@@ -22,7 +22,6 @@
 #ifndef SUP_XML_TREE_DATA_H_
 #define SUP_XML_TREE_DATA_H_
 
-#include <map>
 #include <string>
 #include <utility>
 #include <vector>
@@ -101,7 +100,7 @@ public:
   std::string GetAttribute(const std::string& name) const;
 
   /**
-   * @brief Retrieve map of all attributes.
+   * @brief Retrieve a list of all attributes.
    *
    * @return List of all attributes.
    */
