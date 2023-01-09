@@ -20,6 +20,7 @@ target_sources(sup-xml
   PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/exceptions.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tree_data_parser.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/tree_data_parser_utils.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tree_data_serialize_utils.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tree_data.cpp
     ${CMAKE_CURRENT_LIST_DIR}/xml_utils.cpp
