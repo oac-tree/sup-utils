@@ -28,6 +28,41 @@ namespace sup
 {
 namespace xml
 {
+
+XMLBufferHandle::XMLBufferHandle()
+  : m_buffer{xmlBufferCreate()}
+{}
+
+XMLBufferHandle::~XMLBufferHandle()
+{
+  if (m_buffer)
+  {
+    xmlBufferFree(m_buffer);
+  }
+}
+
+xmlBufferPtr XMLBufferHandle::Buffer() const
+{
+  return m_buffer;
+}
+
+XMLTextWriterHandle::XMLTextWriterHandle(xmlTextWriterPtr writer)
+  : m_writer{writer}
+{}
+
+XMLTextWriterHandle::~XMLTextWriterHandle()
+{
+  if (m_writer)
+  {
+    xmlFreeTextWriter(m_writer);
+  }
+}
+
+xmlTextWriterPtr XMLTextWriterHandle::Writer() const
+{
+  return m_writer;
+}
+
 void SerializeUsingWriter(xmlTextWriterPtr writer, const TreeData& tree_data)
 {
   SetupWriterIndentation(writer);

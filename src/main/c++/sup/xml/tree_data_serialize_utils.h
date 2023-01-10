@@ -24,7 +24,6 @@
 
 #include <sup/xml/tree_data.h>
 
-#include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 
 #include <string>
@@ -36,13 +35,13 @@ namespace xml
 class XMLBufferHandle
 {
 public:
-  XMLBufferHandle() : m_buffer{xmlBufferCreate()} {}
-  ~XMLBufferHandle() { if (m_buffer) xmlBufferFree(m_buffer); }
+  XMLBufferHandle();
+  ~XMLBufferHandle();
 
   XMLBufferHandle(const XMLBufferHandle&) = delete;
   XMLBufferHandle& operator=(const XMLBufferHandle&) = delete;
 
-  xmlBufferPtr Buffer() const { return m_buffer; }
+  xmlBufferPtr Buffer() const;
 private:
   xmlBufferPtr m_buffer;
 };
@@ -50,13 +49,13 @@ private:
 class XMLTextWriterHandle
 {
 public:
-  XMLTextWriterHandle(xmlTextWriterPtr writer) : m_writer{writer} {}
-  ~XMLTextWriterHandle() { if (m_writer) xmlFreeTextWriter(m_writer); }
+  XMLTextWriterHandle(xmlTextWriterPtr writer);
+  ~XMLTextWriterHandle();
 
   XMLTextWriterHandle(const XMLTextWriterHandle&) = delete;
   XMLTextWriterHandle& operator=(const XMLTextWriterHandle&) = delete;
 
-  xmlTextWriterPtr Writer() const { return m_writer; }
+  xmlTextWriterPtr Writer() const;
 private:
   xmlTextWriterPtr m_writer;
 };
