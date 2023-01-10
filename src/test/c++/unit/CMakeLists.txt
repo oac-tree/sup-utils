@@ -10,6 +10,7 @@ target_sources(unit-tests
         ${CMAKE_CURRENT_LIST_DIR}/logger_t_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/tree_data_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/tree_data_parse_tests.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/tree_data_serialize_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/unit_test_helper.cpp
 )
 
