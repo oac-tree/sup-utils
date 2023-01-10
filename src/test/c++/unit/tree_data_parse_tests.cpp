@@ -23,7 +23,7 @@
 
 #include <sup/xml/exceptions.h>
 #include <sup/xml/tree_data_parser.h>
-#include <sup/xml/tree_data_serialize_utils.h>
+#include <sup/xml/tree_data_serialize.h>
 
 #include <gtest/gtest.h>
 

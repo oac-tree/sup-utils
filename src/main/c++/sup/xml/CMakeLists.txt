@@ -21,6 +21,7 @@ target_sources(sup-xml
     ${CMAKE_CURRENT_LIST_DIR}/exceptions.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tree_data_parser.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tree_data_parser_utils.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/tree_data_serialize.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tree_data_serialize_utils.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tree_data.cpp
     ${CMAKE_CURRENT_LIST_DIR}/xml_utils.cpp
@@ -35,7 +36,7 @@ install(TARGETS sup-xml EXPORT sup-utils-targets LIBRARY DESTINATION ${CMAKE_INS
 install(FILES
   exceptions.h
   tree_data_parser.h
-  tree_data_serialize_utils.h
+  tree_data_serialize.h
   tree_data.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/xml
 )

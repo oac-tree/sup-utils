@@ -24,15 +24,54 @@
 
 #include <sup/xml/tree_data.h>
 
+#include <libxml/encoding.h>
+#include <libxml/xmlwriter.h>
+
 #include <string>
 
 namespace sup
 {
 namespace xml
 {
-void TreeDataToFile(const std::string& file_name, const TreeData& tree_data);
+class XMLBufferHandle
+{
+public:
+  XMLBufferHandle() : m_buffer{xmlBufferCreate()} {}
+  ~XMLBufferHandle() { if (m_buffer) xmlBufferFree(m_buffer); }
 
-std::string TreeDataToString(const TreeData& tree_data);
+  XMLBufferHandle(const XMLBufferHandle&) = delete;
+  XMLBufferHandle& operator=(const XMLBufferHandle&) = delete;
+
+  xmlBufferPtr Buffer() const { return m_buffer; }
+private:
+  xmlBufferPtr m_buffer;
+};
+
+class XMLTextWriterHandle
+{
+public:
+  XMLTextWriterHandle(xmlTextWriterPtr writer) : m_writer{writer} {}
+  ~XMLTextWriterHandle() { if (m_writer) xmlFreeTextWriter(m_writer); }
+
+  XMLTextWriterHandle(const XMLTextWriterHandle&) = delete;
+  XMLTextWriterHandle& operator=(const XMLTextWriterHandle&) = delete;
+
+  xmlTextWriterPtr Writer() const { return m_writer; }
+private:
+  xmlTextWriterPtr m_writer;
+};
+
+//! Serialize the TreeData to the given writer
+void SerializeUsingWriter(xmlTextWriterPtr writer, const sup::xml::TreeData& tree_data);
+
+//! Set-up indentation.
+void SetupWriterIndentation(xmlTextWriterPtr writer);
+
+//! Main method for recursive writing of XML from TreeData.
+void AddTreeData(xmlTextWriterPtr writer, const sup::xml::TreeData& tree_data);
+
+//! Adds to currently opened XML element all attributes defined in TreeData.
+void AddTreeAttributes(xmlTextWriterPtr writer, const sup::xml::TreeData& tree_data);
 
 }  // namespace xml
 
