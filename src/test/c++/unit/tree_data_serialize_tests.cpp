@@ -59,12 +59,32 @@ protected:
   virtual ~TreeDataSerializeTest();
 
   std::string AddXMLHeader(const std::string& body);
+
+  TreeData m_tree;
 };
 
 TEST_F(TreeDataSerializeTest, ToString)
 {
-  // Construct tree
-  TreeData tree{MEMBERLIST_NODE};
+  // Serialize to XML string
+  auto xml_repr = TreeDataToString(m_tree);
+  EXPECT_EQ(xml_repr, AddXMLHeader(XML_REPR_BODY));
+}
+
+TEST_F(TreeDataSerializeTest, ToFile)
+{
+  // Serialize to XML file
+  std::string filename = "memberlist_test";
+  sup::unit_test_helper::TemporaryTestFile(filename, "");
+  EXPECT_NO_THROW(TreeDataToFile(filename, m_tree));
+
+  // Read back from file
+  auto tree = TreeDataFromFile(filename);
+  EXPECT_EQ(*tree, m_tree);
+}
+
+TreeDataSerializeTest::TreeDataSerializeTest()
+  : m_tree{MEMBERLIST_NODE}
+{
   TreeData martha{MEMBER_NODE};
   martha.AddAttribute(KEY_ATTRIBUTE, "433");
   TreeData martha_name{NAME_NODE};
@@ -75,7 +95,7 @@ TEST_F(TreeDataSerializeTest, ToString)
   martha_details.AddAttribute(COUNTRY_ATTRIBUTE, "FR");
   martha_details.AddAttribute(MEMBERSHIP_ATTRIBUTE, "gold");
   martha.AddChild(martha_details);
-  tree.AddChild(martha);
+  m_tree.AddChild(martha);
   TreeData anna{MEMBER_NODE};
   anna.AddAttribute(KEY_ATTRIBUTE, "23");
   TreeData anna_name{NAME_NODE};
@@ -86,14 +106,8 @@ TEST_F(TreeDataSerializeTest, ToString)
   anna_details.AddAttribute(COUNTRY_ATTRIBUTE, "DE");
   anna_details.AddAttribute(MEMBERSHIP_ATTRIBUTE, "platina");
   anna.AddChild(anna_details);
-  tree.AddChild(anna);
-
-  // Serialize to XML string
-  auto xml_repr = TreeDataToString(tree);
-  EXPECT_EQ(xml_repr, AddXMLHeader(XML_REPR_BODY));
+  m_tree.AddChild(anna);
 }
-
-TreeDataSerializeTest::TreeDataSerializeTest() = default;
 
 TreeDataSerializeTest::~TreeDataSerializeTest() = default;
 
