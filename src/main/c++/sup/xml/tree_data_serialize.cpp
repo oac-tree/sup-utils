@@ -37,13 +37,9 @@ void TreeDataToFile(const std::string& file_name, const TreeData& tree_data)
 {
   // Create a new XmlWriter for uri, with no compression.
   XMLTextWriterHandle h_writer(xmlNewTextWriterFilename(file_name.c_str(), 0));
-  auto writer = h_writer.Writer();
-  if (!writer)
-  {
-    std::string message = "sup::xml::TreeDataToFile(): could not create an XML writer for file [" +
+  std::string message = "sup::xml::TreeDataToFile(): could not create an XML writer for file [" +
     file_name;
-    throw SerializeException(message);
-  }
+  auto writer = AssertNoNullptr(h_writer.Writer(), SerializeException(message));
   SerializeUsingWriter(writer, tree_data);
 }
 
@@ -51,21 +47,13 @@ std::string TreeDataToString(const TreeData& tree_data)
 {
   // Create a new XML buffer, to which the XML document will be written
   XMLBufferHandle h_buffer{};
-  auto buf = h_buffer.Buffer();
-  if (!buf)
-  {
-    std::string message = "sup::xml::TreeDataToString(): could not create an XML buffer";
-    throw SerializeException(message);
-  }
+  std::string buf_message = "sup::xml::TreeDataToString(): could not create an XML buffer";
+  auto buf = AssertNoNullptr(h_buffer.Buffer(), SerializeException(buf_message));
 
   // Create a new XmlWriter for memory, with no compression.
   XMLTextWriterHandle h_writer(xmlNewTextWriterMemory(buf, 0));
-  auto writer = h_writer.Writer();
-  if (!writer)
-  {
-    std::string message = "sup::xml::TreeDataToString(): could not create an XML writer";
-    throw SerializeException(message);
-  }
+  std::string writer_message = "sup::xml::TreeDataToString(): could not create an XML writer";
+  auto writer = AssertNoNullptr(h_writer.Writer(), SerializeException(writer_message));
   SerializeUsingWriter(writer, tree_data);
   return ToString(buf->content);
 }

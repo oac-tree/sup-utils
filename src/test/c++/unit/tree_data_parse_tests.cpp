@@ -23,6 +23,7 @@
 
 #include <sup/xml/exceptions.h>
 #include <sup/xml/tree_data_parser.h>
+#include <sup/xml/tree_data_parser_utils.h>
 #include <sup/xml/tree_data_serialize.h>
 
 #include <gtest/gtest.h>
@@ -280,6 +281,11 @@ TEST_F(TreeDataParserTest, FromStringAndRoundtrip)
   auto tree_data_roundtrip = TreeDataFromString(TreeDataToString(*tree_data));
   ASSERT_TRUE(static_cast<bool>(tree_data_roundtrip));
   EXPECT_EQ(*tree_data_roundtrip, *tree_data);
+}
+
+TEST_F(TreeDataParserTest, ParseExceptions)
+{
+  EXPECT_THROW(ParseXMLDoc(nullptr), ParseException);
 }
 
 static bool ContentEmpty(const std::string& content)

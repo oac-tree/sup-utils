@@ -16,6 +16,7 @@ target_sources(unit-tests
 )
 
 find_package(GTest REQUIRED)
+find_package(LibXml2 REQUIRED)
 
 target_link_libraries(unit-tests
     PRIVATE
@@ -24,6 +25,7 @@ target_link_libraries(unit-tests
         gmock
         sup-log
         sup-xml
+        LibXml2::LibXml2
 )
 
 gtest_discover_tests(unit-tests)

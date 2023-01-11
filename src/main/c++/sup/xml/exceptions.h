@@ -30,6 +30,23 @@ namespace sup
 namespace xml
 {
   /**
+ * @brief Verify the passed pointer is not null.
+ *
+ * @return Given pointer if it's not a nullptr.
+ *
+ * @throws Given exception if provided pointer was null.
+ */
+template <typename T, typename E>
+T* AssertNoNullptr(T* ptr, E exception)
+{
+  if (ptr == nullptr)
+  {
+    throw exception;
+  }
+  return ptr;
+}
+
+  /**
  * @brief Base Exception class with message.
  */
 class MessageException : public std::exception

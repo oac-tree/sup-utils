@@ -54,6 +54,17 @@ TEST_F(XMLExceptionTest, Serialize)
   EXPECT_EQ(exception.what(), MESSAGE_3);
 }
 
+TEST_F(XMLExceptionTest, NullptrCheck)
+{
+  int a;
+  int* pa = &a;
+  auto checked_ptr = AssertNoNullptr(pa, InvalidOperationException("doesnt_matter"));
+  EXPECT_EQ(checked_ptr, pa);
+  pa = nullptr;
+  EXPECT_THROW(AssertNoNullptr(pa, InvalidOperationException("test")),
+               InvalidOperationException);
+}
+
 XMLExceptionTest::XMLExceptionTest() = default;
 
 XMLExceptionTest::~XMLExceptionTest() = default;
