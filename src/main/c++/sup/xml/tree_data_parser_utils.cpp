@@ -45,7 +45,7 @@ std::unique_ptr<TreeData> ParseXMLDoc(xmlDocPtr doc)
   if (root_node == nullptr)
   {
     xmlFreeDoc(doc);
-    std::string message = "ParseXMLDoc(): could not retrieve root element";
+    std::string message = "sup::xml::ParseXMLDoc(): could not retrieve root element";
     throw ParseException(message);
   }
   auto data_tree = ParseDataTree(doc, root_node);
