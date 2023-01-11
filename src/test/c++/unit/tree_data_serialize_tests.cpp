@@ -24,6 +24,7 @@
 #include <sup/xml/exceptions.h>
 #include <sup/xml/tree_data_parser.h>
 #include <sup/xml/tree_data_serialize.h>
+#include <sup/xml/tree_data_serialize_utils.h>
 
 #include <gtest/gtest.h>
 
@@ -61,6 +62,8 @@ protected:
   std::string AddXMLHeader(const std::string& body);
 
   TreeData m_tree;
+  XMLBufferHandle m_buffer;
+  XMLTextWriterHandle m_writer;
 };
 
 TEST_F(TreeDataSerializeTest, ToString)
@@ -82,8 +85,22 @@ TEST_F(TreeDataSerializeTest, ToFile)
   EXPECT_EQ(*tree, m_tree);
 }
 
+TEST_F(TreeDataSerializeTest, SerializeExceptions)
+{
+  // Trying to serialize a node with empty name throws
+  TreeData empty_node_name{""};
+  EXPECT_THROW(AddTreeData(m_writer.Writer(), empty_node_name), SerializeException);
+
+  // Pass nullptr as writer pointer
+  TreeData some_node_name{"node_name"};
+  EXPECT_THROW(AddTreeData(nullptr, some_node_name), SerializeException);
+
+}
+
 TreeDataSerializeTest::TreeDataSerializeTest()
   : m_tree{MEMBERLIST_NODE}
+  , m_buffer{}
+  , m_writer{xmlNewTextWriterMemory(m_buffer.Buffer(), 0)}
 {
   TreeData martha{MEMBER_NODE};
   martha.AddAttribute(KEY_ATTRIBUTE, "433");
