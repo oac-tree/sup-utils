@@ -151,6 +151,10 @@ namespace
 bool EqualAttributes(const std::vector<sup::xml::TreeData::Attribute>& left,
                      const std::vector<sup::xml::TreeData::Attribute>& right)
 {
-  return std::is_permutation(left.begin(), left.end(), right.begin(), right.end());
+  if (left.size() != right.size())
+  {
+    return false;
+  }
+  return std::is_permutation(left.begin(), left.end(), right.begin());
 }
 }  // unnamed namespace

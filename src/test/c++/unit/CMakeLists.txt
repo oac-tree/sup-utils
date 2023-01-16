@@ -22,7 +22,6 @@ target_link_libraries(unit-tests
     PRIVATE
         GTest::GTest
         GTest::Main
-        gmock
         sup-log
         sup-xml
         LibXml2::LibXml2
