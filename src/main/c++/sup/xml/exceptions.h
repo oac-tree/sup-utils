@@ -68,6 +68,15 @@ public:
 };
 
 /**
+ * @brief Exception thrown when validation of an object failed.
+ */
+class ValidationException : public MessageException
+{
+public:
+  ValidationException(const std::string& message);
+};
+
+/**
  * @brief Exception thrown when parsing to an object failed.
  */
 class ParseException : public MessageException

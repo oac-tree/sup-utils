@@ -19,38 +19,30 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "exceptions.h"
+#ifndef SUP_XML_TREE_DATA_VALIDATE_H_
+#define SUP_XML_TREE_DATA_VALIDATE_H_
+
+#include <sup/xml/tree_data.h>
+
+#include <string>
 
 namespace sup
 {
 namespace xml
 {
 
-MessageException::MessageException(std::string message_)
-  : message{std::move(message_)}
-{}
+void ValidateSingleChildWithTag(const TreeData& tree, const std::string& child_tag);
 
-const char* MessageException::what() const noexcept
-{
-  return message.c_str();
-}
+void ValidateAllowedChildTags(const TreeData& tree, const std::vector<std::string> allowed_tags);
 
-InvalidOperationException::InvalidOperationException(const std::string& message)
-  : MessageException{message}
-{}
+void ValidateNoAttributes(const TreeData& tree);
 
-ValidationException::ValidationException(const std::string& message)
-  : MessageException{message}
-{}
+void ValidateNoChildren(const TreeData& tree);
 
-ParseException::ParseException(const std::string& message)
-  : MessageException{message}
-{}
-
-SerializeException::SerializeException(const std::string& message)
-  : MessageException{message}
-{}
+void ValidateNoContent(const TreeData& tree);
 
 }  // namespace xml
 
 }  // namespace sup
+
+#endif  // SUP_XML_TREE_DATA_VALIDATE_H_

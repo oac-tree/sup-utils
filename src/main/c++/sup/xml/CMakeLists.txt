@@ -23,6 +23,7 @@ target_sources(sup-xml
     ${CMAKE_CURRENT_LIST_DIR}/tree_data_parser_utils.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tree_data_serialize.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tree_data_serialize_utils.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/tree_data_validate.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tree_data.cpp
     ${CMAKE_CURRENT_LIST_DIR}/xml_utils.cpp
 )
