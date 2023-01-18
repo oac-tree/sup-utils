@@ -38,6 +38,7 @@ install(FILES
   exceptions.h
   tree_data_parser.h
   tree_data_serialize.h
+  tree_data_validate.h
   tree_data.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/xml
 )
