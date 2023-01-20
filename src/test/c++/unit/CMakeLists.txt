@@ -18,6 +18,8 @@ target_sources(unit-tests
 find_package(GTest REQUIRED)
 find_package(LibXml2 REQUIRED)
 
+include(GoogleTest)
+
 target_link_libraries(unit-tests
     PRIVATE
         GTest::GTest
