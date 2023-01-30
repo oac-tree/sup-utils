@@ -20,6 +20,8 @@ target_include_directories(${library_name} PUBLIC
 target_sources(${library_name} PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/command_line_option.cpp
   ${CMAKE_CURRENT_LIST_DIR}/command_line_option.h
+  ${CMAKE_CURRENT_LIST_DIR}/command_line_parser.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/command_line_parser.h
 )
 
 # -- Installation --

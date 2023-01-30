@@ -19,30 +19,25 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include <gtest/gtest.h>
+#ifndef SUP_CLI_COMMAND_LINE_PARSER_H_
+#define SUP_CLI_COMMAND_LINE_PARSER_H_
 
-#include <sup/cli/command_line_option.h>
+#include <string>
+#include <vector>
 
-using namespace sup::cli;
-
-class CommandLineOptionTests : public ::testing::Test
+namespace sup
 {
+namespace cli
+{
+
+class CommandLineParser
+{
+public:
+  CommandLineParser();
 };
 
-TEST_F(CommandLineOptionTests, Construction)
-{
-  CommandLineOption option1({"-f"});
-  EXPECT_EQ(option1.GetOptionNames(), std::vector<std::string>({"-f"}));
+}  // namespace cli
 
-  CommandLineOption option2({"-f", "--file"});
-  EXPECT_EQ(option2.GetOptionNames(), std::vector<std::string>({"-f", "--file"}));
-}
+}  // namespace sup
 
-TEST_F(CommandLineOptionTests, FluentInterface)
-{
-  CommandLineOption option({"-f"});
-  option.SetDefaultValue("abc")->SetDescription("description");
-
-  EXPECT_EQ(option.GetDefaultValue(), std::string("abc"));
-  EXPECT_EQ(option.GetDescription(), std::string("description"));
-}
+#endif  // SUP_CLI_COMMAND_LINE_OPTION_H_

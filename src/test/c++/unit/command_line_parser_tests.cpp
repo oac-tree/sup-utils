@@ -25,24 +25,11 @@
 
 using namespace sup::cli;
 
-class CommandLineOptionTests : public ::testing::Test
+class CommandLineParserTests : public ::testing::Test
 {
 };
 
-TEST_F(CommandLineOptionTests, Construction)
+TEST_F(CommandLineParserTests, InitialState)
 {
-  CommandLineOption option1({"-f"});
-  EXPECT_EQ(option1.GetOptionNames(), std::vector<std::string>({"-f"}));
 
-  CommandLineOption option2({"-f", "--file"});
-  EXPECT_EQ(option2.GetOptionNames(), std::vector<std::string>({"-f", "--file"}));
-}
-
-TEST_F(CommandLineOptionTests, FluentInterface)
-{
-  CommandLineOption option({"-f"});
-  option.SetDefaultValue("abc")->SetDescription("description");
-
-  EXPECT_EQ(option.GetDefaultValue(), std::string("abc"));
-  EXPECT_EQ(option.GetDescription(), std::string("description"));
 }
