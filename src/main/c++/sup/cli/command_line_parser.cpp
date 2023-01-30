@@ -21,12 +21,50 @@
 
 #include "command_line_parser.h"
 
+#include <algorithm>
+
+namespace
+{
+template <typename A, typename B>
+bool Contains(const A &container, const B &element)
+{
+  return std::find(container.begin(), container.end(), element) != container.end();
+}
+}  // namespace
+
 namespace sup
 {
 namespace cli
 {
 
-CommandLineParser::CommandLineParser() {}
+struct CommandLineParser::CommandLineParserImpl
+{
+  std::vector<std::unique_ptr<CommandLineOption>> m_options;
+
+  CommandLineParserImpl() : m_options() {}
+};
+
+CommandLineParser::CommandLineParser() : p_impl(std::make_unique<CommandLineParserImpl>()) {}
+
+CommandLineParser::~CommandLineParser() = default;
+
+CommandLineOption *CommandLineParser::AddOption(const std::vector<std::string> &option_names)
+{
+  p_impl->m_options.emplace_back(std::make_unique<CommandLineOption>(option_names));
+  return p_impl->m_options.back().get();
+}
+
+CommandLineOption *CommandLineParser::GetOption(const std::string &option_name)
+{
+  for (auto &option : p_impl->m_options)
+  {
+    if (Contains(option->GetOptionNames(), option_name))
+    {
+      return option.get();
+    }
+  }
+  return nullptr;
+}
 
 }  // namespace cli
 }  // namespace sup

@@ -22,8 +22,9 @@
 #ifndef SUP_CLI_COMMAND_LINE_PARSER_H_
 #define SUP_CLI_COMMAND_LINE_PARSER_H_
 
-#include <string>
-#include <vector>
+#include <sup/cli/command_line_option.h>
+
+#include <memory>
 
 namespace sup
 {
@@ -34,6 +35,15 @@ class CommandLineParser
 {
 public:
   CommandLineParser();
+  ~CommandLineParser();
+
+  CommandLineOption* AddOption(const std::vector<std::string>& option_names);
+
+  CommandLineOption* GetOption(const std::string& option_name);
+
+private:
+  struct CommandLineParserImpl;
+  std::unique_ptr<CommandLineParserImpl> p_impl;
 };
 
 }  // namespace cli

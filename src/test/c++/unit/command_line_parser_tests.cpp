@@ -21,7 +21,7 @@
 
 #include <gtest/gtest.h>
 
-#include <sup/cli/command_line_option.h>
+#include <sup/cli/command_line_parser.h>
 
 using namespace sup::cli;
 
@@ -29,7 +29,35 @@ class CommandLineParserTests : public ::testing::Test
 {
 };
 
-TEST_F(CommandLineParserTests, InitialState)
+TEST_F(CommandLineParserTests, AddOption)
 {
+  CommandLineParser parser;
+  auto option1 = parser.AddOption({"-f", "--file"});
+  ASSERT_TRUE(option1 != nullptr);
+  EXPECT_EQ(option1->GetOptionNames(), std::vector<std::string>({"-f", "--file"}));
 
+  auto option2 = parser.AddOption({"--help"});
+  ASSERT_TRUE(option2 != nullptr);
+  EXPECT_EQ(option2->GetOptionNames(), std::vector<std::string>({"--help"}));
+
+  // access to existing options
+  EXPECT_EQ(parser.GetOption("-f"), option1);
+  EXPECT_EQ(parser.GetOption("--file"), option1);
+  EXPECT_EQ(parser.GetOption("--help"), option2);
+
+  // non-existing options
+  EXPECT_EQ(parser.GetOption("-file"), nullptr);
+  EXPECT_EQ(parser.GetOption("-help"), nullptr);
+  EXPECT_EQ(parser.GetOption("-nonexisting"), nullptr);
+}
+
+TEST_F(CommandLineParserTests, FluentInterface)
+{
+  CommandLineParser parser;
+  auto option =
+      parser.AddOption({"-f", "--file"})->SetDescription("description")->SetDefaultValue("value");
+
+  EXPECT_EQ(option->GetOptionNames(), std::vector<std::string>({"-f", "--file"}));
+  EXPECT_EQ(option->GetDescription(), std::string("description"));
+  EXPECT_EQ(option->GetDefaultValue(), std::string("value"));
 }

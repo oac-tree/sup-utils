@@ -30,5 +30,6 @@ install(TARGETS ${library_name} EXPORT sup-utils-targets LIBRARY DESTINATION ${C
 
 install(FILES
   command_line_option.h
+  command_line_parser.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/cli
 )
