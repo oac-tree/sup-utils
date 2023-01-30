@@ -43,10 +43,14 @@ public:
   std::string GetDescription() const;
   CommandLineOption* SetDescription(const std::string& description);
 
+  bool IsRequired() const;
+  CommandLineOption* SetRequired(bool value);
+
 private:
   std::vector<std::string> m_option_names;
   std::string m_default_value;
   std::string m_description;
+  bool m_is_required;
 };
 
 }  // namespace cli

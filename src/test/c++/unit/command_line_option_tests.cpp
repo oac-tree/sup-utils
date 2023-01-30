@@ -33,6 +33,7 @@ TEST_F(CommandLineOptionTests, Construction)
 {
   CommandLineOption option1({"-f"});
   EXPECT_EQ(option1.GetOptionNames(), std::vector<std::string>({"-f"}));
+  EXPECT_FALSE(option1.IsRequired());
 
   CommandLineOption option2({"-f", "--file"});
   EXPECT_EQ(option2.GetOptionNames(), std::vector<std::string>({"-f", "--file"}));
@@ -41,8 +42,9 @@ TEST_F(CommandLineOptionTests, Construction)
 TEST_F(CommandLineOptionTests, FluentInterface)
 {
   CommandLineOption option({"-f"});
-  option.SetDefaultValue("abc")->SetDescription("description");
+  option.SetDefaultValue("abc")->SetDescription("description")->SetRequired(true);
 
   EXPECT_EQ(option.GetDefaultValue(), std::string("abc"));
   EXPECT_EQ(option.GetDescription(), std::string("description"));
+  EXPECT_TRUE(option.IsRequired());
 }

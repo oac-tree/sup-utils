@@ -27,7 +27,7 @@ namespace cli
 {
 
 CommandLineOption::CommandLineOption(const std::vector<std::string> &option_names)
-    : m_option_names(option_names), m_default_value(), m_description()
+    : m_option_names(option_names), m_default_value(), m_description(), m_is_required(false)
 {
 }
 
@@ -55,6 +55,17 @@ std::string CommandLineOption::GetDescription() const
 CommandLineOption *CommandLineOption::SetDescription(const std::string &description)
 {
   m_description = description;
+  return this;
+}
+
+bool CommandLineOption::IsRequired() const
+{
+  return m_is_required;
+}
+
+CommandLineOption *CommandLineOption::SetRequired(bool value)
+{
+  m_is_required = value;
   return this;
 }
 
