@@ -26,6 +26,7 @@ target_link_libraries(unit-tests
         GTest::Main
         sup-log
         sup-xml
+        sup-cli
         LibXml2::LibXml2
 )
 

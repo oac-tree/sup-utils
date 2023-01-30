@@ -19,8 +19,8 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_CLI_COMMAND_LINE_OPTIONS_H_
-#define SUP_CLI_COMMAND_LINE_OPTIONS_H_
+#ifndef SUP_CLI_COMMAND_LINE_OPTION_H_
+#define SUP_CLI_COMMAND_LINE_OPTION_H_
 
 #include <string>
 #include <vector>
@@ -33,22 +33,24 @@ namespace cli
 class CommandLineOption
 {
 public:
-
-  CommandLineOption(const std::string& option_name);
-
   CommandLineOption(const std::vector<std::string>& option_names);
 
   std::vector<std::string> GetOptionNames() const;
 
+  std::string GetDefaultValue() const;
   CommandLineOption* SetDefaultValue(const std::string& default_value);
+
+  std::string GetDescription() const;
+  CommandLineOption* SetDescription(const std::string& description);
 
 private:
   std::vector<std::string> m_option_names;
   std::string m_default_value;
+  std::string m_description;
 };
 
 }  // namespace cli
 
 }  // namespace sup
 
-#endif  // SUP_CLI_COMMAND_LINE_OPTIONS_H_
+#endif  // SUP_CLI_COMMAND_LINE_OPTION_H_

@@ -26,19 +26,35 @@ namespace sup
 namespace cli
 {
 
-CommandLineOption::CommandLineOption(const std::string &option_name)
-    : CommandLineOption(std::vector<std::string>{option_name})
+CommandLineOption::CommandLineOption(const std::vector<std::string> &option_names)
+    : m_option_names(option_names), m_default_value(), m_description()
 {
 }
 
-CommandLineOption::CommandLineOption(const std::vector<std::string> &option_names)
-    : m_option_names(option_names), m_default_value()
+std::vector<std::string> CommandLineOption::GetOptionNames() const
 {
+  return m_option_names;
+}
+
+std::string CommandLineOption::GetDefaultValue() const
+{
+  return m_default_value;
 }
 
 CommandLineOption *CommandLineOption::SetDefaultValue(const std::string &default_value)
 {
   m_default_value = default_value;
+  return this;
+}
+
+std::string CommandLineOption::GetDescription() const
+{
+  return m_description;
+}
+
+CommandLineOption *CommandLineOption::SetDescription(const std::string &description)
+{
+  m_description = description;
   return this;
 }
 
