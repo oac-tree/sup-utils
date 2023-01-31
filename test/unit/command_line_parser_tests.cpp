@@ -27,10 +27,6 @@ using namespace sup::cli;
 
 class CommandLineParserTests : public ::testing::Test
 {
-//  char* argv[] GetCommandLine(std::vector<std::string>)
-//  {
-
-//  }
 };
 
 TEST_F(CommandLineParserTests, AddOption)
@@ -76,13 +72,11 @@ TEST_F(CommandLineParserTests, ParseFlag)
   EXPECT_FALSE(option->IsParameter());
   EXPECT_FALSE(option->IsPositional());
 
-  char progname[] = "--verbose";
-  char* argv[] = {&progname[0], nullptr};
-  int argc = 1;
+  const int argc = 2;
+  std::array<const char *, argc> argv{"progname", "--verbose"};
 
-  parser.Parse(argc, argv);
+  parser.Parse(argc, &argv[0]);
 
   EXPECT_TRUE(parser.IsSet("--verbose"));
-
+  EXPECT_FALSE(parser.IsSet("-f"));
 }
-
