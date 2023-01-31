@@ -107,7 +107,10 @@ TEST_F(CommandLineParserTests, ParseTwoFlags)
 TEST_F(CommandLineParserTests, ParseParameter)
 {
   CommandLineParser parser;
-  parser.AddOption({"--font"})->SetParameter(true);
+  auto option = parser.AddOption({"--font"})->SetParameter(true);
+
+  EXPECT_TRUE(option->IsParameter());
+  EXPECT_FALSE(option->IsPositional());
 
   const int argc = 2;
   // command line contains short version of flags
@@ -116,4 +119,6 @@ TEST_F(CommandLineParserTests, ParseParameter)
   parser.Parse(argc, &argv[0]);
 
   EXPECT_TRUE(parser.IsSet("--font"));
+
+  EXPECT_EQ(parser.GetValue<int>("--font"), 10);
 }

@@ -25,6 +25,7 @@
 #include <sup/cli/command_line_option.h>
 
 #include <memory>
+#include <sstream>
 
 namespace sup
 {
@@ -48,10 +49,23 @@ public:
    */
   bool IsSet(const std::string& option_name);
 
+  template <typename T>
+  T GetValue(const std::string& option_name) const;
+
 private:
+  std::stringstream GetValueStream(const std::string& option_name) const;
+
   struct CommandLineParserImpl;
   std::unique_ptr<CommandLineParserImpl> p_impl;
 };
+
+template <typename T>
+T CommandLineParser::GetValue(const std::string& option_name) const
+{
+  T result;
+  GetValueStream(option_name) >> result;
+  return result;
+}
 
 }  // namespace cli
 

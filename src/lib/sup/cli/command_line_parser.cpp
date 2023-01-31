@@ -134,5 +134,14 @@ bool CommandLineParser::IsSet(const std::string &option_name)
   return p_impl->IsSet(option);
 }
 
+std::stringstream CommandLineParser::GetValueStream(const std::string &option_name) const
+{
+  std::string str;
+  p_impl->m_parser(option_name) >> str;
+  std::stringstream result(str);
+
+  return result;
+}
+
 }  // namespace cli
 }  // namespace sup
