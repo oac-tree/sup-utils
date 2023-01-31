@@ -80,3 +80,40 @@ TEST_F(CommandLineParserTests, ParseFlag)
   EXPECT_TRUE(parser.IsSet("--verbose"));
   EXPECT_FALSE(parser.IsSet("-f"));
 }
+
+//! Parsing two options without a parameter (flags).
+
+TEST_F(CommandLineParserTests, ParseTwoFlags)
+{
+  CommandLineParser parser;
+  parser.AddOption({"-v", "--verbose"});
+  parser.AddOption({"-h", "--help"});
+
+  const int argc = 3;
+  // command line contains short version of flags
+  std::array<const char *, argc> argv{"progname", "-v", "-h"};
+
+  parser.Parse(argc, &argv[0]);
+
+  // parser should report both versions (short and long) as set
+  EXPECT_TRUE(parser.IsSet("--verbose"));
+  EXPECT_TRUE(parser.IsSet("-v"));
+  EXPECT_TRUE(parser.IsSet("--help"));
+  EXPECT_TRUE(parser.IsSet("-h"));
+}
+
+//! Parsing single parameter (option that has a value).
+
+TEST_F(CommandLineParserTests, ParseParameter)
+{
+  CommandLineParser parser;
+  parser.AddOption({"--font"})->SetParameter(true);
+
+  const int argc = 2;
+  // command line contains short version of flags
+  std::array<const char *, argc> argv{"progname", "--font=10"};
+
+  parser.Parse(argc, &argv[0]);
+
+  EXPECT_TRUE(parser.IsSet("--font"));
+}

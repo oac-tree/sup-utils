@@ -43,6 +43,9 @@ public:
 
   void Parse(int argc, const char* const argv[]);
 
+  /**
+   * Check whether \a option_name was passed to the application.
+   */
   bool IsSet(const std::string& option_name);
 
 private:

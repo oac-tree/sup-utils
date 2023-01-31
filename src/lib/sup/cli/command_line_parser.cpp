@@ -51,9 +51,20 @@ struct CommandLineParser::CommandLineParserImpl
     {
       for (const auto &option_name : option->GetOptionNames())
       {
-        if (m_parser[option_name])
+        if (option->IsParameter())
         {
-          return true;
+          std::string result;
+          if ((m_parser(option_name) >> result))
+          {
+            return true;
+          }
+        }
+        else
+        {
+          if (m_parser[option_name])
+          {
+            return true;
+          }
         }
       }
     }
@@ -111,4 +122,3 @@ bool CommandLineParser::IsSet(const std::string &option_name)
 
 }  // namespace cli
 }  // namespace sup
-
