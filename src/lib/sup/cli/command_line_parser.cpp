@@ -44,30 +44,44 @@ struct CommandLineParser::CommandLineParserImpl
   std::vector<std::unique_ptr<CommandLineOption>> m_options;
   argh::parser m_parser;
 
-  //! Returns true if option is set
+  //! Returns true if parameter options with given name was set in command line.
+  bool IsParameterSet(const std::string &option_name)
+  {
+    std::string result;
+    return static_cast<bool>(m_parser(option_name) >> result);
+  }
+
+  //! Returns true if flag with given name was set in comand line.
+  bool IsFlagSet(const std::string &option_name)
+  {
+    return m_parser[option_name];
+    if (m_parser[option_name])
+    {
+      return true;
+    }
+  }
+
+  //! Returns true if given option_name appears in command line.
+  //! Parameter options and flag requires different handling by parser.
+  bool IsOptionNameSet(const std::string &option_name, bool is_parameter)
+  {
+    return is_parameter ? IsParameterSet(option_name) : IsFlagSet(option_name);
+  }
+
+  //! Returns true if option is set.
   bool IsSet(const CommandLineOption *option)
   {
     if (option)
     {
       for (const auto &option_name : option->GetOptionNames())
       {
-        if (option->IsParameter())
+        if (IsOptionNameSet(option_name, option->IsParameter()))
         {
-          std::string result;
-          if ((m_parser(option_name) >> result))
-          {
-            return true;
-          }
-        }
-        else
-        {
-          if (m_parser[option_name])
-          {
-            return true;
-          }
+          return true;
         }
       }
     }
+
     return false;
   }
 
