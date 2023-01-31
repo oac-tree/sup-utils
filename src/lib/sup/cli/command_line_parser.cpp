@@ -21,6 +21,8 @@
 
 #include "command_line_parser.h"
 
+#include "argh.h"
+
 #include <algorithm>
 
 namespace
@@ -40,8 +42,25 @@ namespace cli
 struct CommandLineParser::CommandLineParserImpl
 {
   std::vector<std::unique_ptr<CommandLineOption>> m_options;
+  argh::parser m_parser;
 
-  CommandLineParserImpl() : m_options() {}
+  //! Returns true if option is set
+  bool IsSet(const CommandLineOption *option)
+  {
+    if (option)
+    {
+      for (const auto &option_name : option->GetOptionNames())
+      {
+        if (m_parser[option_name])
+        {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  CommandLineParserImpl() : m_options(), m_parser() {}
 };
 
 CommandLineParser::CommandLineParser() : p_impl(std::make_unique<CommandLineParserImpl>()) {}
@@ -66,5 +85,30 @@ CommandLineOption *CommandLineParser::GetOption(const std::string &option_name)
   return nullptr;
 }
 
+void CommandLineParser::Parse(int argc, const char *const argv[])
+{
+  for (auto &option : p_impl->m_options)
+  {
+    // Underlying parser from the Argh library requires parameters (i.e. options with values) to
+    // be registered before parsing.
+    if (option->IsParameter())
+    {
+      for (const auto &option_name : option->GetOptionNames())
+      {
+        p_impl->m_parser.add_param(option_name);
+      }
+    }
+  }
+
+  p_impl->m_parser.parse(argc, argv);
+}
+
+bool CommandLineParser::IsSet(const std::string &option_name)
+{
+  auto option = GetOption(option_name);
+  return p_impl->IsSet(option);
+}
+
 }  // namespace cli
 }  // namespace sup
+

@@ -27,6 +27,10 @@ using namespace sup::cli;
 
 class CommandLineParserTests : public ::testing::Test
 {
+//  char* argv[] GetCommandLine(std::vector<std::string>)
+//  {
+
+//  }
 };
 
 TEST_F(CommandLineParserTests, AddOption)
@@ -61,3 +65,24 @@ TEST_F(CommandLineParserTests, FluentInterface)
   EXPECT_EQ(option->GetDescription(), std::string("description"));
   EXPECT_EQ(option->GetDefaultValue(), std::string("value"));
 }
+
+//! Parsing a single option without a parameter (a flag).
+
+TEST_F(CommandLineParserTests, ParseFlag)
+{
+  CommandLineParser parser;
+  auto option = parser.AddOption({"--verbose"});
+
+  EXPECT_FALSE(option->IsParameter());
+  EXPECT_FALSE(option->IsPositional());
+
+  char progname[] = "--verbose";
+  char* argv[] = {&progname[0], nullptr};
+  int argc = 1;
+
+  parser.Parse(argc, argv);
+
+  EXPECT_TRUE(parser.IsSet("--verbose"));
+
+}
+

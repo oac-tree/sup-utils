@@ -41,6 +41,10 @@ public:
 
   CommandLineOption* GetOption(const std::string& option_name);
 
+  void Parse(int argc, const char* const argv[]);
+
+  bool IsSet(const std::string& option_name);
+
 private:
   struct CommandLineParserImpl;
   std::unique_ptr<CommandLineParserImpl> p_impl;
