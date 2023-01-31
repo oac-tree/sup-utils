@@ -55,10 +55,6 @@ struct CommandLineParser::CommandLineParserImpl
   bool IsFlagSet(const std::string &option_name)
   {
     return m_parser[option_name];
-    if (m_parser[option_name])
-    {
-      return true;
-    }
   }
 
   //! Returns true if given option_name appears in command line.
