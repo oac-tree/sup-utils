@@ -30,6 +30,11 @@ namespace sup
 namespace cli
 {
 
+/**
+ * The CommandLineOption class defines a possible command-line option.
+ * It doesn't contain results of command line parsing.
+ */
+
 class CommandLineOption
 {
 public:
@@ -46,11 +51,21 @@ public:
   bool IsRequired() const;
   CommandLineOption* SetRequired(bool value);
 
+  CommandLineOption* SetValueName(const std::string& value_name);
+  std::string GetValueName() const;
+
+  bool IsPositional() const;
+
+  bool IsParameter() const;
+  CommandLineOption* SetParameter(bool value);
+
 private:
   std::vector<std::string> m_option_names;
   std::string m_default_value;
   std::string m_description;
+  std::string m_value_name;  //!< the name of the value to appear in help string
   bool m_is_required;
+  bool m_is_parameter;
 };
 
 }  // namespace cli
