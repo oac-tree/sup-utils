@@ -39,18 +39,26 @@ public:
   ~CommandLineParser();
 
   /**
-   * Adds help option `-h, --help`.
+   * Adds the new option to the list of available options and returns the result.
+   */
+  CommandLineOption* AddOption(const std::vector<std::string>& option_names);
+
+  /**
+   * Adds help option `-h, --help` to the list of available options.
    */
   CommandLineOption* AddHelpOption();
 
-  CommandLineOption* AddOption(const std::vector<std::string>& option_names);
-
   CommandLineOption* GetOption(const std::string& option_name);
 
-  void Parse(int argc, const char* const argv[]);
+  /**
+   * Parses command line arguments and returns true in the case of success.
+   * @note The appearance of help option will lead to `false`.
+   */
+  bool Parse(int argc, const char* const argv[]);
 
   /**
    * Check whether \a option_name was passed to the application.
+   * Valid for
    */
   bool IsSet(const std::string& option_name);
 
@@ -58,7 +66,7 @@ public:
   T GetValue(const std::string& option_name) const;
 
   /**
-   * Returns usage string
+   * Returns usage string.
    */
   std::string GetUsageString() const;
 

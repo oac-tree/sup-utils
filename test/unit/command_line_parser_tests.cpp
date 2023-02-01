@@ -20,7 +20,6 @@
  ******************************************************************************/
 
 #include <gtest/gtest.h>
-
 #include <sup/cli/command_line_parser.h>
 
 using namespace sup::cli;
@@ -86,7 +85,7 @@ TEST_F(CommandLineParserTests, ParseFlag)
   const int argc = 2;
   std::array<const char *, argc> argv{"progname", "--verbose"};
 
-  parser.Parse(argc, &argv[0]);
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
   EXPECT_TRUE(parser.IsSet("--verbose"));
   EXPECT_FALSE(parser.IsSet("-f"));
@@ -104,7 +103,7 @@ TEST_F(CommandLineParserTests, ParseTwoFlags)
   // command line contains short version of flags
   std::array<const char *, argc> argv{"progname", "-v", "-h"};
 
-  parser.Parse(argc, &argv[0]);
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
   // parser should report both versions (short and long) as set
   EXPECT_TRUE(parser.IsSet("--verbose"));
@@ -127,9 +126,29 @@ TEST_F(CommandLineParserTests, ParseParameter)
   // command line contains short version of flags
   std::array<const char *, argc> argv{"progname", "--font=10"};
 
-  parser.Parse(argc, &argv[0]);
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
   EXPECT_TRUE(parser.IsSet("--font"));
 
   EXPECT_EQ(parser.GetValue<int>("--font"), 10);
+}
+
+TEST_F(CommandLineParserTests, GetUsageString)
+{
+  CommandLineParser parser;
+  auto option = parser.AddOption({"-v", "--verbose"});
+  option->SetDescription("description");
+
+  const int argc = 2;
+  // command line contains short version of flags
+  std::array<const char *, argc> argv{"progname", "--verbose"};
+
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  std::string expected(R"RAW(Usage: progname [options]
+
+Options:
+-v, --verbose       description
+)RAW");
+  EXPECT_EQ(parser.GetUsageString(), expected);
 }

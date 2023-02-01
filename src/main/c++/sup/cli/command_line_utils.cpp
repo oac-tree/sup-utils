@@ -70,11 +70,11 @@ std::string GetOptionUsageString(const CommandLineOption &option)
   return result;
 }
 
-std::string GetUsageString(const std::string &program_name,
+std::string GetUsageString(const std::string &app_name,
                            const std::vector<const CommandLineOption *> &options)
 {
   std::string header =
-      "Usage: " + program_name + " " + GetAvailableOptionsSummaryString(options) + "\n\n";
+      "Usage: " + app_name + " " + GetAvailableOptionsSummaryString(options) + "\n\n";
 
   if (options.empty())
   {

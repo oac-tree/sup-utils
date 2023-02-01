@@ -48,7 +48,7 @@ std::string GetOptionUsageString(const CommandLineOption& option);
 /**
  * Returns a string describing the program usage.
  */
-std::string GetUsageString(const std::string& program_name,
+std::string GetUsageString(const std::string& app_name,
                            const std::vector<const CommandLineOption*>& options);
 
 }  // namespace cli

@@ -22,6 +22,7 @@
 #include "command_line_parser.h"
 
 #include "argh.h"
+#include "command_line_utils.h"
 
 #include <algorithm>
 
@@ -78,15 +79,18 @@ struct CommandLineParser::CommandLineParserImpl
     return false;
   }
 
+  std::vector<const CommandLineOption *> GetOptions()
+  {
+    std::vector<const CommandLineOption *> result;
+    std::transform(m_options.begin(), m_options.end(), std::back_inserter(result),
+                   [](const auto &it) { return it.get(); });
+    return result;
+  }
+
   CommandLineParserImpl() : m_options(), m_parser() {}
 };
 
 CommandLineParser::CommandLineParser() : p_impl(std::make_unique<CommandLineParserImpl>()) {}
-
-CommandLineOption *CommandLineParser::AddHelpOption()
-{
-  return AddOption({"-h", "--help"})->SetDescription("Displays help on command line options");
-}
 
 CommandLineParser::~CommandLineParser() = default;
 
@@ -94,6 +98,11 @@ CommandLineOption *CommandLineParser::AddOption(const std::vector<std::string> &
 {
   p_impl->m_options.emplace_back(std::make_unique<CommandLineOption>(option_names));
   return p_impl->m_options.back().get();
+}
+
+CommandLineOption *CommandLineParser::AddHelpOption()
+{
+  return AddOption({"-h", "--help"})->SetDescription("Displays help on command line options");
 }
 
 CommandLineOption *CommandLineParser::GetOption(const std::string &option_name)
@@ -108,7 +117,7 @@ CommandLineOption *CommandLineParser::GetOption(const std::string &option_name)
   return nullptr;
 }
 
-void CommandLineParser::Parse(int argc, const char *const argv[])
+bool CommandLineParser::Parse(int argc, const char *const argv[])
 {
   for (auto &option : p_impl->m_options)
   {
@@ -124,6 +133,8 @@ void CommandLineParser::Parse(int argc, const char *const argv[])
   }
 
   p_impl->m_parser.parse(argc, argv);
+
+  return true;
 }
 
 bool CommandLineParser::IsSet(const std::string &option_name)
@@ -134,7 +145,9 @@ bool CommandLineParser::IsSet(const std::string &option_name)
 
 std::string CommandLineParser::GetUsageString() const
 {
-  return {};
+  std::string app_name;
+  p_impl->m_parser(0) >> app_name;
+  return ::sup::cli::GetUsageString(app_name, p_impl->GetOptions());
 }
 
 std::stringstream CommandLineParser::GetValueStream(const std::string &option_name) const
