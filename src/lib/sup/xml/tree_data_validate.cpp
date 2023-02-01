@@ -49,7 +49,7 @@ void ValidateSingleChildWithTag(const TreeData& tree, const std::string& child_t
 }
 
 void ValidateAllowedChildTags(const TreeData& tree,
-                              const std::vector<std::string> allowed_tags)
+                              const std::vector<std::string>& allowed_tags)
 {
   for (const auto& child : tree.Children())
   {

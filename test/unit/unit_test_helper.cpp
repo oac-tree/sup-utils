@@ -29,7 +29,7 @@ namespace sup
 namespace unit_test_helper
 {
 
-TemporaryTestFile::TemporaryTestFile(std::string filename, std::string contents)
+TemporaryTestFile::TemporaryTestFile(const std::string& filename, const std::string& contents)
     : m_filename{filename}
 {
   std::ofstream file_out(m_filename);
@@ -39,14 +39,6 @@ TemporaryTestFile::TemporaryTestFile(std::string filename, std::string contents)
 TemporaryTestFile::~TemporaryTestFile()
 {
   std::remove(m_filename.c_str());
-}
-
-std::string GetTextFileContent(const std::string& file_name)
-{
-  std::ifstream in(file_name);
-  std::stringstream sstr;
-  while(in >> sstr.rdbuf());
-  return sstr.str();
 }
 
 }  // namespace unit_test_helper

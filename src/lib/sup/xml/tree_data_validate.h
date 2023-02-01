@@ -33,7 +33,7 @@ namespace xml
 
 void ValidateSingleChildWithTag(const TreeData& tree, const std::string& child_tag);
 
-void ValidateAllowedChildTags(const TreeData& tree, const std::vector<std::string> allowed_tags);
+void ValidateAllowedChildTags(const TreeData& tree, const std::vector<std::string>& allowed_tags);
 
 void ValidateNoAttributes(const TreeData& tree);
 

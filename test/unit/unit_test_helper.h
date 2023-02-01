@@ -36,14 +36,9 @@ private:
   std::string m_filename;
 
 public:
-  TemporaryTestFile(std::string filename, std::string contents);
+  TemporaryTestFile(const std::string& filename, const std::string& contents);
   ~TemporaryTestFile();
 };
-
-/**
- * Returns text file content.
- */
-std::string GetTextFileContent(const std::string &file_name);
 
 }  // namespace unit_test_helper
 
