@@ -58,7 +58,8 @@ public:
 
   /**
    * Check whether \a option_name was passed to the application.
-   * Valid for
+   * In the case of `parameter option` it means that the parameter after the option exists and can
+   * be parsed.
    */
   bool IsSet(const std::string& option_name);
 

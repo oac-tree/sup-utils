@@ -20,6 +20,7 @@
  ******************************************************************************/
 
 #include <gtest/gtest.h>
+#include <sup/cli/argh.h>
 #include <sup/cli/command_line_parser.h>
 
 using namespace sup::cli;
@@ -27,6 +28,57 @@ using namespace sup::cli;
 class CommandLineParserTests : public ::testing::Test
 {
 };
+
+//! Clarifying Argh! parser behaviour.
+
+TEST_F(CommandLineParserTests, ArghParser)
+{
+  {  // parameter is pre-registered
+    argh::parser parser;
+    parser.add_param("--font");
+
+    const int argc = 3;
+    std::array<const char *, argc> argv{"progname", "--font", "24"};
+    parser.parse(argc, &argv[0]);
+
+    // make sure it's not treated as a flag ([] operator)
+    EXPECT_FALSE(parser["--font"]);
+  }
+
+  {  // parameter is pre-registered, but the value is missed
+    argh::parser parser;
+    parser.add_param("--font");
+
+    const int argc = 2;
+    std::array<const char *, argc> argv{"progname", "--font"};
+    parser.parse(argc, &argv[0]);
+
+    // strangely, it appeared as a flag
+    EXPECT_TRUE(parser["--font"]);
+  }
+
+  {  // no registration
+    argh::parser parser;
+
+    const int argc = 2;
+    std::array<const char *, argc> argv{"progname", "--font"};
+    parser.parse(argc, &argv[0]);
+
+    // make sure it's treated as a flag ([] operator)
+    EXPECT_TRUE(parser["--font"]);
+  }
+
+  {  // no registration, but we pass free standing parameter
+    argh::parser parser;
+
+    const int argc = 3;
+    std::array<const char *, argc> argv{"progname", "--font", "24"};
+    parser.parse(argc, &argv[0]);
+
+    // it is still a flag, despite of a parameter nearby
+    EXPECT_TRUE(parser["--font"]);
+  }
+}
 
 TEST_F(CommandLineParserTests, AddHelpOption)
 {
@@ -131,6 +183,27 @@ TEST_F(CommandLineParserTests, ParseParameter)
   EXPECT_TRUE(parser.IsSet("--font"));
 
   EXPECT_EQ(parser.GetValue<int>("--font"), 10);
+}
+
+//! Parsing single parameter (option that has a value).
+
+TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
+{
+  CommandLineParser parser;
+  auto option = parser.AddOption({"--font"})->SetParameter(true);
+
+  EXPECT_TRUE(option->IsParameter());
+  EXPECT_FALSE(option->IsPositional());
+
+  const int argc = 2;
+  // command line contains short version of flags
+  std::array<const char *, argc> argv{"progname", "--font"};
+
+  EXPECT_FALSE(parser.Parse(argc, &argv[0]));
+
+  EXPECT_FALSE(parser.IsSet("--font"));
+
+  EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
 }
 
 //! Parsing command line string containing a help option.

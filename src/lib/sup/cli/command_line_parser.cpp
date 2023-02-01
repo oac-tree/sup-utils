@@ -89,6 +89,22 @@ struct CommandLineParser::CommandLineParserImpl
 
   bool IsValidParsing()
   {
+    for (auto &option : m_options)
+    {
+      // check the case when parameter option appears in command line without parameter
+      if (option->IsParameter())
+      {
+        for (const auto &option_name : option->GetOptionNames())
+        {
+          if (IsFlagSet(option_name))
+          {
+            // appearance as a flag means that no proper parameter has been given
+            return false;
+          }
+        }
+      }
+    }
+
     return true;
   }
 
@@ -158,7 +174,10 @@ std::string CommandLineParser::GetUsageString() const
 std::stringstream CommandLineParser::GetValueStream(const std::string &option_name) const
 {
   std::string str;
-  p_impl->m_parser(option_name) >> str;
+  if (!(p_impl->m_parser(option_name) >> str))
+  {
+    throw std::runtime_error("Can't parse the value");
+  }
   std::stringstream result(str);
 
   return result;
