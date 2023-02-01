@@ -58,7 +58,7 @@ struct CommandLineParser::CommandLineParserImpl
   }
 
   //! Returns true if given option_name appears in command line.
-  //! Parameter options and flag requires different handling by parser.
+  //! Parameter options and flags requires different handling by the parser.
   bool IsOptionNameSet(const std::string &option_name, bool is_parameter)
   {
     return is_parameter ? IsParameterSet(option_name) : IsFlagSet(option_name);
@@ -128,6 +128,11 @@ bool CommandLineParser::IsSet(const std::string &option_name)
 {
   auto option = GetOption(option_name);
   return p_impl->IsSet(option);
+}
+
+std::string CommandLineParser::GetUsageString() const
+{
+  return {};
 }
 
 std::stringstream CommandLineParser::GetValueStream(const std::string &option_name) const

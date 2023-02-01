@@ -52,6 +52,11 @@ public:
   template <typename T>
   T GetValue(const std::string& option_name) const;
 
+  /**
+   * Returns usage string
+   */
+  std::string GetUsageString() const;
+
 private:
   std::stringstream GetValueStream(const std::string& option_name) const;
 
