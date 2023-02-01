@@ -34,9 +34,17 @@ class CommandLineOption;
 
 /**
  * Returns summary string representing all options.
- * Example: [-h, --help] [--font=<value>] [--verbose] <positional_option>
+ * Example: "[-h, --help] [--font=<value>] [--verbose] <positional_option>"
  */
-std::string GetSummaryString(const std::vector<const CommandLineOption*>& options);
+std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLineOption*>& options);
+
+/**
+ * Returns a string describing the usage of the option.
+ * Example: "-v, --version"
+ * Example: "-f, --file <filename>"
+ */
+std::string GetOptionUsageString(const CommandLineOption& option);
+
 
 }  // namespace cli
 
