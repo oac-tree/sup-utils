@@ -27,8 +27,7 @@
 
 namespace
 {
-// const int kDesiredOptionStringLength = 20;
-// const int kDesiredDescriptionStringLength = 60;
+const int kDesiredOptionStringLength = 20;
 
 /**
  * Returns value name.
@@ -48,7 +47,6 @@ namespace cli
 std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLineOption *> &options)
 {
   (void)options;
-
   // currently returns simplified representation of all options
   return {"[options]"};
 }
@@ -70,6 +68,27 @@ std::string GetOptionUsageString(const CommandLineOption &option)
   }
 
   return result;
+}
+
+std::string GetUsageString(const std::string &program_name,
+                           const std::vector<const CommandLineOption *> &options)
+{
+  std::string header =
+      "Usage: " + program_name + " " + GetAvailableOptionsSummaryString(options) + "\n\n";
+
+  if (options.empty())
+  {
+    return header;
+  }
+
+  std::string body("Options:\n");
+  for (const auto option : options)
+  {
+    auto option_string = GetOptionUsageString(*option);
+    option_string.resize(kDesiredOptionStringLength, ' ');
+    body += option_string + option->GetDescription() + "\n";
+  }
+  return header + body;
 }
 
 }  // namespace cli

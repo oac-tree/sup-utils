@@ -45,6 +45,11 @@ std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLine
  */
 std::string GetOptionUsageString(const CommandLineOption& option);
 
+/**
+ * Returns a string describing the program usage.
+ */
+std::string GetUsageString(const std::string& program_name,
+                           const std::vector<const CommandLineOption*>& options);
 
 }  // namespace cli
 

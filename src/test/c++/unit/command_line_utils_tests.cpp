@@ -29,15 +29,21 @@ class CommandLineUtilsTests : public ::testing::Test
 {
 };
 
+//! Testing GetAvailableOptionsSummaryString function.
+
 TEST_F(CommandLineUtilsTests, GetAvailableOptionsSummaryString)
 {
   std::vector<const CommandLineOption *> options;
   EXPECT_EQ(GetAvailableOptionsSummaryString(options), std::string("[options]"));
 }
 
+//! Testing GetOptionUsageString function.
+
 TEST_F(CommandLineUtilsTests, GetOptionUsageString)
 {
   EXPECT_TRUE(GetOptionUsageString(CommandLineOption({})).empty());
+
+  // flags
   EXPECT_EQ(GetOptionUsageString(CommandLineOption({"-v"})), std::string("-v"));
   EXPECT_EQ(GetOptionUsageString(CommandLineOption({"-v", "--verbose"})),
             std::string("-v, --verbose"));
@@ -52,5 +58,30 @@ TEST_F(CommandLineUtilsTests, GetOptionUsageString)
     CommandLineOption option({"-f", "--font"});
     option.SetParameter(true)->SetValueName("size");
     EXPECT_EQ(GetOptionUsageString(option), std::string("-f, --font <size>"));
+  }
+}
+
+//! Testing GetUsageString function.
+
+TEST_F(CommandLineUtilsTests, GetUsageString)
+{
+  {  // no options
+    std::vector<const CommandLineOption *> options;
+    std::string expected(R"RAW(Usage: myprogram [options]
+
+)RAW");
+    EXPECT_EQ(GetUsageString("myprogram", options), expected);
+  }
+
+  {  // single flag
+    CommandLineOption option({"-v", "--verbose"});
+    option.SetDescription("description");
+    std::vector<const CommandLineOption *> options{&option};
+    std::string expected(R"RAW(Usage: myprogram [options]
+
+Options:
+-v, --verbose       description
+)RAW");
+    EXPECT_EQ(GetUsageString("myprogram", options), expected);
   }
 }
