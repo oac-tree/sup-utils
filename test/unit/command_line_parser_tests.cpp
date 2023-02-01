@@ -97,19 +97,19 @@ TEST_F(CommandLineParserTests, ParseTwoFlags)
 {
   CommandLineParser parser;
   parser.AddOption({"-v", "--verbose"});
-  parser.AddOption({"-h", "--help"});
+  parser.AddOption({"-f", "--file"});
 
   const int argc = 3;
   // command line contains short version of flags
-  std::array<const char *, argc> argv{"progname", "-v", "-h"};
+  std::array<const char *, argc> argv{"progname", "-v", "-f"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
   // parser should report both versions (short and long) as set
   EXPECT_TRUE(parser.IsSet("--verbose"));
   EXPECT_TRUE(parser.IsSet("-v"));
-  EXPECT_TRUE(parser.IsSet("--help"));
-  EXPECT_TRUE(parser.IsSet("-h"));
+  EXPECT_TRUE(parser.IsSet("--file"));
+  EXPECT_TRUE(parser.IsSet("-f"));
 }
 
 //! Parsing single parameter (option that has a value).
@@ -132,6 +132,21 @@ TEST_F(CommandLineParserTests, ParseParameter)
 
   EXPECT_EQ(parser.GetValue<int>("--font"), 10);
 }
+
+//! Parsing command line string containing a help option.
+
+TEST_F(CommandLineParserTests, ParseHelpOption)
+{
+  CommandLineParser parser;
+  parser.AddHelpOption();
+
+  const int argc = 2;
+  std::array<const char *, argc> argv{"progname", "--help"};
+
+  EXPECT_FALSE(parser.Parse(argc, &argv[0]));
+}
+
+//! Validate multiline string representing `usage` help for the single option setup.
 
 TEST_F(CommandLineParserTests, GetUsageString)
 {

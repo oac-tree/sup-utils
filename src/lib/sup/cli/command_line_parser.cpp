@@ -87,6 +87,11 @@ struct CommandLineParser::CommandLineParserImpl
     return result;
   }
 
+  bool IsValidParsing()
+  {
+    return true;
+  }
+
   CommandLineParserImpl() : m_options(), m_parser() {}
 };
 
@@ -134,7 +139,7 @@ bool CommandLineParser::Parse(int argc, const char *const argv[])
 
   p_impl->m_parser.parse(argc, argv);
 
-  return true;
+  return !IsSet("--help") && p_impl->IsValidParsing();
 }
 
 bool CommandLineParser::IsSet(const std::string &option_name)
