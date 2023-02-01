@@ -12,6 +12,7 @@ target_sources(unit-tests PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/tree_data_tests.cpp
   ${CMAKE_CURRENT_LIST_DIR}/tree_data_parse_tests.cpp
   ${CMAKE_CURRENT_LIST_DIR}/tree_data_serialize_tests.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/tree_data_validate_tests.cpp
   ${CMAKE_CURRENT_LIST_DIR}/unit_test_helper.cpp
   ${CMAKE_CURRENT_LIST_DIR}/xml_exception_tests.cpp
 )
