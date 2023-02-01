@@ -38,6 +38,11 @@ public:
   CommandLineParser();
   ~CommandLineParser();
 
+  /**
+   * Adds help option `-h, --help`.
+   */
+  CommandLineOption* AddHelpOption();
+
   CommandLineOption* AddOption(const std::vector<std::string>& option_names);
 
   CommandLineOption* GetOption(const std::string& option_name);

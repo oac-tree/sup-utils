@@ -29,6 +29,17 @@ class CommandLineParserTests : public ::testing::Test
 {
 };
 
+TEST_F(CommandLineParserTests, AddHelpOption)
+{
+  CommandLineParser parser;
+  auto option = parser.AddHelpOption();
+
+  ASSERT_TRUE(option != nullptr);
+  EXPECT_EQ(option->GetOptionNames(), std::vector<std::string>({"-h", "--help"}));
+  EXPECT_FALSE(option->IsParameter());
+  EXPECT_FALSE(option->IsPositional());
+}
+
 TEST_F(CommandLineParserTests, AddOption)
 {
   CommandLineParser parser;

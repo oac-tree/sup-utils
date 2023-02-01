@@ -52,10 +52,7 @@ struct CommandLineParser::CommandLineParserImpl
   }
 
   //! Returns true if flag with given name was set in comand line.
-  bool IsFlagSet(const std::string &option_name)
-  {
-    return m_parser[option_name];
-  }
+  bool IsFlagSet(const std::string &option_name) { return m_parser[option_name]; }
 
   //! Returns true if given option_name appears in command line.
   //! Parameter options and flags requires different handling by the parser.
@@ -85,6 +82,11 @@ struct CommandLineParser::CommandLineParserImpl
 };
 
 CommandLineParser::CommandLineParser() : p_impl(std::make_unique<CommandLineParserImpl>()) {}
+
+CommandLineOption *CommandLineParser::AddHelpOption()
+{
+  return AddOption({"-h", "--help"})->SetDescription("Displays help on command line options");
+}
 
 CommandLineParser::~CommandLineParser() = default;
 
