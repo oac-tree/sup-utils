@@ -61,7 +61,7 @@ struct CommandLineParser::CommandLineParserImpl
   bool IsFlagOptionSet(const CommandLineOption &option)
   {
     auto names = option.GetOptionNames();
-    auto predicate = [this](auto it) { return IsFlagSet(it); };
+    auto predicate = [this](const std::string &str) { return IsFlagSet(str); };
     return std::find_if(names.begin(), names.end(), predicate) != names.end();
   }
 
@@ -69,7 +69,7 @@ struct CommandLineParser::CommandLineParserImpl
   bool IsParameterOptionSet(const CommandLineOption &option)
   {
     auto names = option.GetOptionNames();
-    auto predicate = [this](auto it) { return IsParameterSet(it); };
+    auto predicate = [this](const std::string &str) { return IsParameterSet(str); };
     return std::find_if(names.begin(), names.end(), predicate) != names.end();
   }
 
@@ -83,7 +83,7 @@ struct CommandLineParser::CommandLineParserImpl
   {
     std::vector<const CommandLineOption *> result;
     std::transform(m_options.begin(), m_options.end(), std::back_inserter(result),
-                   [](const auto &it) { return it.get(); });
+                   [](std::unique_ptr<::sup::cli::CommandLineOption> &it) { return it.get(); });
     return result;
   }
 
@@ -116,13 +116,13 @@ struct CommandLineParser::CommandLineParserImpl
   CommandLineParserImpl() : m_options(), m_parser() {}
 };
 
-CommandLineParser::CommandLineParser() : p_impl(std::make_unique<CommandLineParserImpl>()) {}
+CommandLineParser::CommandLineParser() : p_impl(new CommandLineParserImpl) {}
 
 CommandLineParser::~CommandLineParser() = default;
 
 CommandLineOption *CommandLineParser::AddOption(const std::vector<std::string> &option_names)
 {
-  p_impl->m_options.emplace_back(std::make_unique<CommandLineOption>(option_names));
+  p_impl->m_options.emplace_back(new CommandLineOption(option_names));
   return p_impl->m_options.back().get();
 }
 
