@@ -58,15 +58,25 @@ struct CommandLineParser::CommandLineParserImpl
   bool IsFlagSet(const std::string &option_name) { return m_parser[option_name]; }
 
   //! Returns true if option is properly set.
+  bool IsFlagOptionSet(const CommandLineOption &option)
+  {
+    auto names = option.GetOptionNames();
+    auto predicate = [this](auto it) { return IsFlagSet(it); };
+    return std::find_if(names.begin(), names.end(), predicate) != names.end();
+  }
+
+  //! Returns true if option is properly set.
+  bool IsParameterOptionSet(const CommandLineOption &option)
+  {
+    auto names = option.GetOptionNames();
+    auto predicate = [this](auto it) { return IsParameterSet(it); };
+    return std::find_if(names.begin(), names.end(), predicate) != names.end();
+  }
+
+  //! Returns true if option is properly set.
   bool IsSet(const CommandLineOption &option)
   {
-    bool result{false};
-    for (const auto &option_name : option.GetOptionNames())
-    {
-      result |= (option.IsParameter() ? IsParameterSet(option_name) : IsFlagSet(option_name));
-    }
-
-    return result;
+    return option.IsParameter() ? IsParameterOptionSet(option) : IsFlagOptionSet(option);
   }
 
   std::vector<const CommandLineOption *> GetOptions()
@@ -83,35 +93,24 @@ struct CommandLineParser::CommandLineParserImpl
     return option.IsRequired() ? IsSet(option) : true;
   }
 
-  //! Returns true if parameter option is properly set.
-  bool IsValidParameterOption(const CommandLineOption &option)
+  //! Returns true if necessary parameter arguments have been provided.
+  bool IsParameterArgumentsProvided(const CommandLineOption &option)
   {
-    if (option.IsParameter())
-    {
-      for (const auto &option_name : option.GetOptionNames())
-      {
-        if (IsFlagSet(option_name))
-        {
-          // appearance as a flag means that no proper parameter has been given
-          return false;
-        }
-      }
-    }
-    return true;
+    // Special case when the user provide non-obligatory parameter option but forgets to provide
+    // arguments for it. We check that there is no flag found with the same name,
+    // which would be a sign of forgotten arguments.
+    return option.IsParameter() ? !IsFlagOptionSet(option) : true;
   }
 
   bool IsValidParsing()
   {
-    bool result{true};
+    bool result{false};
     for (auto &option : m_options)
     {
-      if (!IsValidParameterOption(*option) || !IsValidRequiredOption(*option))
-      {
-        return false;
-      }
+      result |= (IsParameterArgumentsProvided(*option) && IsValidRequiredOption(*option));
     }
 
-    return true;
+    return result;
   }
 
   CommandLineParserImpl() : m_options(), m_parser() {}
