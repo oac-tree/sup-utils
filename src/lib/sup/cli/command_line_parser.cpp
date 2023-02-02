@@ -25,6 +25,7 @@
 #include "command_line_utils.h"
 
 #include <algorithm>
+#include <iostream>
 
 namespace
 {
@@ -45,7 +46,8 @@ struct CommandLineParser::CommandLineParserImpl
   std::vector<std::unique_ptr<CommandLineOption>> m_options;
   argh::parser m_parser;
 
-  //! Returns true if parameter options with given name was set in command line.
+  //! Returns true if parameter options with given name was set in command line and parameter can be
+  //! parsed.
   bool IsParameterSet(const std::string &option_name)
   {
     std::string result;
@@ -63,16 +65,13 @@ struct CommandLineParser::CommandLineParserImpl
   }
 
   //! Returns true if option is set.
-  bool IsSet(const CommandLineOption *option)
+  bool IsSet(const CommandLineOption &option)
   {
-    if (option)
+    for (const auto &option_name : option.GetOptionNames())
     {
-      for (const auto &option_name : option->GetOptionNames())
+      if (IsOptionNameSet(option_name, option.IsParameter()))
       {
-        if (IsOptionNameSet(option_name, option->IsParameter()))
-        {
-          return true;
-        }
+        return true;
       }
     }
 
@@ -87,21 +86,36 @@ struct CommandLineParser::CommandLineParserImpl
     return result;
   }
 
+  //! Returns true if option is required and valid.
+  bool IsValidRequiredOption(const CommandLineOption &option)
+  {
+    return option.IsRequired() ? IsSet(option) : true;
+  }
+
+  //! Returns true if parameter option is properly set.
+  bool IsValidParameterOption(const CommandLineOption &option)
+  {
+    if (option.IsParameter())
+    {
+      for (const auto &option_name : option.GetOptionNames())
+      {
+        if (IsFlagSet(option_name))
+        {
+          // appearance as a flag means that no proper parameter has been given
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   bool IsValidParsing()
   {
     for (auto &option : m_options)
     {
-      // check the case when parameter option appears in command line without parameter
-      if (option->IsParameter())
+      if (!IsValidParameterOption(*option) || !IsValidRequiredOption(*option))
       {
-        for (const auto &option_name : option->GetOptionNames())
-        {
-          if (IsFlagSet(option_name))
-          {
-            // appearance as a flag means that no proper parameter has been given
-            return false;
-          }
-        }
+        return false;
       }
     }
 
@@ -161,7 +175,7 @@ bool CommandLineParser::Parse(int argc, const char *const argv[])
 bool CommandLineParser::IsSet(const std::string &option_name)
 {
   auto option = GetOption(option_name);
-  return p_impl->IsSet(option);
+  return option ? p_impl->IsSet(*option) : false;
 }
 
 std::string CommandLineParser::GetUsageString() const

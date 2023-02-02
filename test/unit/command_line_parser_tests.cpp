@@ -185,7 +185,7 @@ TEST_F(CommandLineParserTests, ParseParameter)
   EXPECT_EQ(parser.GetValue<int>("--font"), 10);
 }
 
-//! Parsing single parameter (option that has a value).
+//! Attempt to parse single parameter option, when parameter wasn't provided.
 
 TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
 {
@@ -196,7 +196,7 @@ TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
   EXPECT_FALSE(option->IsPositional());
 
   const int argc = 2;
-  // command line contains short version of flags
+  // command line doesn't contain a parameter
   std::array<const char *, argc> argv{"progname", "--font"};
 
   EXPECT_FALSE(parser.Parse(argc, &argv[0]));
@@ -205,6 +205,28 @@ TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
 
   EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
 }
+
+//! Attempt to parse command line when required option is missed
+
+TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArguments)
+{
+  CommandLineParser parser;
+  auto option = parser.AddOption({"--font", "-f"})->SetParameter(true)->SetRequired(true);
+
+  EXPECT_TRUE(option->IsParameter());
+  EXPECT_FALSE(option->IsPositional());
+
+  const int argc = 2;
+  // command line doesn't contain a parameter
+  std::array<const char *, argc> argv{"progname", "--version"};
+
+  EXPECT_FALSE(parser.Parse(argc, &argv[0]));
+
+//  EXPECT_FALSE(parser.IsSet("--font"));
+
+//  EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
+}
+
 
 //! Parsing command line string containing a help option.
 
