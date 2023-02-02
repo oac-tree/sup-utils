@@ -1,10 +1,3 @@
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../cmake/module)
-include(configuration)
-
-if(CMAKE_VERSION VERSION_LESS "3.7.0")
-    set(CMAKE_INCLUDE_CURRENT_DIR ON)
-endif()
-
 add_subdirectory(unit)
 
 file(WRITE ${TEST_OUTPUT_DIRECTORY}/test.sh
