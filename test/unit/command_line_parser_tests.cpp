@@ -258,7 +258,7 @@ TEST_F(CommandLineParserTests, GetUsageString)
   std::string expected(R"RAW(Usage: progname [options]
 
 Options:
--v, --verbose       description
+-v, --verbose                 description
 )RAW");
   EXPECT_EQ(parser.GetUsageString(), expected);
 }

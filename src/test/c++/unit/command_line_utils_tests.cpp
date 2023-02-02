@@ -80,7 +80,7 @@ TEST_F(CommandLineUtilsTests, GetUsageString)
     std::string expected(R"RAW(Usage: myprogram [options]
 
 Options:
--v, --verbose       description
+-v, --verbose                 description
 )RAW");
     EXPECT_EQ(GetUsageString("myprogram", options), expected);
   }
