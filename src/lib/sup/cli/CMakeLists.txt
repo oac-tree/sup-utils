@@ -4,7 +4,7 @@ set(export_name sup-cli)
 add_library(${library_name} SHARED "")
 add_library(sup-utils::${export_name} ALIAS ${library_name}) # alias for build-tree usage
 
-target_compile_features(${library_name} PRIVATE cxx_std_11)
+target_compile_features(${library_name} PRIVATE cxx_std_14)
 
 set_target_properties(${library_name} PROPERTIES
   EXPORT_NAME ${export_name}
