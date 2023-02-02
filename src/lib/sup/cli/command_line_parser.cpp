@@ -57,25 +57,16 @@ struct CommandLineParser::CommandLineParserImpl
   //! Returns true if flag with given name was set in comand line.
   bool IsFlagSet(const std::string &option_name) { return m_parser[option_name]; }
 
-  //! Returns true if given option_name appears in command line.
-  //! Parameter options and flags requires different handling by the parser.
-  bool IsOptionNameSet(const std::string &option_name, bool is_parameter)
-  {
-    return is_parameter ? IsParameterSet(option_name) : IsFlagSet(option_name);
-  }
-
-  //! Returns true if option is set.
+  //! Returns true if option is properly set.
   bool IsSet(const CommandLineOption &option)
   {
+    bool result{false};
     for (const auto &option_name : option.GetOptionNames())
     {
-      if (IsOptionNameSet(option_name, option.IsParameter()))
-      {
-        return true;
-      }
+      result |= (option.IsParameter() ? IsParameterSet(option_name) : IsFlagSet(option_name));
     }
 
-    return false;
+    return result;
   }
 
   std::vector<const CommandLineOption *> GetOptions()
@@ -111,6 +102,7 @@ struct CommandLineParser::CommandLineParserImpl
 
   bool IsValidParsing()
   {
+    bool result{true};
     for (auto &option : m_options)
     {
       if (!IsValidParameterOption(*option) || !IsValidRequiredOption(*option))

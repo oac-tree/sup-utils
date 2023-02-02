@@ -32,6 +32,28 @@ namespace sup
 namespace cli
 {
 
+/**
+ * @brief The CommandLineParser class parses the command line arguments.
+ *
+ * It allows forming a list of expected options, parsing command line arguments, and then querying
+ * the values of the options set.
+ *
+ * @code
+ * CommandLineParser parser;
+ *
+ * // adds verbose flag
+ * parser.AddOption({"-v", "--verbose})->SetDescription("Verbose level");
+ *
+ * //
+ * parser.AddOption("--file")->SetParameter(true)->SetRequired(true);
+ *
+ * assert(parser.parse(argc, argv));
+ *
+ * std::cout << "Verbosity:" << parser.IsSet("-v");
+ * std::cout << "Filename:" << parser.GetValue<std::string>("--file");
+
+ * @endcode
+ */
 class CommandLineParser
 {
 public:
@@ -40,6 +62,8 @@ public:
 
   /**
    * Adds the new option to the list of available options and returns the result.
+   * Option name should start from a dash for flags and parameter options, otherwise, it will be
+   * treated as a positional argument.
    */
   CommandLineOption* AddOption(const std::vector<std::string>& option_names);
 
