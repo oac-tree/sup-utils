@@ -331,3 +331,27 @@ Options:
 )RAW");
   EXPECT_EQ(parser.GetUsageString(), expected);
 }
+
+TEST_F(CommandLineParserTests, GetUsageStringWithHeaderAndFooter)
+{
+  CommandLineParser parser;
+  parser.SetDescription("header", "footer");
+  auto &option = parser.AddOption({"-v", "--verbose"});
+  option.SetDescription("description");
+
+  const int argc = 2;
+  // command line contains short version of flags
+  std::array<const char *, argc> argv{"progname", "--verbose"};
+
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  std::string expected(R"RAW(Usage: progname [options]
+
+header
+Options:
+-v, --verbose                 description
+
+footer
+)RAW");
+  EXPECT_EQ(parser.GetUsageString(), expected);
+}

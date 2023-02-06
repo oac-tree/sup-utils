@@ -86,13 +86,7 @@ std::string GetUsageString(const std::string &app_name, const std::string &heade
   std::string usage_short =
       "Usage: " + app_name + " " + GetAvailableOptionsSummaryString(options) + "\n";
 
-  return MergeWithNewLine({usage_short, GetOptionBlockString(options)});
-//  if (options.empty())
-//  {
-//    return usage_short;
-//  }
-
-//  return usage_short + GetOptionBlockString(options);
+  return MergeWithNewLine({usage_short, header, GetOptionBlockString(options), footer});
 }
 
 std::string GetOptionBlockString(const std::vector<const CommandLineOption *> &options)
