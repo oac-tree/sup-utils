@@ -84,7 +84,7 @@ TEST_F(CommandLineParserTests, ArghParser)
 TEST_F(CommandLineParserTests, AddHelpOption)
 {
   CommandLineParser parser;
-  auto option = parser.AddHelpOption();
+  auto &option = parser.AddHelpOption();
 
   EXPECT_EQ(option.GetOptionNames(), std::vector<std::string>({"-h", "--help"}));
   EXPECT_FALSE(option.IsParameter());
@@ -115,7 +115,7 @@ TEST_F(CommandLineParserTests, AddOption)
 TEST_F(CommandLineParserTests, FluentInterface)
 {
   CommandLineParser parser;
-  auto option =
+  auto &option =
       parser.AddOption({"-f", "--file"}).SetDescription("description").SetDefaultValue("value");
 
   EXPECT_EQ(option.GetOptionNames(), std::vector<std::string>({"-f", "--file"}));
@@ -128,7 +128,7 @@ TEST_F(CommandLineParserTests, FluentInterface)
 TEST_F(CommandLineParserTests, ParseFlag)
 {
   CommandLineParser parser;
-  auto option = parser.AddOption({"--verbose"});
+  auto &option = parser.AddOption({"--verbose"});
 
   EXPECT_FALSE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
@@ -168,7 +168,7 @@ TEST_F(CommandLineParserTests, ParseTwoFlags)
 TEST_F(CommandLineParserTests, ParseParameter)
 {
   CommandLineParser parser;
-  auto option = parser.AddOption({"--font"}).SetParameter(true);
+  auto &option = parser.AddOption({"--font"}).SetParameter(true);
 
   EXPECT_TRUE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
@@ -191,7 +191,7 @@ TEST_F(CommandLineParserTests, ParseParameter)
 TEST_F(CommandLineParserTests, ParseParameterSpaceDelimeter)
 {
   CommandLineParser parser;
-  auto option = parser.AddOption({"--font"}).SetParameter(true);
+  auto &option = parser.AddOption({"--font"}).SetParameter(true);
   // to make sure that default value doesn't influence the parsing of user input.
   option.SetDefaultValue("42");
 
@@ -214,7 +214,7 @@ TEST_F(CommandLineParserTests, ParseParameterSpaceDelimeter)
 TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
 {
   CommandLineParser parser;
-  auto option = parser.AddOption({"--font"}).SetParameter(true);
+  auto &option = parser.AddOption({"--font"}).SetParameter(true);
 
   EXPECT_TRUE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
@@ -232,10 +232,10 @@ TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
 
 //! Parsing a single parameter (option that has a value) with default parameter defined.
 
- TEST_F(CommandLineParserTests, ParseParameterWithDefaultValue)
+TEST_F(CommandLineParserTests, ParseParameterWithDefaultValue)
 {
-   CommandLineParser parser;
-   auto option = parser.AddOption({"--font"}).SetParameter(true).SetDefaultValue("42");
+  CommandLineParser parser;
+  auto &option = parser.AddOption({"--font"}).SetParameter(true).SetDefaultValue("42");
 
   EXPECT_TRUE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
@@ -251,12 +251,12 @@ TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
   EXPECT_EQ(parser.GetValue<int>("--font"), 42);
 }
 
-//! Attempt to parse command line when required option is missed
+//! Attempt to parse command line when required option is missed.
 
 TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArguments)
 {
   CommandLineParser parser;
-  auto option = parser.AddOption({"--font", "-f"}).SetParameter(true).SetRequired(true);
+  auto &option = parser.AddOption({"--font", "-f"}).SetParameter(true).SetRequired(true);
 
   EXPECT_TRUE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
@@ -271,6 +271,30 @@ TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArguments)
 
   EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
 }
+
+//! Attempt to parse command line when required option is missed.
+//! Difference with the previous test is the presence of help options (real-life bug)
+
+TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArgumentsWhenHelpIsPresent)
+{
+  CommandLineParser parser;
+  parser.AddHelpOption();
+  auto &option = parser.AddOption({"-f", "--file"}).SetParameter(true).SetRequired(true);
+
+  EXPECT_TRUE(option.IsParameter());
+  EXPECT_FALSE(option.IsPositional());
+
+  const int argc = 2;
+  // command line doesn't contain a parameter
+  std::array<const char *, argc> argv{"progname", "--version"};
+
+  EXPECT_FALSE(parser.Parse(argc, &argv[0]));
+
+  EXPECT_FALSE(parser.IsSet("--font"));
+
+  EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
+}
+
 
 //! Parsing command line string containing a help option.
 
@@ -303,6 +327,7 @@ TEST_F(CommandLineParserTests, GetUsageString)
 
 Options:
 -v, --verbose                 description
+
 )RAW");
   EXPECT_EQ(parser.GetUsageString(), expected);
 }

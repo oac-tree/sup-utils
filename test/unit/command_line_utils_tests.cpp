@@ -30,6 +30,15 @@ class CommandLineUtilsTests : public ::testing::Test
 {
 };
 
+//! Testing MergeWithNewLine function.
+
+TEST_F(CommandLineUtilsTests, MergeWithNewLine)
+{
+  EXPECT_EQ(MergeWithNewLine({"abc"}), std::string("abc\n"));
+  EXPECT_EQ(MergeWithNewLine({"abc", "efg"}), std::string("abc\nefg\n"));
+}
+
+
 //! Testing GetAvailableOptionsSummaryString function.
 
 TEST_F(CommandLineUtilsTests, GetAvailableOptionsSummaryString)
@@ -66,6 +75,8 @@ TEST_F(CommandLineUtilsTests, GetOptionUsageString)
 
 TEST_F(CommandLineUtilsTests, GetOptionBlockString)
 {
+  EXPECT_TRUE(GetOptionBlockString(std::vector<const CommandLineOption *>()).empty());
+
   CommandLineOption option1({"-v", "--verbose"});
   option1.SetDescription("description");
 
@@ -89,7 +100,7 @@ TEST_F(CommandLineUtilsTests, GetUsageString)
     std::string expected(R"RAW(Usage: myprogram [options]
 
 )RAW");
-    EXPECT_EQ(GetUsageString("myprogram", options), expected);
+    EXPECT_EQ(GetUsageString("myprogram", "", options, ""), expected);
   }
 
   {  // single flag
@@ -100,7 +111,8 @@ TEST_F(CommandLineUtilsTests, GetUsageString)
 
 Options:
 -v, --verbose                 description
+
 )RAW");
-    EXPECT_EQ(GetUsageString("myprogram", options), expected);
+    EXPECT_EQ(GetUsageString("myprogram", "", options, ""), expected);
   }
 }

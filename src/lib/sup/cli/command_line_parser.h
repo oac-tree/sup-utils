@@ -98,7 +98,7 @@ public:
 
   /**
    * Add \a header and \a footer to usage string. These will appear before and after option
-   * desctriptions.
+   * descriptions.
    */
   void SetDescription(const std::string& header, const std::string& footer);
 

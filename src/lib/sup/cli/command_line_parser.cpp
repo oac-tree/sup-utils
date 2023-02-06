@@ -45,6 +45,8 @@ struct CommandLineParser::CommandLineParserImpl
 {
   std::vector<std::unique_ptr<CommandLineOption>> m_options;
   argh::parser m_parser;
+  std::string m_header;
+  std::string m_footer;
 
   //! Returns true if parameter options with given name was set in command line and parameter can be
   //! parsed.
@@ -115,16 +117,16 @@ struct CommandLineParser::CommandLineParserImpl
 
   bool IsValidParsing()
   {
-    bool result{false};
+    bool result{true};
     for (auto &option : m_options)
     {
-      result |= (IsParameterArgumentsProvided(*option) && IsValidRequiredOption(*option));
+      result &= (IsParameterArgumentsProvided(*option) && IsValidRequiredOption(*option));
     }
 
     return result;
   }
 
-  CommandLineParserImpl() : m_options(), m_parser() {}
+  CommandLineParserImpl() : m_options(), m_parser(), m_header(), m_footer() {}
 };
 
 CommandLineParser::CommandLineParser() : p_impl(new CommandLineParserImpl) {}
@@ -187,7 +189,14 @@ std::string CommandLineParser::GetUsageString() const
 {
   std::string app_name;
   p_impl->m_parser(0) >> app_name;
-  return ::sup::cli::GetUsageString(app_name, p_impl->GetOptions());
+  return ::sup::cli::GetUsageString(app_name, p_impl->m_header, p_impl->GetOptions(),
+                                    p_impl->m_footer);
+}
+
+void CommandLineParser::SetDescription(const std::string &header, const std::string &footer)
+{
+  p_impl->m_header = header;
+  p_impl->m_footer = footer;
 }
 
 std::stringstream CommandLineParser::GetValueStream(const std::string &option_name) const

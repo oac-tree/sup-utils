@@ -33,6 +33,12 @@ namespace cli
 class CommandLineOption;
 
 /**
+ * Returns a string which is the result of string concatenation, with new line
+ * inserted after each non-empty string.
+ */
+std::string MergeWithNewLine(std::initializer_list<std::string> strings);
+
+/**
  * Returns summary string representing all options.
  * Example: "[-h, --help] [--font=<value>] [--verbose] <positional_option>"
  */
@@ -50,13 +56,14 @@ std::string GetOptionUsageString(const CommandLineOption& option);
  * "--version           software version"
  * "-v, --verbose       verbose level"
  */
-std::string GetOptionBlockString(const std::vector<const CommandLineOption *> &options);
+std::string GetOptionBlockString(const std::vector<const CommandLineOption*>& options);
 
 /**
  * Returns a string describing the program usage.
  */
-std::string GetUsageString(const std::string& app_name,
-                           const std::vector<const CommandLineOption*>& options);
+std::string GetUsageString(const std::string& app_name, const std::string& header,
+                           const std::vector<const CommandLineOption*>& options,
+                           const std::string& footer);
 
 }  // namespace cli
 

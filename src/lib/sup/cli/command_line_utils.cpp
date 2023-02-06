@@ -44,6 +44,15 @@ namespace sup
 namespace cli
 {
 
+std::string MergeWithNewLine(std::initializer_list<std::string> strings)
+{
+  std::string str;
+
+  auto pack = [](std::string result, std::string element)
+  { return element.empty() ? result : result + element + "\n"; };
+  return std::accumulate(strings.begin(), strings.end(), str, pack);
+}
+
 std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLineOption *> &options)
 {
   (void)options;
@@ -70,22 +79,29 @@ std::string GetOptionUsageString(const CommandLineOption &option)
   return result;
 }
 
-std::string GetUsageString(const std::string &app_name,
-                           const std::vector<const CommandLineOption *> &options)
+std::string GetUsageString(const std::string &app_name, const std::string &header,
+                           const std::vector<const CommandLineOption *> &options,
+                           const std::string &footer)
 {
-  std::string header =
-      "Usage: " + app_name + " " + GetAvailableOptionsSummaryString(options) + "\n\n";
+  std::string usage_short =
+      "Usage: " + app_name + " " + GetAvailableOptionsSummaryString(options) + "\n";
 
-  if (options.empty())
-  {
-    return header;
-  }
+  return MergeWithNewLine({usage_short, GetOptionBlockString(options)});
+//  if (options.empty())
+//  {
+//    return usage_short;
+//  }
 
-  return header + GetOptionBlockString(options);
+//  return usage_short + GetOptionBlockString(options);
 }
 
 std::string GetOptionBlockString(const std::vector<const CommandLineOption *> &options)
 {
+  if(options.empty())
+  {
+    return {};
+  }
+
   std::string result("Options:\n");
   for (const auto option : options)
   {
