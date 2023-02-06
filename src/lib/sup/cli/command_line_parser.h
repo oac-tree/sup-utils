@@ -65,7 +65,8 @@ public:
    * Option name should start from a dash for flags and parameter options, otherwise, it will be
    * treated as a positional argument.
    */
-  CommandLineOption& AddOption(const std::vector<std::string>& option_names);
+  CommandLineOption& AddOption(const std::vector<std::string>& option_names,
+                               const std::string& description = {});
 
   /**
    * Adds help option `-h, --help` to the list of available options.

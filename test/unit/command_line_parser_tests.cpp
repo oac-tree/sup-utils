@@ -97,8 +97,9 @@ TEST_F(CommandLineParserTests, AddOption)
   const auto &option1 = parser.AddOption({"-f", "--file"});
   EXPECT_EQ(option1.GetOptionNames(), std::vector<std::string>({"-f", "--file"}));
 
-  const auto &option2 = parser.AddOption({"--help"});
+  const auto &option2 = parser.AddOption({"--help"}, "description");
   EXPECT_EQ(option2.GetOptionNames(), std::vector<std::string>({"--help"}));
+  EXPECT_EQ(option2.GetDescription(), std::string("description"));
 
   // access to existing options
   EXPECT_EQ(parser.GetOption("-f"), &option1);
@@ -220,9 +221,9 @@ TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArguments)
 
   EXPECT_FALSE(parser.Parse(argc, &argv[0]));
 
-  //  EXPECT_FALSE(parser.IsSet("--font"));
+  EXPECT_FALSE(parser.IsSet("--font"));
 
-  //  EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
+  EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
 }
 
 //! Parsing command line string containing a help option.
