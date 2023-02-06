@@ -68,6 +68,11 @@ struct CommandLineParser::CommandLineParserImpl
   //! Returns true if option is properly set.
   bool IsParameterOptionSet(const CommandLineOption &option)
   {
+    if (IsFlagOptionSet(option) && !option.GetDefaultValue().empty())
+    {
+      return true;
+    }
+
     auto names = option.GetOptionNames();
     auto predicate = [this](const std::string &str) { return IsParameterSet(str); };
     return std::find_if(names.begin(), names.end(), predicate) != names.end();
@@ -96,10 +101,16 @@ struct CommandLineParser::CommandLineParserImpl
   //! Returns true if necessary parameter arguments have been provided.
   bool IsParameterArgumentsProvided(const CommandLineOption &option)
   {
-    // Special case when the user provide non-obligatory parameter option but forgets to provide
-    // arguments for it. We check that there is no flag found with the same name,
-    // which would be a sign of forgotten arguments.
-    return option.IsParameter() ? !IsFlagOptionSet(option) : true;
+    if (!option.IsParameter())
+    {
+      // non-parameters (i.e. flags) always pass
+      return true;
+    }
+
+    // Special case when the user provides parameter option without the value. We check that there
+    // is no flag found with the same name, which would be a sign of forgotten arguments.
+    // Presence of default argument makes it always passign.
+    return option.GetDefaultValue().empty() ? !IsFlagOptionSet(option) : true;
   }
 
   bool IsValidParsing()
@@ -134,7 +145,7 @@ CommandLineOption &CommandLineParser::AddHelpOption()
   return AddOption({"-h", "--help"}).SetDescription("Displays help on command line options");
 }
 
-CommandLineOption *CommandLineParser::GetOption(const std::string &option_name)
+CommandLineOption *CommandLineParser::GetOption(const std::string &option_name) const
 {
   for (auto &option : p_impl->m_options)
   {
@@ -182,7 +193,11 @@ std::string CommandLineParser::GetUsageString() const
 std::stringstream CommandLineParser::GetValueStream(const std::string &option_name) const
 {
   std::string str;
-  if (!(p_impl->m_parser(option_name) >> str))
+  auto option = GetOption(option_name);
+
+  std::string default_value = (option ? option->GetDefaultValue() : std::string());
+
+  if (!(p_impl->m_parser(option_name, default_value) >> str))
   {
     throw std::runtime_error("Can't parse the value");
   }

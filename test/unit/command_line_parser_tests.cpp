@@ -184,6 +184,31 @@ TEST_F(CommandLineParserTests, ParseParameter)
   EXPECT_EQ(parser.GetValue<int>("--font"), 10);
 }
 
+//! Parsing single parameter (option that has a value).
+//! Same as above, except that " " space is used instead of equal sign "=" while providing
+//! parameter's argument.
+
+TEST_F(CommandLineParserTests, ParseParameterSpaceDelimeter)
+{
+  CommandLineParser parser;
+  auto option = parser.AddOption({"--font"}).SetParameter(true);
+  // to make sure that default value doesn't influence the parsing of user input.
+  option.SetDefaultValue("42");
+
+  EXPECT_TRUE(option.IsParameter());
+  EXPECT_FALSE(option.IsPositional());
+
+  const int argc = 3;
+  // command line contains short version of flags
+  std::array<const char *, argc> argv{"progname", "--font", "10"};
+
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  EXPECT_TRUE(parser.IsSet("--font"));
+
+  EXPECT_EQ(parser.GetValue<int>("--font"), 10);
+}
+
 //! Attempt to parse single parameter option, when parameter wasn't provided.
 
 TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
@@ -203,6 +228,27 @@ TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
   EXPECT_FALSE(parser.IsSet("--font"));
 
   EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
+}
+
+//! Parsing a single parameter (option that has a value) with default parameter defined.
+
+ TEST_F(CommandLineParserTests, ParseParameterWithDefaultValue)
+{
+   CommandLineParser parser;
+   auto option = parser.AddOption({"--font"}).SetParameter(true).SetDefaultValue("42");
+
+  EXPECT_TRUE(option.IsParameter());
+  EXPECT_FALSE(option.IsPositional());
+
+  const int argc = 2;
+  // command line contains short version of flags
+  std::array<const char *, argc> argv{"progname", "--font"};
+
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  EXPECT_TRUE(parser.IsSet("--font"));
+
+  EXPECT_EQ(parser.GetValue<int>("--font"), 42);
 }
 
 //! Attempt to parse command line when required option is missed

@@ -73,7 +73,7 @@ public:
    */
   CommandLineOption& AddHelpOption();
 
-  CommandLineOption* GetOption(const std::string& option_name);
+  CommandLineOption* GetOption(const std::string& option_name) const;
 
   /**
    * Parses command line arguments and returns true in the case of success.
