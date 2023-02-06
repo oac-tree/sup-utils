@@ -96,6 +96,12 @@ public:
    */
   std::string GetUsageString() const;
 
+  /**
+   * Add \a header and \a footer to usage string. These will appear before and after option
+   * desctriptions.
+   */
+  void SetDescription(const std::string& header, const std::string& footer);
+
 private:
   std::stringstream GetValueStream(const std::string& option_name) const;
 

@@ -20,6 +20,7 @@
  ******************************************************************************/
 
 #include <gtest/gtest.h>
+
 #include <sup/cli/command_line_option.h>
 #include <sup/cli/command_line_utils.h>
 
@@ -59,6 +60,24 @@ TEST_F(CommandLineUtilsTests, GetOptionUsageString)
     option.SetParameter(true).SetValueName("size");
     EXPECT_EQ(GetOptionUsageString(option), std::string("-f, --font <size>"));
   }
+}
+
+//! Testing GetUsageString function.
+
+TEST_F(CommandLineUtilsTests, GetOptionBlockString)
+{
+  CommandLineOption option1({"-v", "--verbose"});
+  option1.SetDescription("description");
+
+  CommandLineOption option2({"--help"});
+  option2.SetDescription("help");
+
+  std::vector<const CommandLineOption *> options{&option1, &option2};
+  std::string expected(R"RAW(Options:
+-v, --verbose                 description
+--help                        help
+)RAW");
+  EXPECT_EQ(GetOptionBlockString(options), expected);
 }
 
 //! Testing GetUsageString function.

@@ -81,14 +81,19 @@ std::string GetUsageString(const std::string &app_name,
     return header;
   }
 
-  std::string body("Options:\n");
+  return header + GetOptionBlockString(options);
+}
+
+std::string GetOptionBlockString(const std::vector<const CommandLineOption *> &options)
+{
+  std::string result("Options:\n");
   for (const auto option : options)
   {
     auto option_string = GetOptionUsageString(*option);
     option_string.resize(kDesiredOptionStringLength, ' ');
-    body += option_string + option->GetDescription() + "\n";
+    result += option_string + option->GetDescription() + "\n";
   }
-  return header + body;
+  return result;
 }
 
 }  // namespace cli
