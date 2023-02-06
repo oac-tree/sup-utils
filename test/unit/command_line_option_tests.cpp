@@ -42,10 +42,10 @@ TEST_F(CommandLineOptionTests, FluentInterface)
 {
   CommandLineOption option({"-f"});
   option.SetDefaultValue("abc")
-      ->SetDescription("description")
-      ->SetRequired(true)
-      ->SetValueName("value_name")
-      ->SetParameter(true);
+      .SetDescription("description")
+      .SetRequired(true)
+      .SetValueName("value_name")
+      .SetParameter(true);
 
   EXPECT_EQ(option.GetDefaultValue(), std::string("abc"));
   EXPECT_EQ(option.GetDescription(), std::string("description"));

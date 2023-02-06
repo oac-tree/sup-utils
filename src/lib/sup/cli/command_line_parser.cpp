@@ -120,15 +120,15 @@ CommandLineParser::CommandLineParser() : p_impl(new CommandLineParserImpl) {}
 
 CommandLineParser::~CommandLineParser() = default;
 
-CommandLineOption *CommandLineParser::AddOption(const std::vector<std::string> &option_names)
+CommandLineOption &CommandLineParser::AddOption(const std::vector<std::string> &option_names)
 {
   p_impl->m_options.emplace_back(new CommandLineOption(option_names));
-  return p_impl->m_options.back().get();
+  return *(p_impl->m_options.back().get());
 }
 
-CommandLineOption *CommandLineParser::AddHelpOption()
+CommandLineOption &CommandLineParser::AddHelpOption()
 {
-  return AddOption({"-h", "--help"})->SetDescription("Displays help on command line options");
+  return AddOption({"-h", "--help"}).SetDescription("Displays help on command line options");
 }
 
 CommandLineOption *CommandLineParser::GetOption(const std::string &option_name)

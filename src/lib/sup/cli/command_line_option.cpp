@@ -46,10 +46,10 @@ std::string CommandLineOption::GetDefaultValue() const
   return m_default_value;
 }
 
-CommandLineOption *CommandLineOption::SetDefaultValue(const std::string &default_value)
+CommandLineOption &CommandLineOption::SetDefaultValue(const std::string &default_value)
 {
   m_default_value = default_value;
-  return this;
+  return *this;
 }
 
 std::string CommandLineOption::GetDescription() const
@@ -57,10 +57,10 @@ std::string CommandLineOption::GetDescription() const
   return m_description;
 }
 
-CommandLineOption *CommandLineOption::SetDescription(const std::string &description)
+CommandLineOption &CommandLineOption::SetDescription(const std::string &description)
 {
   m_description = description;
-  return this;
+  return *this;
 }
 
 bool CommandLineOption::IsRequired() const
@@ -68,21 +68,21 @@ bool CommandLineOption::IsRequired() const
   return m_is_required;
 }
 
-CommandLineOption *CommandLineOption::SetRequired(bool value)
+CommandLineOption &CommandLineOption::SetRequired(bool value)
 {
   m_is_required = value;
-  return this;
-}
-
-CommandLineOption *CommandLineOption::SetValueName(const std::string &value_name)
-{
-  m_value_name = value_name;
-  return this;
+  return *this;
 }
 
 std::string CommandLineOption::GetValueName() const
 {
   return m_value_name;
+}
+
+CommandLineOption &CommandLineOption::SetValueName(const std::string &value_name)
+{
+  m_value_name = value_name;
+  return *this;
 }
 
 bool CommandLineOption::IsPositional() const
@@ -95,10 +95,10 @@ bool CommandLineOption::IsParameter() const
   return m_is_parameter;
 }
 
-CommandLineOption *CommandLineOption::SetParameter(bool value)
+CommandLineOption &CommandLineOption::SetParameter(bool value)
 {
   m_is_parameter = value;
-  return this;
+  return *this;
 }
 
 }  // namespace cli

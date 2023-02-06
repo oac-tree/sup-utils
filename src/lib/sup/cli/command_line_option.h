@@ -43,21 +43,21 @@ public:
   std::vector<std::string> GetOptionNames() const;
 
   std::string GetDefaultValue() const;
-  CommandLineOption* SetDefaultValue(const std::string& default_value);
+  CommandLineOption& SetDefaultValue(const std::string& default_value);
 
   std::string GetDescription() const;
-  CommandLineOption* SetDescription(const std::string& description);
+  CommandLineOption& SetDescription(const std::string& description);
 
   bool IsRequired() const;
-  CommandLineOption* SetRequired(bool value);
+  CommandLineOption& SetRequired(bool value);
 
-  CommandLineOption* SetValueName(const std::string& value_name);
   std::string GetValueName() const;
+  CommandLineOption& SetValueName(const std::string& value_name);
 
   bool IsPositional() const;
 
   bool IsParameter() const;
-  CommandLineOption* SetParameter(bool value);
+  CommandLineOption& SetParameter(bool value);
 
 private:
   std::vector<std::string> m_option_names;

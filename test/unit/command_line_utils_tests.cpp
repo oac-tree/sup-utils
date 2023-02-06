@@ -56,7 +56,7 @@ TEST_F(CommandLineUtilsTests, GetOptionUsageString)
 
   {  // named parameter
     CommandLineOption option({"-f", "--font"});
-    option.SetParameter(true)->SetValueName("size");
+    option.SetParameter(true).SetValueName("size");
     EXPECT_EQ(GetOptionUsageString(option), std::string("-f, --font <size>"));
   }
 }
