@@ -118,6 +118,9 @@
                                 <include>*.so</include>
                             </include>
                             <!-- Public API headers -->
+                            <include type="file" source="include/sup/cli" target="include/sup/cli">
+                                <include>*.h</include>
+                            </include>
                             <include type="file" source="include/sup/log" target="include/sup/log">
                                 <include>*.h</include>
                             </include>
