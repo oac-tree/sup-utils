@@ -203,13 +203,28 @@ std::stringstream CommandLineParser::GetValueStream(const std::string &option_na
 {
   std::string str;
   auto option = GetOption(option_name);
-
-  std::string default_value = (option ? option->GetDefaultValue() : std::string());
-
-  if (!(p_impl->m_parser(option_name, default_value) >> str))
+  if (!option)
   {
     throw std::runtime_error("Can't parse the value");
   }
+
+  std::string default_value = (option ? option->GetDefaultValue() : std::string());
+
+  bool is_success{false};
+  for (const auto &option_name : option->GetOptionNames())
+  {
+    if ((p_impl->m_parser(option_name, default_value) >> str))
+    {
+      is_success = true;
+      break;
+    }
+  }
+
+  if (!is_success)
+  {
+    throw std::runtime_error("Can't parse the value");
+  }
+
   std::stringstream result(str);
 
   return result;

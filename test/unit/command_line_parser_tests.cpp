@@ -295,7 +295,6 @@ TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArgumentsWhenHelpIsPres
   EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
 }
 
-
 //! Parsing command line string containing a help option.
 
 TEST_F(CommandLineParserTests, ParseHelpOption)
@@ -307,6 +306,31 @@ TEST_F(CommandLineParserTests, ParseHelpOption)
   std::array<const char *, argc> argv{"progname", "--help"};
 
   EXPECT_FALSE(parser.Parse(argc, &argv[0]));
+}
+
+//! Parsing file option.
+//! Real life bug when the value is accessed using onne of the aliases.
+
+TEST_F(CommandLineParserTests, ParseFileOption)
+{
+  CommandLineParser parser;
+  parser.AddHelpOption();
+  auto &option = parser.AddOption({"-f", "--file"}).SetParameter(true).SetRequired(true);
+
+  EXPECT_TRUE(option.IsParameter());
+  EXPECT_FALSE(option.IsPositional());
+
+  const int argc = 3;
+  // command line doesn't contain a parameter
+  std::array<const char *, argc> argv{"progname", "--f", "filename"};
+
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  EXPECT_TRUE(parser.IsSet("-f"));
+  EXPECT_TRUE(parser.IsSet("--file"));
+
+  EXPECT_EQ(parser.GetValue<std::string>("--file"), "filename");
+  EXPECT_EQ(parser.GetValue<std::string>("-f"), "filename");
 }
 
 //! Validate multiline string representing `usage` help for the single option setup.
