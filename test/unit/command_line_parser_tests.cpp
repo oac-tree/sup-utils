@@ -19,10 +19,10 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include <gtest/gtest.h>
-
 #include <sup/cli/argh.h>
 #include <sup/cli/command_line_parser.h>
+
+#include <gtest/gtest.h>
 
 using namespace sup::cli;
 

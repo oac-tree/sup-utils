@@ -201,33 +201,20 @@ void CommandLineParser::SetDescription(const std::string &header, const std::str
 
 std::stringstream CommandLineParser::GetValueStream(const std::string &option_name) const
 {
-  std::string str;
-  auto option = GetOption(option_name);
-  if (!option)
-  {
-    throw std::runtime_error("Can't parse the value");
-  }
+  std::string parse_result;
 
-  std::string default_value = (option ? option->GetDefaultValue() : std::string());
-
-  bool is_success{false};
-  for (const auto &option_name : option->GetOptionNames())
+  if (auto option = GetOption(option_name))
   {
-    if ((p_impl->m_parser(option_name, default_value) >> str))
+    for (const auto &option_name : option->GetOptionNames())
     {
-      is_success = true;
-      break;
+      if ((p_impl->m_parser(option_name, option->GetDefaultValue()) >> parse_result))
+      {
+        return std::stringstream(parse_result);
+      }
     }
   }
 
-  if (!is_success)
-  {
-    throw std::runtime_error("Can't parse the value");
-  }
-
-  std::stringstream result(str);
-
-  return result;
+  throw std::runtime_error("Can't parse the value");
 }
 
 }  // namespace cli
