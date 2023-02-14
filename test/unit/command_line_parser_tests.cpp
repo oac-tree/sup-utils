@@ -23,6 +23,7 @@
 #include <sup/cli/command_line_parser.h>
 
 #include <gtest/gtest.h>
+#include <array>
 
 using namespace sup::cli;
 
