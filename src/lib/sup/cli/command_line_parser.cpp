@@ -205,12 +205,16 @@ std::stringstream CommandLineParser::GetValueStream(const std::string &option_na
 
   if (auto option = GetOption(option_name))
   {
-    for (const auto &option_name : option->GetOptionNames())
+    for (const auto &alias_name : option->GetOptionNames())
     {
-      if ((p_impl->m_parser(option_name, option->GetDefaultValue()) >> parse_result))
+      if ((p_impl->m_parser(alias_name) >> parse_result))
       {
         return std::stringstream(parse_result);
       }
+    }
+    if (!option->GetDefaultValue().empty())
+    {
+      return std::stringstream(option->GetDefaultValue());
     }
   }
 

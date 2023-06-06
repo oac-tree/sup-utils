@@ -23,6 +23,7 @@
 #include <sup/cli/command_line_parser.h>
 
 #include <gtest/gtest.h>
+
 #include <array>
 
 using namespace sup::cli;
@@ -310,7 +311,7 @@ TEST_F(CommandLineParserTests, ParseHelpOption)
 }
 
 //! Parsing file option.
-//! Real life bug when the value is accessed using onne of the aliases.
+//! Real life bug when the value is accessed using one of the aliases.
 
 TEST_F(CommandLineParserTests, ParseFileOption)
 {
@@ -322,7 +323,6 @@ TEST_F(CommandLineParserTests, ParseFileOption)
   EXPECT_FALSE(option.IsPositional());
 
   const int argc = 3;
-  // command line doesn't contain a parameter
   std::array<const char *, argc> argv{"progname", "--f", "filename"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
@@ -332,6 +332,114 @@ TEST_F(CommandLineParserTests, ParseFileOption)
 
   EXPECT_EQ(parser.GetValue<std::string>("--file"), "filename");
   EXPECT_EQ(parser.GetValue<std::string>("-f"), "filename");
+}
+
+//! Parsing timeout option.
+//! Real life bug when the value is accessed using one of the aliases, and the default value is set.
+
+TEST_F(CommandLineParserTests, ParseTimeoutOption)
+{
+  CommandLineParser parser;
+  parser.AddHelpOption();
+  auto &option = parser.AddOption({"-t", "--timeout"})
+                     .SetParameter(true)
+                     .SetValueName("sec")
+                     .SetDefaultValue("5.0");
+
+  EXPECT_TRUE(option.IsParameter());
+  EXPECT_FALSE(option.IsPositional());
+
+  {  // set -t option
+    const int argc = 3;
+    std::array<const char *, argc> argv{"progname", "-t", "42"};
+
+    EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+    EXPECT_TRUE(parser.IsSet("-t"));
+    EXPECT_TRUE(parser.IsSet("--timeout"));
+
+    EXPECT_DOUBLE_EQ(parser.GetValue<double>("--timeout"), 42.0);
+    EXPECT_DOUBLE_EQ(parser.GetValue<double>("-t"), 42.0);
+  }
+
+  {  // set --timeout option
+    const int argc = 3;
+    std::array<const char *, argc> argv{"progname", "--timeout", "42"};
+
+    EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+    EXPECT_TRUE(parser.IsSet("-t"));
+    EXPECT_TRUE(parser.IsSet("--timeout"));
+
+    EXPECT_DOUBLE_EQ(parser.GetValue<double>("--timeout"), 42.0);
+    EXPECT_DOUBLE_EQ(parser.GetValue<double>("-t"), 42.0);
+  }
+}
+
+//! Parsing timeout option (parameter without default value).
+
+TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
+{
+  CommandLineParser parser;
+  parser.AddHelpOption();
+  auto &option = parser.AddOption({"-t", "--timeout"})
+                     .SetParameter(true)
+                     .SetValueName("sec");
+
+  EXPECT_TRUE(option.IsParameter());
+  EXPECT_FALSE(option.IsPositional());
+
+  {  // set -t option with value
+    const int argc = 3;
+    std::array<const char *, argc> argv{"progname", "-t", "42"};
+
+    EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+    EXPECT_TRUE(parser.IsSet("-t"));
+    EXPECT_TRUE(parser.IsSet("--timeout"));
+
+    EXPECT_DOUBLE_EQ(parser.GetValue<double>("--timeout"), 42.0);
+    EXPECT_DOUBLE_EQ(parser.GetValue<double>("-t"), 42.0);
+  }
+
+  {  // set -t option without value
+    const int argc = 2;
+    std::array<const char *, argc> argv{"progname", "-t"};
+
+    EXPECT_FALSE(parser.Parse(argc, &argv[0]));
+
+    EXPECT_FALSE(parser.IsSet("-t"));
+    EXPECT_FALSE(parser.IsSet("--timeout"));
+
+    EXPECT_THROW(parser.GetValue<double>("--timeout"), std::runtime_error);
+    EXPECT_THROW(parser.GetValue<double>("-t"), std::runtime_error);
+  }
+
+  {  // set --timeout option with value
+    const int argc = 3;
+    std::array<const char *, argc> argv{"progname", "--timeout", "42"};
+
+    EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+    EXPECT_TRUE(parser.IsSet("-t"));
+    EXPECT_TRUE(parser.IsSet("--timeout"));
+
+    EXPECT_DOUBLE_EQ(parser.GetValue<double>("--timeout"), 42.0);
+    EXPECT_DOUBLE_EQ(parser.GetValue<double>("-t"), 42.0);
+  }
+
+  {  // set --timeout option without value
+    const int argc = 2;
+    std::array<const char *, argc> argv{"progname", "--timeout"};
+
+    EXPECT_FALSE(parser.Parse(argc, &argv[0]));
+
+    EXPECT_FALSE(parser.IsSet("-t"));
+    EXPECT_FALSE(parser.IsSet("--timeout"));
+
+    EXPECT_THROW(parser.GetValue<double>("--timeout"), std::runtime_error);
+    EXPECT_THROW(parser.GetValue<double>("-t"), std::runtime_error);
+  }
 }
 
 //! Validate multiline string representing `usage` help for the single option setup.
