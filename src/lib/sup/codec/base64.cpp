@@ -48,11 +48,8 @@ static_assert(sizeof(uint32) == 4, "uint32 type needs to have size 4 bytes");
 std::string Base64Encode(const std::vector<uint8>& data)
 {
   std::string result(modp_b64_encode_len(data.size()), '\0');
-  int d = modp_b64_encode(const_cast<char*>(result.data()), GetCharBuffer(data), data.size());
-  if (d == -1)
-  {
-    throw std::runtime_error("sup::codec::Base64Encode(): failure to encode");
-  }
+  // Ignore return value, since there are no invalid inputs
+  (void)modp_b64_encode(const_cast<char*>(result.data()), GetCharBuffer(data), data.size());
   // Remove null terminator
   result.pop_back();
   return result;
