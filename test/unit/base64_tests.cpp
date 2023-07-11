@@ -69,8 +69,22 @@ TEST_F(Base64Test, RFC4648TestVectors)
 
 TEST_F(Base64Test, Failure)
 {
-  std::string contains_whitespace = "this cannot be a base64 string";
-  EXPECT_THROW(Base64Decode(contains_whitespace), std::runtime_error);
+  {
+    std::string contains_whitespace = "this cannot be a base64 string";
+    EXPECT_THROW(Base64Decode(contains_whitespace), std::runtime_error);
+  }
+  {
+    std::string wrong_length = "wrong";
+    EXPECT_THROW(Base64Decode(wrong_length), std::runtime_error);
+  }
+  {
+    std::string wrong_length = "wrong=";
+    EXPECT_THROW(Base64Decode(wrong_length), std::runtime_error);
+  }
+  {
+    std::string wrong_length = "wrong==";
+    EXPECT_THROW(Base64Decode(wrong_length), std::runtime_error);
+  }
 }
 
 TEST_F(Base64Test, Random)
