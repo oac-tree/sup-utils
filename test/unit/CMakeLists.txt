@@ -27,9 +27,10 @@ target_link_libraries(unit-tests
     PRIVATE
         GTest::GTest
         GTest::Main
+        sup-cli
+        sup-codec
         sup-log
         sup-xml
-        sup-cli
         LibXml2::LibXml2
 )
 

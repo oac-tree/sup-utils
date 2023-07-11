@@ -1,3 +1,7 @@
+Changes for 1.1.0:
+
+- Implemented sup-codec, containing base64 encode/decode
+
 Changes for 1.0.0:
 
 - Implemented sup-log
