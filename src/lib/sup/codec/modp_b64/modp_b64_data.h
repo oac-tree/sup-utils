@@ -1,14 +1,5 @@
-#include "build/build_config.h"
-#if !defined(COMPILER_MSVC)
-#include <stdint.h>
-#else
-// VC8 doesn't have stdint.h.  On the other hand, some compilers don't like
-// the below code, because basictypes.h itself includes stdint.h and the
-// typedefs below can cause conflicts.
-#include "base/basictypes.h"
-typedef uint8 uint8_t;
-typedef uint32 uint32_t;
-#endif
+/* Use our own fixed size types: */
+#include <sup/codec/base_types.h>
 
 #define CHAR62 '+'
 #define CHAR63 '/'
@@ -300,7 +291,7 @@ static const uint32_t d3[256] = {
 
 /* SPECIAL DECODE TABLES FOR LITTLE ENDIAN (INTEL) CPUS */
 
-static const uint32_t d0[256] = {
+static const sup::codec::uint32 d0[256] = {
 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -347,7 +338,7 @@ static const uint32_t d0[256] = {
 };
 
 
-static const uint32_t d1[256] = {
+static const sup::codec::uint32 d1[256] = {
 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -394,7 +385,7 @@ static const uint32_t d1[256] = {
 };
 
 
-static const uint32_t d2[256] = {
+static const sup::codec::uint32 d2[256] = {
 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -441,7 +432,7 @@ static const uint32_t d2[256] = {
 };
 
 
-static const uint32_t d3[256] = {
+static const sup::codec::uint32 d3[256] = {
 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,

@@ -1,3 +1,4 @@
 add_subdirectory(cli)
+add_subdirectory(codec)
 add_subdirectory(log)
 add_subdirectory(xml)

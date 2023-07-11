@@ -19,23 +19,18 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_CODEC_BASE64_H_
-#define SUP_CODEC_BASE64_H_
-
-#include <sup/codec/base_types.h>
-
-#include <string>
-#include <vector>
+#ifndef SUP_CODEC_BASE_TYPES_H_
+#define SUP_CODEC_BASE_TYPES_H_
 
 namespace sup
 {
 namespace codec
 {
-
-std::string Base64Encode(const std::vector<uint8>& data);
+using uint8 = unsigned char;
+using uint32 = unsigned int;
 
 }  // namespace codec
 
 }  // namespace sup
 
-#endif  // SUP_CODEC_BASE64_H_
+#endif  // SUP_CODEC_BASE_TYPES_H_

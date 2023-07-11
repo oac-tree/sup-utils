@@ -80,10 +80,10 @@
 int modp_b64_encode(char* dest, const char* str, int len)
 {
     int i;
-    uint8_t* p = (uint8_t*) dest;
+    sup::codec::uint8* p = (sup::codec::uint8*) dest;
 
     /* unsigned here is important! */
-    uint8_t t1, t2, t3;
+    sup::codec::uint8 t1, t2, t3;
 
     for (i = 0; i < len - 2; i += 3) {
         t1 = str[i]; t2 = str[i+1]; t3 = str[i+2];
@@ -112,7 +112,7 @@ int modp_b64_encode(char* dest, const char* str, int len)
     }
 
     *p = '\0';
-    return p - (uint8_t*)dest;
+    return p - (sup::codec::uint8*)dest;
 }
 
 #ifdef WORDS_BIGENDIAN   /* BIG ENDIAN -- SUN / IBM / MOTOROLA */
@@ -137,11 +137,11 @@ int modp_b64_decode(char* dest, const char* src, int len)
     int leftover = len % 4;
     int chunks = (leftover == 0) ? len / 4 - 1 : len /4;
 
-    uint8_t* p = (uint8_t*) dest;
-    uint32_t x = 0;
-    uint32_t* destInt = (uint32_t*) p;
-    uint32_t* srcInt = (uint32_t*) src;
-    uint32_t y = *srcInt++;
+    sup::codec::uint8* p = (sup::codec::uint8*) dest;
+    sup::codec::uint32 x = 0;
+    sup::codec::uint32* destInt = (sup::codec::uint32*) p;
+    sup::codec::uint32* srcInt = (sup::codec::uint32*) src;
+    sup::codec::uint32 y = *srcInt++;
     for (i = 0; i < chunks; ++i) {
         x = d0[y >> 24 & 0xff] | d1[y >> 16 & 0xff] |
             d2[y >> 8 & 0xff] | d3[y & 0xff];
@@ -149,7 +149,7 @@ int modp_b64_decode(char* dest, const char* src, int len)
         if (x >= BADCHAR)  return -1;
         *destInt = x << 8;
         p += 3;
-        destInt = (uint32_t*)p;
+        destInt = (sup::codec::uint32*)p;
         y = *srcInt++;
     }
 
@@ -158,23 +158,23 @@ int modp_b64_decode(char* dest, const char* src, int len)
         x = d0[y >> 24 & 0xff] | d1[y >> 16 & 0xff] |
             d2[y >>  8 & 0xff] | d3[y & 0xff];
         if (x >= BADCHAR)  return -1;
-        *p++ = ((uint8_t*)&x)[1];
-        *p++ = ((uint8_t*)&x)[2];
-        *p = ((uint8_t*)&x)[3];
+        *p++ = ((sup::codec::uint8*)&x)[1];
+        *p++ = ((sup::codec::uint8*)&x)[2];
+        *p = ((sup::codec::uint8*)&x)[3];
         return (chunks+1)*3;
     case 1:
         x = d3[y >> 24];
-        *p =  (uint8_t)x;
+        *p =  (sup::codec::uint8)x;
         break;
     case 2:
         x = d3[y >> 24] *64 + d3[(y >> 16) & 0xff];
-        *p =  (uint8_t)(x >> 4);
+        *p =  (sup::codec::uint8)(x >> 4);
         break;
     default:  /* case 3 */
         x = (d3[y >> 24] *64 + d3[(y >> 16) & 0xff])*64 +
             d3[(y >> 8) & 0xff];
-        *p++ = (uint8_t) (x >> 10);
-        *p = (uint8_t) (x >> 2);
+        *p++ = (sup::codec::uint8) (x >> 10);
+        *p = (sup::codec::uint8) (x >> 2);
         break;
     }
 
@@ -207,11 +207,11 @@ int modp_b64_decode(char* dest, const char* src, int len)
     int leftover = len % 4;
     int chunks = (leftover == 0) ? len / 4 - 1 : len /4;
 
-    uint8_t* p = (uint8_t*)dest;
-    uint32_t x = 0;
-    uint32_t* destInt = (uint32_t*) p;
-    uint32_t* srcInt = (uint32_t*) src;
-    uint32_t y = *srcInt++;
+    sup::codec::uint8* p = (sup::codec::uint8*)dest;
+    sup::codec::uint32 x = 0;
+    sup::codec::uint32* destInt = (sup::codec::uint32*) p;
+    sup::codec::uint32* srcInt = (sup::codec::uint32*) src;
+    sup::codec::uint32 y = *srcInt++;
     for (i = 0; i < chunks; ++i) {
         x = d0[y & 0xff] |
             d1[(y >> 8) & 0xff] |
@@ -221,7 +221,7 @@ int modp_b64_decode(char* dest, const char* src, int len)
         if (x >= BADCHAR) return -1;
         *destInt = x ;
         p += 3;
-        destInt = (uint32_t*)p;
+        destInt = (sup::codec::uint32*)p;
         y = *srcInt++;}
 
 
@@ -233,25 +233,25 @@ int modp_b64_decode(char* dest, const char* src, int len)
             d3[(y >> 24) & 0xff];
 
         if (x >= BADCHAR) return -1;
-        *p++ =  ((uint8_t*)(&x))[0];
-        *p++ =  ((uint8_t*)(&x))[1];
-        *p =    ((uint8_t*)(&x))[2];
+        *p++ =  ((sup::codec::uint8*)(&x))[0];
+        *p++ =  ((sup::codec::uint8*)(&x))[1];
+        *p =    ((sup::codec::uint8*)(&x))[2];
         return (chunks+1)*3;
         break;
     case 1:  /* with padding this is an impossible case */
         x = d0[y & 0xff];
-        *p = *((uint8_t*)(&x)); // i.e. first char/byte in int
+        *p = *((sup::codec::uint8*)(&x)); // i.e. first char/byte in int
         break;
     case 2: // * case 2, 1  output byte */
         x = d0[y & 0xff] | d1[y >> 8 & 0xff];
-        *p = *((uint8_t*)(&x)); // i.e. first char
+        *p = *((sup::codec::uint8*)(&x)); // i.e. first char
         break;
     default: /* case 3, 2 output bytes */
         x = d0[y & 0xff] |
             d1[y >> 8 & 0xff ] |
             d2[y >> 16 & 0xff];  /* 0x3c */
-        *p++ =  ((uint8_t*)(&x))[0];
-        *p =  ((uint8_t*)(&x))[1];
+        *p++ =  ((sup::codec::uint8*)(&x))[0];
+        *p =  ((sup::codec::uint8*)(&x))[1];
         break;
     }
 
