@@ -34,6 +34,8 @@ namespace codec
 
 std::string Base64Encode(const std::vector<uint8>& data);
 
+std::vector<uint8> Base64Decode(const std::string& str);
+
 }  // namespace codec
 
 }  // namespace sup
