@@ -25,6 +25,7 @@ add_subdirectory(modp_b64)
 install(TARGETS sup-codec EXPORT sup-utils-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES
+  base_types.h
   base64.h
 DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/codec
 )
