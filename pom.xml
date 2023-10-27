@@ -40,10 +40,10 @@
         <makefile.args>install</makefile.args>
         <coverage>false</coverage>
         <!-- sonar scan / coverage configuration -->
-        <cppcheck.args>--enable=all --suppress=missingInclude --inline-suppr</cppcheck.args>
+        <sonar.language>cpp</sonar.language>
         <sonar.sources.cpp>src</sonar.sources.cpp>
         <sonar.tests.cpp>test</sonar.tests.cpp>
-        <sonar.exclusions>src/lib/sup/cli/argh.h, test/**</sonar.exclusions>
+        <sonar.exclusions>src/lib/sup/cli/argh.h</sonar.exclusions>
     </properties>
 
     <!-- Parent pom.xml -->
