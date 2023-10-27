@@ -1,3 +1,7 @@
+Changes for 1.2.0:
+
+- Bugfix: install forgotten header for base64
+
 Changes for 1.1.0:
 
 - Implemented sup-codec, containing base64 encode/decode
