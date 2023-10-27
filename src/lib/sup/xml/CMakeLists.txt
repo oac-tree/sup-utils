@@ -1,5 +1,3 @@
-find_package(LibXml2 REQUIRED)
-
 add_library(sup-xml SHARED "")
 add_library(sup-utils::sup-xml ALIAS sup-xml) # alias for build-tree usage
 

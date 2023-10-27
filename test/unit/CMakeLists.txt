@@ -19,8 +19,6 @@ target_sources(unit-tests PRIVATE
   xml_exception_tests.cpp
 )
 
-find_package(LibXml2 REQUIRED)
-
 target_link_libraries(unit-tests
   PRIVATE
   GTest::GTest

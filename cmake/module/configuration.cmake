@@ -42,3 +42,6 @@ if (NOT DEFINED TEST_OUTPUT_DIRECTORY)
 endif()
 
 file(MAKE_DIRECTORY ${TEST_OUTPUT_DIRECTORY})
+
+# Dependencies
+find_package(LibXml2 REQUIRED)
