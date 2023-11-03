@@ -5,11 +5,11 @@ get_filename_component(SUP_UTILS_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 if(TARGET sup-utils::sup-cli OR TARGET sup-utils::sup-codec OR TARGET sup-utils::sup-log OR TARGET sup-utils::sup-xml)
 else()
-  message(STATUS "sup-utils-config.cmake including ${SUP_UTILS_CMAKE_DIR}/sup-utils-targets.cmake")
+  message(DEBUG "sup-utils-config.cmake including ${SUP_UTILS_CMAKE_DIR}/sup-utils-targets.cmake")
  include("${SUP_UTILS_CMAKE_DIR}/sup-utils-targets.cmake")
 endif()
 
 set(SUP_UTILS_LIBRARIES sup-utils::sup-cli sup-utils::sup-codec sup-utils::sup-log sup-utils::sup-xml)
 
-message(STATUS "sup-utils-config.cmake in ${CMAKE_CURRENT_LIST_FILE}")
-message(STATUS "SUP_UTILS_LIBRARIES ${SUP_UTILS_LIBRARIES}")
+message(DEBUG "sup-utils-config.cmake in ${CMAKE_CURRENT_LIST_FILE}")
+message(VERBOSE "SUP_UTILS_LIBRARIES ${SUP_UTILS_LIBRARIES}")
