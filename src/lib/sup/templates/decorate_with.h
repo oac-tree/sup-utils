@@ -4,7 +4,7 @@
  *
  * Project       : Supervision and Automation System Utilities
  *
- * Description   : SUP logging
+ * Description   : SUP templates
  *
  * Author        : Walter Van Herck (IO)
  *
