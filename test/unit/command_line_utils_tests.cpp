@@ -59,26 +59,26 @@ TEST_F(CommandLineUtilsTests, GetAvailableOptionsSummaryString)
   EXPECT_EQ(GetAvailableOptionsSummaryString(options), std::string("[options]"));
 }
 
-//! Testing GetOptionUsageString function.
-TEST_F(CommandLineUtilsTests, GetOptionUsageString)
+//! Testing GetOptionNameString function.
+TEST_F(CommandLineUtilsTests, GetOptionNameString)
 {
-  EXPECT_TRUE(GetOptionUsageString(CommandLineOption({})).empty());
+  EXPECT_TRUE(GetOptionNameString(CommandLineOption({})).empty());
 
   // flags
-  EXPECT_EQ(GetOptionUsageString(CommandLineOption({"-v"})), std::string("-v"));
-  EXPECT_EQ(GetOptionUsageString(CommandLineOption({"-v", "--verbose"})),
+  EXPECT_EQ(GetOptionNameString(CommandLineOption({"-v"})), std::string("-v"));
+  EXPECT_EQ(GetOptionNameString(CommandLineOption({"-v", "--verbose"})),
             std::string("-v, --verbose"));
 
   {  // unnamed parameter
     CommandLineOption option({"-f", "--font"});
     option.SetParameter(true);
-    EXPECT_EQ(GetOptionUsageString(option), std::string("-f, --font <value>"));
+    EXPECT_EQ(GetOptionNameString(option), std::string("-f, --font <value>"));
   }
 
   {  // named parameter
     CommandLineOption option({"-f", "--font"});
     option.SetParameter(true).SetValueName("size");
-    EXPECT_EQ(GetOptionUsageString(option), std::string("-f, --font <size>"));
+    EXPECT_EQ(GetOptionNameString(option), std::string("-f, --font <size>"));
   }
 }
 

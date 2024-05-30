@@ -55,7 +55,7 @@ std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLine
  * Example: "-v, --version"
  * Example: "-f, --file <filename>"
  */
-std::string GetOptionUsageString(const CommandLineOption& option);
+std::string GetOptionNameString(const CommandLineOption& option);
 
 /**
  * Returns a multiline string describing the usage of all options.

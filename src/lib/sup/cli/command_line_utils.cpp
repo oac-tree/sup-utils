@@ -71,7 +71,7 @@ std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLine
   return {"[options]"};
 }
 
-std::string GetOptionUsageString(const CommandLineOption &option)
+std::string GetOptionNameString(const CommandLineOption &option)
 {
   const auto names = option.GetOptionNames();
   if (names.empty())
@@ -110,7 +110,7 @@ std::string GetOptionBlockString(const std::vector<const CommandLineOption *> &o
   std::string result("Options:\n");
   for (const auto option : GetFilteredOptions(options, /*positional*/ false))
   {
-    auto option_string = GetOptionUsageString(*option);
+    auto option_string = GetOptionNameString(*option);
     option_string.resize(kDesiredOptionStringLength, ' ');
     result += option_string + option->GetDescription() + "\n";
   }
