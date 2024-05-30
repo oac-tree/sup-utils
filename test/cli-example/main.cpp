@@ -51,6 +51,9 @@ int main(int argc, char* argv[])
 
   parser.AddOption({"-V", "--validate"}, "Only parse and setup the procedure without running it");
 
+  parser.AddPositionalOption("<origin>", "Positional option #0");
+  parser.AddPositionalOption("<target>", "Positional option #1");
+
   if (!parser.Parse(argc, argv))
   {
     std::cout << parser.GetUsageString();

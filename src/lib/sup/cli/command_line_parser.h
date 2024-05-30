@@ -73,6 +73,17 @@ public:
    */
   CommandLineOption& AddHelpOption();
 
+  /**
+   * @brief Adds positional option.
+   *
+   * The name of the positional option is used only for the help string. It shouldn't appear in the
+   * command line.
+   *
+   * @param option_name Option name.
+   * @param description Option description.
+   */
+  void AddPositionalOption(const std::string& option_name, const std::string& description = {});
+
   CommandLineOption* GetOption(const std::string& option_name) const;
 
   /**

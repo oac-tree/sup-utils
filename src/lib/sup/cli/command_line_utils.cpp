@@ -119,6 +119,17 @@ std::string GetOptionBlockString(const std::vector<const CommandLineOption *> &o
   {
     result += GetOptionUsageString(*option) + "\n";
   }
+
+  auto positional_options = GetFilteredOptions(options, /*positional*/ true);
+  if (!positional_options.empty())
+  {
+    result += "\nPositional Options:\n";
+    for (const auto option : positional_options)
+    {
+      result += GetOptionUsageString(*option) + "\n";
+    }
+  }
+
   return result;
 }
 

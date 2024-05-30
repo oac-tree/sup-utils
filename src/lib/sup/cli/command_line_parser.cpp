@@ -147,6 +147,12 @@ CommandLineOption &CommandLineParser::AddHelpOption()
   return AddOption({"-h", "--help"}).SetDescription("Displays help on command line options");
 }
 
+void CommandLineParser::AddPositionalOption(const std::string &option_name,
+                                            const std::string &description)
+{
+  AddOption({option_name}).SetDescription(description).SetPositional(true);
+}
+
 CommandLineOption *CommandLineParser::GetOption(const std::string &option_name) const
 {
   for (auto &option : p_impl->m_options)

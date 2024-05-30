@@ -492,6 +492,30 @@ Options:
   EXPECT_EQ(parser.GetUsageString(), expected);
 }
 
+//! Validate multiline string representing `usage` help for a single positional option.
+
+TEST_F(CommandLineParserTests, GetUsageStringForPositionalOptions)
+{
+  CommandLineParser parser;
+  parser.AddPositionalOption("<target>", "positional option");
+
+  const int argc = 2;
+  // command line contains short version of flags
+  std::array<const char *, argc> argv{"progname", "var0"};
+
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  std::string expected(R"RAW(Usage: progname [options]
+
+Options:
+
+Positional Options:
+<target>                      positional option
+
+)RAW");
+  EXPECT_EQ(parser.GetUsageString(), expected);
+}
+
 TEST_F(CommandLineParserTests, GetUsageStringWithHeaderAndFooter)
 {
   CommandLineParser parser;
