@@ -36,6 +36,20 @@ class CommandLineParserTests : public ::testing::Test
 
 TEST_F(CommandLineParserTests, ArghParser)
 {
+  {  // no pregistered parameters, empty command line
+    argh::parser parser;
+
+    const int argc = 1;
+    std::array<const char *, argc> argv{"progname"};
+    parser.parse(argc, &argv[0]);
+
+    // it reports program name as positional argument
+    EXPECT_EQ(parser.size(), 1);
+    std::string pos_value;
+    parser(0) >> pos_value;
+    EXPECT_EQ(pos_value, std::string("progname"));
+  }
+
   {  // parameter is pre-registered
     argh::parser parser;
     parser.add_param("--font");
@@ -46,6 +60,9 @@ TEST_F(CommandLineParserTests, ArghParser)
 
     // make sure it's not treated as a flag ([] operator)
     EXPECT_FALSE(parser["--font"]);
+
+    // it reports program name as positional argument
+    EXPECT_EQ(parser.size(), 1);
   }
 
   {  // parameter is pre-registered, but the value is missed
@@ -58,6 +75,9 @@ TEST_F(CommandLineParserTests, ArghParser)
 
     // strangely, it appeared as a flag
     EXPECT_TRUE(parser["--font"]);
+
+    // it reports program name as positional argument
+    EXPECT_EQ(parser.size(), 1);
   }
 
   {  // no registration
@@ -69,6 +89,9 @@ TEST_F(CommandLineParserTests, ArghParser)
 
     // make sure it's treated as a flag ([] operator)
     EXPECT_TRUE(parser["--font"]);
+
+    // it reports program name as positional argument
+    EXPECT_EQ(parser.size(), 1);
   }
 
   {  // no registration, but we pass free standing parameter
@@ -80,6 +103,12 @@ TEST_F(CommandLineParserTests, ArghParser)
 
     // it is still a flag, despite of a parameter nearby
     EXPECT_TRUE(parser["--font"]);
+
+    // free standing parameter appears as positional argument
+    EXPECT_EQ(parser.size(), 2);
+    std::string pos_value;
+    parser(1) >> pos_value;
+    EXPECT_EQ(pos_value, std::string("24"));
   }
 }
 
@@ -382,9 +411,7 @@ TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
 {
   CommandLineParser parser;
   parser.AddHelpOption();
-  auto &option = parser.AddOption({"-t", "--timeout"})
-                     .SetParameter(true)
-                     .SetValueName("sec");
+  auto &option = parser.AddOption({"-t", "--timeout"}).SetParameter(true).SetValueName("sec");
 
   EXPECT_TRUE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
