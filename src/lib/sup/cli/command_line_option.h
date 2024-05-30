@@ -31,40 +31,115 @@ namespace cli
 {
 
 /**
- * The CommandLineOption class defines a possible command-line option.
- * It doesn't contain results of command line parsing.
+ * The CommandLineOption class defines a possible command-line option. It doesn't contain the
+ * results of command line parsing.
+ *
+ * Command line option is defined by its option names, as it appears in the command line. For
+ * example, a help option can be defined as {"-h", "--help"}.
+ *
+ * Options are divided into three types: flags, flags parameters, and positional options.
+ *
+ * 1) Flags
+ * These are options like "-v", or "--version" that have no parameters right after.
+ *
+ * 2) Flags with parameters
+ * These are options like "--font 12" where the value goes right after the flag.
+ * Values can be still omitted if the default value is set.
+ *
+ * 3) Positional options
+ * These are anything that appears without "-" or "--" in the command line, and is not a parameter
+ * of another option.
+ *
+ * For positional options, the option names only appear in the description, and shouldn't appear in
+ * command line.
+ *
+ * For the moment, the class doesn't have consistency check (option can be both positional and
+ * parameter options).
  */
-
 class CommandLineOption
 {
 public:
+  /**
+   * @brief Main constructor.
+   *
+   * @param option_names Option names.
+   */
   CommandLineOption(const std::vector<std::string>& option_names);
 
+  /**
+   * @brief Returns option names.
+   */
   std::vector<std::string> GetOptionNames() const;
 
+  /**
+   * @brief Returns the default value.
+   */
   std::string GetDefaultValue() const;
+
+  /**
+   * @brief Sets the default value.
+   */
   CommandLineOption& SetDefaultValue(const std::string& default_value);
 
+  /**
+   * @brief Sets option description.
+   */
   std::string GetDescription() const;
+
+  /**
+   * @brief Returns option description.
+   */
   CommandLineOption& SetDescription(const std::string& description);
 
+  /**
+   * @brief Checks if the option is required.
+   */
   bool IsRequired() const;
+
+  /**
+   * @brief Sets requirement flag to a given value.
+   */
   CommandLineOption& SetRequired(bool value);
 
+  /**
+   * @brief Returns the name of the value.
+   *
+   * It is a text which will be used to form help line. By default, the name "[value]" is used.
+   */
   std::string GetValueName() const;
+
+  /**
+   * @brief Sets the name to a given value.
+   */
   CommandLineOption& SetValueName(const std::string& value_name);
 
+  /**
+   * @brief Checks if option is positional.
+   */
   bool IsPositional() const;
 
+  /**
+   * @brief Set the positional flag to a given value.
+   */
+  CommandLineOption& SetPositional(bool value);
+
+  /**
+   * @brief Checks if given option is a flag with required parameter.
+   */
   bool IsParameter() const;
+
+  /**
+   * @brief Sets parameter flag to a given value.
+   */
   CommandLineOption& SetParameter(bool value);
 
 private:
   std::vector<std::string> m_option_names;
   std::string m_default_value;
   std::string m_description;
-  std::string m_value_name;  //!< the name of the value to appear in help string
+  std::string m_value_name;  //!< the text representing the value for help string
   bool m_is_required;
+  bool m_is_positional;
   bool m_is_parameter;
 };
 

@@ -32,6 +32,7 @@ CommandLineOption::CommandLineOption(const std::vector<std::string> &option_name
     , m_description()
     , m_value_name()
     , m_is_required(false)
+    , m_is_positional(false)
     , m_is_parameter(false)
 {
 }
@@ -87,7 +88,13 @@ CommandLineOption &CommandLineOption::SetValueName(const std::string &value_name
 
 bool CommandLineOption::IsPositional() const
 {
-  return false;
+  return m_is_positional;
+}
+
+CommandLineOption &CommandLineOption::SetPositional(bool value)
+{
+  m_is_positional = value;
+  return *this;
 }
 
 bool CommandLineOption::IsParameter() const

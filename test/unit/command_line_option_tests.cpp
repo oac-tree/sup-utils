@@ -19,9 +19,9 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include <gtest/gtest.h>
-
 #include <sup/cli/command_line_option.h>
+
+#include <gtest/gtest.h>
 
 using namespace sup::cli;
 
@@ -45,10 +45,12 @@ TEST_F(CommandLineOptionTests, FluentInterface)
       .SetDescription("description")
       .SetRequired(true)
       .SetValueName("value_name")
-      .SetParameter(true);
+      .SetParameter(true)
+      .SetPositional(true);
 
   EXPECT_EQ(option.GetDefaultValue(), std::string("abc"));
   EXPECT_EQ(option.GetDescription(), std::string("description"));
   EXPECT_TRUE(option.IsRequired());
   EXPECT_TRUE(option.IsParameter());
+  EXPECT_TRUE(option.IsPositional());
 }
