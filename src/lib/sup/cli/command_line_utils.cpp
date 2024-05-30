@@ -90,6 +90,13 @@ std::string GetOptionNameString(const CommandLineOption &option)
   return result;
 }
 
+std::string GetOptionUsageString(const CommandLineOption &option)
+{
+  auto result = GetOptionNameString(option);
+  result.resize(kDesiredOptionStringLength, ' ');
+  return result + option.GetDescription();
+}
+
 std::string GetUsageString(const std::string &app_name, const std::string &header,
                            const std::vector<const CommandLineOption *> &options,
                            const std::string &footer)
@@ -110,9 +117,7 @@ std::string GetOptionBlockString(const std::vector<const CommandLineOption *> &o
   std::string result("Options:\n");
   for (const auto option : GetFilteredOptions(options, /*positional*/ false))
   {
-    auto option_string = GetOptionNameString(*option);
-    option_string.resize(kDesiredOptionStringLength, ' ');
-    result += option_string + option->GetDescription() + "\n";
+    result += GetOptionUsageString(*option) + "\n";
   }
   return result;
 }

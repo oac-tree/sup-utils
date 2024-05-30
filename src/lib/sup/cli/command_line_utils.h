@@ -39,8 +39,8 @@ const std::vector<const CommandLineOption*> GetFilteredOptions(
     const std::vector<const CommandLineOption*>& options, bool positional_flag);
 
 /**
- * Returns a string which is the result of string concatenation, with new line
- * inserted after each non-empty string.
+ * @brief Returns a string that is the result of a string concatenation, with a new line inserted
+ * after each non-empty string.
  */
 std::string MergeWithNewLine(std::initializer_list<std::string> strings);
 
@@ -51,21 +51,28 @@ std::string MergeWithNewLine(std::initializer_list<std::string> strings);
 std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLineOption*>& options);
 
 /**
- * Returns a string describing the usage of the option.
+ * @brief Returns a string giving a summary on option names.
  * Example: "-v, --version"
  * Example: "-f, --file <filename>"
  */
 std::string GetOptionNameString(const CommandLineOption& option);
 
 /**
- * Returns a multiline string describing the usage of all options.
+ * @brief Returns a string describing the usage.
+ *
+ * "--version           software version"
+ */
+std::string GetOptionUsageString(const CommandLineOption& option);
+
+/**
+ * @brief Returns a multiline string describing the usage of all options.
  * "--version           software version"
  * "-v, --verbose       verbose level"
  */
 std::string GetOptionBlockString(const std::vector<const CommandLineOption*>& options);
 
 /**
- * Returns a string describing the program usage.
+ * @brief Returns a string describing the program usage.
  */
 std::string GetUsageString(const std::string& app_name, const std::string& header,
                            const std::vector<const CommandLineOption*>& options,
