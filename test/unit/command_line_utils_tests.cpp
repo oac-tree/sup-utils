@@ -19,10 +19,10 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include <gtest/gtest.h>
-
 #include <sup/cli/command_line_option.h>
 #include <sup/cli/command_line_utils.h>
+
+#include <gtest/gtest.h>
 
 using namespace sup::cli;
 
@@ -30,17 +30,29 @@ class CommandLineUtilsTests : public ::testing::Test
 {
 };
 
-//! Testing MergeWithNewLine function.
+//! Testing GetFilteredOptions helper method
+TEST_F(CommandLineUtilsTests, GetFilteredOptions)
+{
+  CommandLineOption option1({"abc"});
+  CommandLineOption option2({"def"});
+  option2.SetPositional(true);
+  std::vector<const CommandLineOption *> options({&option1, &option2});
 
+  const std::vector<const CommandLineOption *> expected_non_positional_options({&option1});
+  const std::vector<const CommandLineOption *> expected_positional_options({&option2});
+
+  EXPECT_EQ(GetFilteredOptions(options, false), expected_non_positional_options);
+  EXPECT_EQ(GetFilteredOptions(options, true), expected_positional_options);
+}
+
+//! Testing MergeWithNewLine function.
 TEST_F(CommandLineUtilsTests, MergeWithNewLine)
 {
   EXPECT_EQ(MergeWithNewLine({"abc"}), std::string("abc\n"));
   EXPECT_EQ(MergeWithNewLine({"abc", "efg"}), std::string("abc\nefg\n"));
 }
 
-
 //! Testing GetAvailableOptionsSummaryString function.
-
 TEST_F(CommandLineUtilsTests, GetAvailableOptionsSummaryString)
 {
   std::vector<const CommandLineOption *> options;
@@ -48,7 +60,6 @@ TEST_F(CommandLineUtilsTests, GetAvailableOptionsSummaryString)
 }
 
 //! Testing GetOptionUsageString function.
-
 TEST_F(CommandLineUtilsTests, GetOptionUsageString)
 {
   EXPECT_TRUE(GetOptionUsageString(CommandLineOption({})).empty());
@@ -72,7 +83,6 @@ TEST_F(CommandLineUtilsTests, GetOptionUsageString)
 }
 
 //! Testing GetUsageString function.
-
 TEST_F(CommandLineUtilsTests, GetOptionBlockString)
 {
   EXPECT_TRUE(GetOptionBlockString(std::vector<const CommandLineOption *>()).empty());
@@ -92,7 +102,6 @@ TEST_F(CommandLineUtilsTests, GetOptionBlockString)
 }
 
 //! Testing GetUsageString function.
-
 TEST_F(CommandLineUtilsTests, GetUsageString)
 {
   {  // no options

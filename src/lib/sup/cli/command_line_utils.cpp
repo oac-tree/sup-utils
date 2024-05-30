@@ -23,6 +23,7 @@
 
 #include <sup/cli/command_line_option.h>
 
+#include <algorithm>
 #include <numeric>
 
 namespace
@@ -43,6 +44,16 @@ namespace sup
 {
 namespace cli
 {
+
+const std::vector<const CommandLineOption *> GetFilteredOptions(
+    const std::vector<const CommandLineOption *> &options, bool positional_flag)
+{
+  std::vector<const CommandLineOption *> result;
+  auto on_options = [positional_flag](const sup::cli::CommandLineOption *option)
+  { return option->IsPositional() == positional_flag; };
+  std::copy_if(std::begin(options), std::end(options), std::back_inserter(result), on_options);
+  return result;
+}
 
 std::string MergeWithNewLine(std::initializer_list<std::string> strings)
 {
@@ -91,13 +102,13 @@ std::string GetUsageString(const std::string &app_name, const std::string &heade
 
 std::string GetOptionBlockString(const std::vector<const CommandLineOption *> &options)
 {
-  if(options.empty())
+  if (options.empty())
   {
     return {};
   }
 
   std::string result("Options:\n");
-  for (const auto option : options)
+  for (const auto option : GetFilteredOptions(options, /*positional*/ false))
   {
     auto option_string = GetOptionUsageString(*option);
     option_string.resize(kDesiredOptionStringLength, ' ');

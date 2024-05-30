@@ -33,6 +33,12 @@ namespace cli
 class CommandLineOption;
 
 /**
+ * @brief Returns list of options filtered according positional flag.
+ */
+const std::vector<const CommandLineOption*> GetFilteredOptions(
+    const std::vector<const CommandLineOption*>& options, bool positional_flag);
+
+/**
  * Returns a string which is the result of string concatenation, with new line
  * inserted after each non-empty string.
  */
