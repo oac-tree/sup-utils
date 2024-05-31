@@ -44,6 +44,11 @@ int main(int argc, char* argv[])
       .SetValueName("filename")
       .SetRequired(true);
 
+  parser.AddOption({"--font"}, "Application font size")
+      .SetParameter(true)
+      .SetValueName("font size")
+      .SetDefaultValue("12");
+
   parser.AddOption({"-v", "--verbose"}, "Log to standard output (default: WARNING)")
       .SetParameter(true)
       .SetValueName("log_level")
@@ -64,10 +69,14 @@ int main(int argc, char* argv[])
   std::cout << "Command line options were"
             << "\n";
 
-  auto filename = parser.GetValue<std::string>("--file");
-  auto severity_name = parser.GetValue<std::string>("--verbose");
-
-  std::cout << "filename: " << filename << "\n";
-  std::cout << "severity: " << severity_name << "\n";
-  std::cout << "validate: " << parser.IsSet("--validate") << "\n";
+  std::cout << "filename  : " << parser.GetValue<std::string>("--file") << "\n";
+  std::cout << "font size : " << parser.GetValue<int>("--font") << "\n";
+  std::cout << "severity  : " << parser.GetValue<std::string>("--verbose") << "\n";
+  std::cout << "validate  : " << parser.IsSet("--validate") << "\n";
+  std::cout << "Number of positional options found:" << parser.GetPositionalOptionCount() << "\n";
+  for (size_t i = 0; i < parser.GetPositionalOptionCount(); ++i)
+  {
+    std::cout << "positional option #" << i << " " << parser.GetPositionalValue<std::string>(i)
+              << "\n";
+  }
 }
