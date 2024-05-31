@@ -34,7 +34,6 @@ class CommandLineParserTests : public ::testing::Test
 };
 
 //! Clarifying Argh! parser behaviour.
-
 TEST_F(CommandLineParserTests, ArghParser)
 {
   {  // no pregistered parameters, empty command line
@@ -113,6 +112,7 @@ TEST_F(CommandLineParserTests, ArghParser)
   }
 }
 
+//! Testing the method to add automatic help otpion.
 TEST_F(CommandLineParserTests, AddHelpOption)
 {
   CommandLineParser parser;
@@ -125,6 +125,7 @@ TEST_F(CommandLineParserTests, AddHelpOption)
   EXPECT_EQ(parser.GetPositionalOptionCount(), -1);  // no parsing yet
 }
 
+//! Testing AddOption method.
 TEST_F(CommandLineParserTests, AddOption)
 {
   CommandLineParser parser;
@@ -148,6 +149,7 @@ TEST_F(CommandLineParserTests, AddOption)
   EXPECT_EQ(parser.GetPositionalOptionCount(), -1);  // no parsing yet
 }
 
+//! Testing fluent interface of CommandLineOption.
 TEST_F(CommandLineParserTests, FluentInterface)
 {
   CommandLineParser parser;
@@ -160,7 +162,6 @@ TEST_F(CommandLineParserTests, FluentInterface)
 }
 
 //! Parsing a single option without a parameter (a flag).
-
 TEST_F(CommandLineParserTests, ParseFlag)
 {
   CommandLineParser parser;
@@ -180,7 +181,6 @@ TEST_F(CommandLineParserTests, ParseFlag)
 }
 
 //! Parsing two options without a parameter (flags).
-
 TEST_F(CommandLineParserTests, ParseTwoFlags)
 {
   CommandLineParser parser;
@@ -202,7 +202,6 @@ TEST_F(CommandLineParserTests, ParseTwoFlags)
 }
 
 //! Parsing single parameter (option that has a value).
-
 TEST_F(CommandLineParserTests, ParseParameter)
 {
   CommandLineParser parser;
@@ -226,7 +225,6 @@ TEST_F(CommandLineParserTests, ParseParameter)
 //! Parsing single parameter (option that has a value).
 //! Same as above, except that " " space is used instead of equal sign "=" while providing
 //! parameter's argument.
-
 TEST_F(CommandLineParserTests, ParseParameterSpaceDelimeter)
 {
   CommandLineParser parser;
@@ -250,7 +248,6 @@ TEST_F(CommandLineParserTests, ParseParameterSpaceDelimeter)
 }
 
 //! Attempt to parse single parameter option, when parameter wasn't provided.
-
 TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
 {
   CommandLineParser parser;
@@ -273,7 +270,6 @@ TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
 }
 
 //! Parsing a single parameter (option that has a value) with default parameter defined.
-
 TEST_F(CommandLineParserTests, ParseParameterWithDefaultValue)
 {
   CommandLineParser parser;
@@ -296,7 +292,6 @@ TEST_F(CommandLineParserTests, ParseParameterWithDefaultValue)
 }
 
 //! Attempt to parse command line when required option is missed.
-
 TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArguments)
 {
   CommandLineParser parser;
@@ -320,7 +315,6 @@ TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArguments)
 
 //! Attempt to parse command line when required option is missed.
 //! Difference with the previous test is the presence of help options (real-life bug)
-
 TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArgumentsWhenHelpIsPresent)
 {
   CommandLineParser parser;
@@ -344,7 +338,6 @@ TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArgumentsWhenHelpIsPres
 }
 
 //! Parsing command line string containing a help option.
-
 TEST_F(CommandLineParserTests, ParseHelpOption)
 {
   CommandLineParser parser;
@@ -359,8 +352,7 @@ TEST_F(CommandLineParserTests, ParseHelpOption)
 }
 
 //! Parsing file option.
-//! Real life bug when the value is accessed using one of the aliases.
-
+//! Real-life bug when the value is accessed using one of the aliases.
 TEST_F(CommandLineParserTests, ParseFileOption)
 {
   CommandLineParser parser;
@@ -385,8 +377,7 @@ TEST_F(CommandLineParserTests, ParseFileOption)
 }
 
 //! Parsing timeout option.
-//! Real life bug when the value is accessed using one of the aliases, and the default value is set.
-
+//! Real-life bug when the value is accessed using one of the aliases, and the default value is set.
 TEST_F(CommandLineParserTests, ParseTimeoutOption)
 {
   CommandLineParser parser;
@@ -431,7 +422,6 @@ TEST_F(CommandLineParserTests, ParseTimeoutOption)
 }
 
 //! Parsing timeout option (parameter without default value).
-
 TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
 {
   CommandLineParser parser;
@@ -503,7 +493,6 @@ TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
 }
 
 //! Validate multiline string representing `usage` help for the single option setup.
-
 TEST_F(CommandLineParserTests, GetUsageString)
 {
   CommandLineParser parser;
@@ -526,7 +515,6 @@ Options:
 }
 
 //! Validate multiline string representing `usage` help for a single positional option.
-
 TEST_F(CommandLineParserTests, GetUsageStringForPositionalOptions)
 {
   CommandLineParser parser;
@@ -549,6 +537,7 @@ Positional Options:
   EXPECT_EQ(parser.GetUsageString(), expected);
 }
 
+//! Validate multiline :usage" string when header and foor are provided.
 TEST_F(CommandLineParserTests, GetUsageStringWithHeaderAndFooter)
 {
   CommandLineParser parser;
@@ -573,6 +562,7 @@ footer
   EXPECT_EQ(parser.GetUsageString(), expected);
 }
 
+//! Single positional argument in the command line. No pre-registered options.
 TEST_F(CommandLineParserTests, PositionalArgument)
 {
   CommandLineParser parser;
@@ -593,6 +583,7 @@ TEST_F(CommandLineParserTests, PositionalArgument)
   EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"abc"}));
 }
 
+//! Two positional arguments in the command line. No pre-registered options.
 TEST_F(CommandLineParserTests, TwoPositionalArguments)
 {
   CommandLineParser parser;
@@ -612,4 +603,25 @@ TEST_F(CommandLineParserTests, TwoPositionalArguments)
   EXPECT_EQ(parser.GetPositionalValue(0), std::string("abc"));
   EXPECT_EQ(parser.GetPositionalValue(1), std::string("def"));
   EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"abc", "def"}));
+}
+
+//! Positional argument, then flag, then positional argument again
+TEST_F(CommandLineParserTests, FlagAndPositionalArgument)
+{
+  CommandLineParser parser;
+  auto &option = parser.AddOption({"--verbose"});
+  EXPECT_FALSE(option.IsParameter());
+  EXPECT_FALSE(option.IsPositional());
+
+  parser.AddPositionalOption("<varName>");
+
+  const int argc = 4;
+  std::array<const char *, argc> argv{"progname", "var0", "--verbose", "var1"};
+
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  EXPECT_TRUE(parser.IsSet("--verbose"));
+  EXPECT_FALSE(parser.IsSet("-f"));
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 2);
+  EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"var0", "var1"}));
 }
