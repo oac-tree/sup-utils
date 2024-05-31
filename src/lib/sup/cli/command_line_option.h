@@ -47,7 +47,7 @@ namespace cli
  *     A named value followed by a non-options.
  *     e.g.: --font 24
  *  3) Positional
- *     Three standing values, e.g: config.json
+ *     Free standing values, e.g: config.json
  *
  * For positional options, the option names only appear in the description, and shouldn't appear in
  * command line.

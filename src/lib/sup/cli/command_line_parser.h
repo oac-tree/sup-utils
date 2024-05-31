@@ -46,7 +46,7 @@ namespace cli
  *     A named value followed by a non-options.
  *     e.g.: --font 24
  *  3) Positional
- *     Three standing values, e.g: config.json
+ *     Free standing values, e.g: config.json
  *
  * @code
  * CommandLineParser parser;
