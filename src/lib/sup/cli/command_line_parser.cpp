@@ -25,7 +25,6 @@
 #include "command_line_utils.h"
 
 #include <algorithm>
-#include <iostream>
 
 namespace
 {
@@ -193,9 +192,31 @@ bool CommandLineParser::IsSet(const std::string &option_name)
 
 int CommandLineParser::GetPositionalOptionCount() const
 {
-  // argh library always treats program name as a positional option
   int parser_result = static_cast<int>(p_impl->m_parser.size());
+  // Argh library always treats program name as a positional option and returns 1 event if no
+  // positional options are present.
   return parser_result - 1;
+}
+
+std::vector<std::string> CommandLineParser::GetPositionalValues() const
+{
+  if (p_impl->m_parser.size() > 0)
+  {
+    // if parsing took place, we have to exclude program name from positional list
+    auto pars_args = p_impl->m_parser.pos_args();
+    return std::vector<std::string>(std::next(pars_args.begin()), pars_args.end());
+  }
+
+  return {};
+}
+
+std::string CommandLineParser::GetPositionalValue(size_t index) const
+{
+  if (static_cast<int>(index) >= GetPositionalOptionCount())
+  {
+    throw std::runtime_error("Positional index exceeds number of positional options found");
+  }
+  return GetPositionalValues().at(index);
 }
 
 std::string CommandLineParser::GetUsageString() const

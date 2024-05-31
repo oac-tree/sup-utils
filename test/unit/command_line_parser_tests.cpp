@@ -25,6 +25,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <stdexcept>
 
 using namespace sup::cli;
 
@@ -121,7 +122,7 @@ TEST_F(CommandLineParserTests, AddHelpOption)
   EXPECT_EQ(option.GetOptionNames(), std::vector<std::string>({"-h", "--help"}));
   EXPECT_FALSE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
-  EXPECT_EQ(parser.GetPositionalOptionCount(), -1); // no parsing yet
+  EXPECT_EQ(parser.GetPositionalOptionCount(), -1);  // no parsing yet
 }
 
 TEST_F(CommandLineParserTests, AddOption)
@@ -144,7 +145,7 @@ TEST_F(CommandLineParserTests, AddOption)
   EXPECT_EQ(parser.GetOption("-help"), nullptr);
   EXPECT_EQ(parser.GetOption("-nonexisting"), nullptr);
 
-  EXPECT_EQ(parser.GetPositionalOptionCount(), -1); // no parsing yet
+  EXPECT_EQ(parser.GetPositionalOptionCount(), -1);  // no parsing yet
 }
 
 TEST_F(CommandLineParserTests, FluentInterface)
@@ -570,4 +571,45 @@ Options:
 footer
 )RAW");
   EXPECT_EQ(parser.GetUsageString(), expected);
+}
+
+TEST_F(CommandLineParserTests, PositionalArgument)
+{
+  CommandLineParser parser;
+
+  const int argc = 2;
+  std::array<const char *, argc> argv{"progname", "abc"};
+
+  // before parsing
+  EXPECT_EQ(parser.GetPositionalOptionCount(), -1);
+  EXPECT_THROW(parser.GetPositionalValue(0), std::runtime_error);
+  EXPECT_TRUE(parser.GetPositionalValues().empty());
+
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  // after parsing
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 1);
+  EXPECT_EQ(parser.GetPositionalValue(0), std::string("abc"));
+  EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"abc"}));
+}
+
+TEST_F(CommandLineParserTests, TwoPositionalArguments)
+{
+  CommandLineParser parser;
+
+  const int argc = 3;
+  std::array<const char *, argc> argv{"progname", "abc", "def"};
+
+  // before parsing
+  EXPECT_EQ(parser.GetPositionalOptionCount(), -1);
+  EXPECT_THROW(parser.GetPositionalValue(0), std::runtime_error);
+  EXPECT_TRUE(parser.GetPositionalValues().empty());
+
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  // after parsing
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 2);
+  EXPECT_EQ(parser.GetPositionalValue(0), std::string("abc"));
+  EXPECT_EQ(parser.GetPositionalValue(1), std::string("def"));
+  EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"abc", "def"}));
 }

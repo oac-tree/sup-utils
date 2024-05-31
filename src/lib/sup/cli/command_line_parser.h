@@ -128,6 +128,18 @@ public:
   int GetPositionalOptionCount() const;
 
   /**
+   * @brief Returns list of positional options found.
+   */
+  std::vector<std::string> GetPositionalValues() const;
+
+  /**
+   * @brief Returns a positional value found at the given index in the list of positional values.
+   *
+   * Will throw, if index exceeds a number of positional values found.
+   */
+  std::string GetPositionalValue(size_t index) const;
+
+  /**
    * @brief Returns multi-line string.
    */
   std::string GetUsageString() const;
