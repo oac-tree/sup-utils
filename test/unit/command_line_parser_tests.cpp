@@ -605,7 +605,7 @@ TEST_F(CommandLineParserTests, TwoPositionalArguments)
   EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"abc", "42"}));
 }
 
-//! Positional argument, then flag, then positional argument again
+//! Positional argument, then flag, then positional argument again.
 TEST_F(CommandLineParserTests, FlagAndPositionalArgument)
 {
   CommandLineParser parser;
@@ -624,4 +624,23 @@ TEST_F(CommandLineParserTests, FlagAndPositionalArgument)
   EXPECT_FALSE(parser.IsSet("-f"));
   EXPECT_EQ(parser.GetPositionalOptionCount(), 2);
   EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"var0", "var1"}));
+}
+
+//! Flag with parameter, then positional argument.
+TEST_F(CommandLineParserTests, FlagWithParameterAndPositionalArgument)
+{
+  CommandLineParser parser;
+  parser.AddOption({"--font"}).SetParameter(true);
+
+  parser.AddPositionalOption("<varName>");
+
+  const int argc = 4;
+  std::array<const char *, argc> argv{"progname", "--font", "42", "128"};
+
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  EXPECT_TRUE(parser.IsSet("--font"));
+  EXPECT_DOUBLE_EQ(parser.GetValue<int>("--font"), 42);
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 1);
+  EXPECT_EQ(parser.GetPositionalValue<int>(0), 128);
 }
