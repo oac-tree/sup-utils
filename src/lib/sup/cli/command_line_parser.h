@@ -38,6 +38,16 @@ namespace cli
  * It allows forming a list of expected options, parsing command line arguments, and then querying
  * the values of the options set.
  *
+ * There are three types of options:
+ *  1) Flags
+ *     Command line arguments beginning with "-", e.g.: -v, --verbose.
+ *     Represent a boolean.
+ *  2) Parameters
+ *     A named value followed by a non-options.
+ *     e.g.: --font 24
+ *  3) Positional
+ *     Three standing values, e.g: config.json
+ *
  * @code
  * CommandLineParser parser;
  *
@@ -137,7 +147,8 @@ public:
    *
    * Will throw, if index exceeds a number of positional values found.
    */
-  std::string GetPositionalValue(size_t index) const;
+  template <typename T>
+  T GetPositionalValue(size_t index) const;
 
   /**
    * @brief Returns multi-line string.
@@ -154,6 +165,8 @@ public:
 private:
   std::stringstream GetValueStream(const std::string& option_name) const;
 
+  std::stringstream GetPositionalValueStream(size_t index) const;
+
   struct CommandLineParserImpl;
   std::unique_ptr<CommandLineParserImpl> p_impl;
 };
@@ -163,6 +176,14 @@ T CommandLineParser::GetValue(const std::string& option_name) const
 {
   T result;
   GetValueStream(option_name) >> result;
+  return result;
+}
+
+template <typename T>
+T CommandLineParser::GetPositionalValue(size_t index) const
+{
+  T result;
+  GetPositionalValueStream(index) >> result;
   return result;
 }
 

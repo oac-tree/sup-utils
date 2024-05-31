@@ -572,14 +572,14 @@ TEST_F(CommandLineParserTests, PositionalArgument)
 
   // before parsing
   EXPECT_EQ(parser.GetPositionalOptionCount(), -1);
-  EXPECT_THROW(parser.GetPositionalValue(0), std::runtime_error);
+  EXPECT_THROW(parser.GetPositionalValue<std::string>(0), std::runtime_error);
   EXPECT_TRUE(parser.GetPositionalValues().empty());
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
   // after parsing
   EXPECT_EQ(parser.GetPositionalOptionCount(), 1);
-  EXPECT_EQ(parser.GetPositionalValue(0), std::string("abc"));
+  EXPECT_EQ(parser.GetPositionalValue<std::string>(0), std::string("abc"));
   EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"abc"}));
 }
 
@@ -589,20 +589,20 @@ TEST_F(CommandLineParserTests, TwoPositionalArguments)
   CommandLineParser parser;
 
   const int argc = 3;
-  std::array<const char *, argc> argv{"progname", "abc", "def"};
+  std::array<const char *, argc> argv{"progname", "abc", "42"};
 
   // before parsing
   EXPECT_EQ(parser.GetPositionalOptionCount(), -1);
-  EXPECT_THROW(parser.GetPositionalValue(0), std::runtime_error);
+  EXPECT_THROW(parser.GetPositionalValue<std::string>(0), std::runtime_error);
   EXPECT_TRUE(parser.GetPositionalValues().empty());
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
   // after parsing
   EXPECT_EQ(parser.GetPositionalOptionCount(), 2);
-  EXPECT_EQ(parser.GetPositionalValue(0), std::string("abc"));
-  EXPECT_EQ(parser.GetPositionalValue(1), std::string("def"));
-  EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"abc", "def"}));
+  EXPECT_EQ(parser.GetPositionalValue<std::string>(0), std::string("abc"));
+  EXPECT_EQ(parser.GetPositionalValue<int>(1), 42);
+  EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"abc", "42"}));
 }
 
 //! Positional argument, then flag, then positional argument again

@@ -39,16 +39,15 @@ namespace cli
  *
  * Options are divided into three types: flags, flags parameters, and positional options.
  *
- * 1) Flags
- * These are options like "-v", or "--version" that have no parameters right after.
- *
- * 2) Flags with parameters
- * These are options like "--font 12" where the value goes right after the flag.
- * Values can be still omitted if the default value is set.
- *
- * 3) Positional options
- * These are anything that appears without "-" or "--" in the command line, and is not a parameter
- * of another option.
+ * There are three types of options:
+ *  1) Flags
+ *     Command line arguments beginning with "-", e.g.: -v, --verbose.
+ *     Represent a boolean.
+ *  2) Parameters
+ *     A named value followed by a non-options.
+ *     e.g.: --font 24
+ *  3) Positional
+ *     Three standing values, e.g: config.json
  *
  * For positional options, the option names only appear in the description, and shouldn't appear in
  * command line.

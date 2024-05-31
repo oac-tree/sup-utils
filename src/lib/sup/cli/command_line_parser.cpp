@@ -210,15 +210,6 @@ std::vector<std::string> CommandLineParser::GetPositionalValues() const
   return {};
 }
 
-std::string CommandLineParser::GetPositionalValue(size_t index) const
-{
-  if (static_cast<int>(index) >= GetPositionalOptionCount())
-  {
-    throw std::runtime_error("Positional index exceeds number of positional options found");
-  }
-  return GetPositionalValues().at(index);
-}
-
 std::string CommandLineParser::GetUsageString() const
 {
   std::string app_name;
@@ -253,6 +244,15 @@ std::stringstream CommandLineParser::GetValueStream(const std::string &option_na
   }
 
   throw std::runtime_error("Can't parse the value");
+}
+
+std::stringstream CommandLineParser::GetPositionalValueStream(size_t index) const
+{
+  if (static_cast<int>(index) >= GetPositionalOptionCount())
+  {
+    throw std::runtime_error("Positional index exceeds number of positional options found");
+  }
+  return std::stringstream(GetPositionalValues().at(index));
 }
 
 }  // namespace cli
