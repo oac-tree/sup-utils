@@ -191,6 +191,13 @@ bool CommandLineParser::IsSet(const std::string &option_name)
   return option ? p_impl->IsSet(*option) : false;
 }
 
+int CommandLineParser::GetPositionalOptionCount() const
+{
+  // argh library always treats program name as a positional option
+  int parser_result = static_cast<int>(p_impl->m_parser.size());
+  return parser_result - 1;
+}
+
 std::string CommandLineParser::GetUsageString() const
 {
   std::string app_name;

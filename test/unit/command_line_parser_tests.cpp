@@ -115,11 +115,13 @@ TEST_F(CommandLineParserTests, ArghParser)
 TEST_F(CommandLineParserTests, AddHelpOption)
 {
   CommandLineParser parser;
+
   auto &option = parser.AddHelpOption();
 
   EXPECT_EQ(option.GetOptionNames(), std::vector<std::string>({"-h", "--help"}));
   EXPECT_FALSE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
+  EXPECT_EQ(parser.GetPositionalOptionCount(), -1); // no parsing yet
 }
 
 TEST_F(CommandLineParserTests, AddOption)
@@ -141,6 +143,8 @@ TEST_F(CommandLineParserTests, AddOption)
   EXPECT_EQ(parser.GetOption("-file"), nullptr);
   EXPECT_EQ(parser.GetOption("-help"), nullptr);
   EXPECT_EQ(parser.GetOption("-nonexisting"), nullptr);
+
+  EXPECT_EQ(parser.GetPositionalOptionCount(), -1); // no parsing yet
 }
 
 TEST_F(CommandLineParserTests, FluentInterface)
@@ -171,6 +175,7 @@ TEST_F(CommandLineParserTests, ParseFlag)
 
   EXPECT_TRUE(parser.IsSet("--verbose"));
   EXPECT_FALSE(parser.IsSet("-f"));
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
 }
 
 //! Parsing two options without a parameter (flags).
@@ -192,6 +197,7 @@ TEST_F(CommandLineParserTests, ParseTwoFlags)
   EXPECT_TRUE(parser.IsSet("-v"));
   EXPECT_TRUE(parser.IsSet("--file"));
   EXPECT_TRUE(parser.IsSet("-f"));
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
 }
 
 //! Parsing single parameter (option that has a value).
@@ -213,6 +219,7 @@ TEST_F(CommandLineParserTests, ParseParameter)
   EXPECT_TRUE(parser.IsSet("--font"));
 
   EXPECT_EQ(parser.GetValue<int>("--font"), 10);
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
 }
 
 //! Parsing single parameter (option that has a value).
@@ -238,6 +245,7 @@ TEST_F(CommandLineParserTests, ParseParameterSpaceDelimeter)
   EXPECT_TRUE(parser.IsSet("--font"));
 
   EXPECT_EQ(parser.GetValue<int>("--font"), 10);
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
 }
 
 //! Attempt to parse single parameter option, when parameter wasn't provided.
@@ -259,6 +267,8 @@ TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
   EXPECT_FALSE(parser.IsSet("--font"));
 
   EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
+
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
 }
 
 //! Parsing a single parameter (option that has a value) with default parameter defined.
@@ -280,6 +290,8 @@ TEST_F(CommandLineParserTests, ParseParameterWithDefaultValue)
   EXPECT_TRUE(parser.IsSet("--font"));
 
   EXPECT_EQ(parser.GetValue<int>("--font"), 42);
+
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
 }
 
 //! Attempt to parse command line when required option is missed.
@@ -301,6 +313,8 @@ TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArguments)
   EXPECT_FALSE(parser.IsSet("--font"));
 
   EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
+
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
 }
 
 //! Attempt to parse command line when required option is missed.
@@ -324,6 +338,8 @@ TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArgumentsWhenHelpIsPres
   EXPECT_FALSE(parser.IsSet("--font"));
 
   EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
+
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
 }
 
 //! Parsing command line string containing a help option.
@@ -337,6 +353,8 @@ TEST_F(CommandLineParserTests, ParseHelpOption)
   std::array<const char *, argc> argv{"progname", "--help"};
 
   EXPECT_FALSE(parser.Parse(argc, &argv[0]));
+
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
 }
 
 //! Parsing file option.
@@ -361,6 +379,8 @@ TEST_F(CommandLineParserTests, ParseFileOption)
 
   EXPECT_EQ(parser.GetValue<std::string>("--file"), "filename");
   EXPECT_EQ(parser.GetValue<std::string>("-f"), "filename");
+
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
 }
 
 //! Parsing timeout option.
@@ -389,6 +409,8 @@ TEST_F(CommandLineParserTests, ParseTimeoutOption)
 
     EXPECT_DOUBLE_EQ(parser.GetValue<double>("--timeout"), 42.0);
     EXPECT_DOUBLE_EQ(parser.GetValue<double>("-t"), 42.0);
+
+    EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
   }
 
   {  // set --timeout option
@@ -402,6 +424,8 @@ TEST_F(CommandLineParserTests, ParseTimeoutOption)
 
     EXPECT_DOUBLE_EQ(parser.GetValue<double>("--timeout"), 42.0);
     EXPECT_DOUBLE_EQ(parser.GetValue<double>("-t"), 42.0);
+
+    EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
   }
 }
 
@@ -427,6 +451,8 @@ TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
 
     EXPECT_DOUBLE_EQ(parser.GetValue<double>("--timeout"), 42.0);
     EXPECT_DOUBLE_EQ(parser.GetValue<double>("-t"), 42.0);
+
+    EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
   }
 
   {  // set -t option without value
@@ -440,6 +466,8 @@ TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
 
     EXPECT_THROW(parser.GetValue<double>("--timeout"), std::runtime_error);
     EXPECT_THROW(parser.GetValue<double>("-t"), std::runtime_error);
+
+    EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
   }
 
   {  // set --timeout option with value
@@ -453,6 +481,8 @@ TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
 
     EXPECT_DOUBLE_EQ(parser.GetValue<double>("--timeout"), 42.0);
     EXPECT_DOUBLE_EQ(parser.GetValue<double>("-t"), 42.0);
+
+    EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
   }
 
   {  // set --timeout option without value
@@ -466,6 +496,8 @@ TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
 
     EXPECT_THROW(parser.GetValue<double>("--timeout"), std::runtime_error);
     EXPECT_THROW(parser.GetValue<double>("-t"), std::runtime_error);
+
+    EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
   }
 }
 

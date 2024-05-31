@@ -61,15 +61,24 @@ public:
   ~CommandLineParser();
 
   /**
-   * Adds the new option to the list of available options and returns the result.
-   * Option name should start from a dash for flags and parameter options, otherwise, it will be
-   * treated as a positional argument.
+   * @brief Adds the new option to the list of available options and returns the result.
+   *
+   * Option name should start from a dash for flags and parameter options. For positional options
+   * use AddPositionalOption method.
+   *
+   * @param option_names List of option alias as it will appear in the command line.
+   * @param description Option description
+   * @return Created option.
+   *
+   * @details A help option can be defined as {"-h", "--help"}
    */
   CommandLineOption& AddOption(const std::vector<std::string>& option_names,
                                const std::string& description = {});
 
   /**
-   * Adds help option `-h, --help` to the list of available options.
+   * @brief Adds help option `-h, --help` to the list of available options.
+   *
+   * Help info will be automatically generated from the list of created options.
    */
   CommandLineOption& AddHelpOption();
 
@@ -84,32 +93,49 @@ public:
    */
   void AddPositionalOption(const std::string& option_name, const std::string& description = {});
 
+  /**
+   * @brief Returns option with given name.
+   */
   CommandLineOption* GetOption(const std::string& option_name) const;
 
   /**
-   * Parses command line arguments and returns true in the case of success.
-   * @note The appearance of help option will lead to `false`.
+   * @brief Parses command line arguments.
+   * @return True in the case of success.
    */
   bool Parse(int argc, const char* const argv[]);
 
   /**
-   * Check whether \a option_name was passed to the application.
-   * In the case of `parameter option` it means that the parameter after the option exists and can
-   * be parsed.
+   * @brief Checks whether option_name was passed to the application.
+   *
+   * In the case of parameter option it means that the parameter after the option exists and can be
+   * parsed.
    */
   bool IsSet(const std::string& option_name);
 
+  /**
+   * @brief Returns the value of an option.
+   */
   template <typename T>
   T GetValue(const std::string& option_name) const;
 
   /**
-   * Returns usage string.
+   * @brief Returns a number of positional options found after the parsing.
+   *
+   * The name of a program (which always appears as a first element of *argv array) is not
+   * considered as a positional option. The method will return -1 if parsing doesn't have a place
+   * yet.
+   */
+  int GetPositionalOptionCount() const;
+
+  /**
+   * @brief Returns multi-line string.
    */
   std::string GetUsageString() const;
 
   /**
-   * Add \a header and \a footer to usage string. These will appear before and after option
-   * descriptions.
+   * @brief Adds header and footer text to the usage multiline string.
+   *
+   * These will appear before and after option description.
    */
   void SetDescription(const std::string& header, const std::string& footer);
 
