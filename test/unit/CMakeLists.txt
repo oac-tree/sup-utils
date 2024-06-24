@@ -8,6 +8,7 @@ target_sources(unit-tests PRIVATE
   command_line_option_tests.cpp
   command_line_parser_tests.cpp
   command_line_utils_tests.cpp
+  decorate_with_tests.cpp
   default_loggers_tests.cpp
   log_severity_tests.cpp
   logger_t_tests.cpp
@@ -23,6 +24,7 @@ target_link_libraries(unit-tests
   PRIVATE
   GTest::GTest
   GTest::Main
+  GTest::gmock
   sup-cli
   sup-codec
   sup-log
