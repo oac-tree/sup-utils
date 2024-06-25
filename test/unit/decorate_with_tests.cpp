@@ -32,41 +32,46 @@ using namespace sup::templates;
 const uint32_t DefaultReturnValue = 5;
 const uint32_t Multiplier = 5;
 const uint32_t Divisor = 5;
-const uint32_t MultiplierResult = DefaultReturnValue*Multiplier;
-const uint32_t DivisorResult = DefaultReturnValue/Divisor;
+const uint32_t MultiplicationResult = DefaultReturnValue * Multiplier;
+const uint32_t DivisionResult = DefaultReturnValue / Divisor;
 
 // Interface used in the tests.
-class CfgItf
+class TestInterface
 {
 public:
-  virtual ~CfgItf(){};
-  virtual uint32_t Method1(const std::string& name, bool& dynamic) const = 0;
-  virtual uint32_t Method2(const std::string& name, uint32_t& value) const = 0;
+  virtual ~TestInterface(){};
+  virtual uint32_t GetMultiplication(const std::string& name, uint32_t value) const = 0;
+  virtual uint32_t GetDivision(const std::string& name, uint32_t value) const = 0;
 };
 
-class MockDecorator : public CfgItf
+class MockDecorator : public TestInterface
 {
 public:
-  MockDecorator(){};
-  MOCK_METHOD(uint32_t, Method1, (const std::string& name, bool& dynamic), (const override));
-  MOCK_METHOD(uint32_t, Method2, (const std::string& name, uint32_t& value), (const override));
+  MockDecorator() = default;
+  virtual ~MockDecorator() { Die(); }
+  MOCK_METHOD(uint32_t, GetMultiplication, (const std::string& name, uint32_t value),
+              (const override));
+  MOCK_METHOD(uint32_t, GetDivision, (const std::string& name, uint32_t value), (const override));
+  MOCK_METHOD0(Die, void());
 };
 
-class FakeDecorator : public CfgItf
+class TestDecorator : public TestInterface
 {
 protected:
-  CfgItf& m_configuration;
+  TestInterface& m_configuration;
 
 public:
-  FakeDecorator(CfgItf& config) : m_configuration(config){};
-  uint32_t Method1(const std::string& name, bool& dynamic) const
+  TestDecorator(TestInterface& config) : m_configuration(config){};
+  ~TestDecorator() { Die(); }
+  MOCK_METHOD0(Die, void());
+  uint32_t GetMultiplication(const std::string& name, uint32_t value) const
   {
-    return Multiplier*m_configuration.Method1(name, dynamic);
+    return Multiplier * m_configuration.GetMultiplication(name, value);
   }
 
-  uint32_t Method2(const std::string& name, uint32_t& value) const
+  uint32_t GetDivision(const std::string& name, uint32_t value) const
   {
-    return static_cast<uint32_t>(m_configuration.Method2(name, value)/Divisor);
+    return static_cast<uint32_t>(m_configuration.GetDivision(name, value) / Divisor);
   }
 };
 
@@ -75,47 +80,63 @@ class DecorateWithTest : public ::testing::Test
 protected:
   DecorateWithTest() {}
   ~DecorateWithTest() = default;
-  std::unique_ptr<CfgItf> mock_decorator{new MockDecorator()};
-  std::string name = "test";
-  bool dynamic = true;
-  uint32_t value;
+  std::unique_ptr<TestInterface> mock_decorator{new MockDecorator()};
+  std::string name{"test"};
+  uint32_t value{1};
 };
 
-TEST_F(DecorateWithTest, Pass_Mock_Method1_Is_Called)
+TEST_F(DecorateWithTest, Pass_Test_Decorator_Method1_Is_Called)
 {
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method1(testing::_, testing::_))
+  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()),
+              GetMultiplication(testing::_, testing::_))
       .WillOnce(testing::Return(DefaultReturnValue));
 
-  EXPECT_EQ(mock_decorator->Method1(name, dynamic), DefaultReturnValue);
+  // Mock destructor should be called
+  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Die());
+
+  std::unique_ptr<TestInterface> test_decorator =
+      DecorateWith<TestDecorator>(std::move(mock_decorator));
+
+  // Test Decorator destructor should be called
+  EXPECT_CALL(*dynamic_cast<TestDecorator*>(test_decorator.get()), Die());
+
+  EXPECT_EQ(test_decorator->GetMultiplication(name, value), MultiplicationResult);
 }
 
-TEST_F(DecorateWithTest, Pass_Mock_Method2_Is_Called)
+TEST_F(DecorateWithTest, Pass_Test_Decorator_Method2_Is_Called)
 {
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method2(testing::_, testing::_))
+  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()),
+              GetDivision(testing::_, testing::_))
       .WillOnce(testing::Return(DefaultReturnValue));
 
-  EXPECT_EQ(mock_decorator->Method2(name, value), DefaultReturnValue);
+  // Mock destructor should be called
+  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Die());
+
+  std::unique_ptr<TestInterface> test_decorator =
+      DecorateWith<TestDecorator>(std::move(mock_decorator));
+
+  // Test_Decorator destructor should be called
+  EXPECT_CALL(*dynamic_cast<TestDecorator*>(test_decorator.get()), Die());
+
+  EXPECT_EQ(test_decorator->GetDivision(name, value), DivisionResult);
 }
 
-
-// Fake Decorator
-TEST_F(DecorateWithTest, Pass_Fake_Method1_Is_Called)
+TEST_F(DecorateWithTest, Pass_Mock_And_Test_Decorator_Destructors_Are_Called)
 {
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method1(testing::_, testing::_))
-      .WillOnce(testing::Return(DefaultReturnValue));
+  // Mock destructor should be called (added to prevent GMOCK WARNING: Uninteresting mock function
+  // call - returning directly).
+  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Die());
 
-  std::unique_ptr<CfgItf> fake_decorator = DecorateWith<FakeDecorator>(std::move(mock_decorator));
-  EXPECT_EQ(fake_decorator->Method1(name, dynamic), MultiplierResult);
-}
+  {
+    std::unique_ptr<TestInterface> _mock_decorator{new MockDecorator()};
+    // Mock destructor should be called
+    EXPECT_CALL(*dynamic_cast<MockDecorator*>(_mock_decorator.get()), Die());
 
-TEST_F(DecorateWithTest, Pass_Fake_Method2_Is_Called)
-{
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method2(testing::_, testing::_))
-      .WillOnce(testing::Return(DefaultReturnValue));
-
-  std::unique_ptr<CfgItf> fake_decorator = DecorateWith<FakeDecorator>(std::move(mock_decorator));
-
-  EXPECT_EQ(fake_decorator->Method2(name, value), DivisorResult);
+    std::unique_ptr<TestInterface> _test_decorator =
+        DecorateWith<TestDecorator>(std::move(_mock_decorator));
+    // Test_Decorator destructor should be called
+    EXPECT_CALL(*dynamic_cast<TestDecorator*>(_test_decorator.get()), Die());
+  }
 }
 
 }  // namespace tests
