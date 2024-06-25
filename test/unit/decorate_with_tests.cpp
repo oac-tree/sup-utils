@@ -29,7 +29,11 @@ namespace tests
 
 using namespace sup::templates;
 
-const uint32_t SUCCESS = 1;
+const uint32_t DefaultReturnValue = 5;
+const uint32_t Multiplier = 5;
+const uint32_t Divisor = 5;
+const uint32_t MultiplierResult = DefaultReturnValue*Multiplier;
+const uint32_t DivisorResult = DefaultReturnValue/Divisor;
 
 // Interface used in the tests.
 class CfgItf
@@ -38,9 +42,6 @@ public:
   virtual ~CfgItf(){};
   virtual uint32_t Method1(const std::string& name, bool& dynamic) const = 0;
   virtual uint32_t Method2(const std::string& name, uint32_t& value) const = 0;
-  virtual uint32_t Method3(std::vector<std::string>& dataset_names) const = 0;
-  virtual uint32_t Method4(const std::string& name, uint32_t& value) const = 0;
-  virtual uint32_t Method5(const std::string& name, const uint32_t& value) = 0;
 };
 
 class MockDecorator : public CfgItf
@@ -49,10 +50,6 @@ public:
   MockDecorator(){};
   MOCK_METHOD(uint32_t, Method1, (const std::string& name, bool& dynamic), (const override));
   MOCK_METHOD(uint32_t, Method2, (const std::string& name, uint32_t& value), (const override));
-
-  MOCK_METHOD(uint32_t, Method3, (std::vector<std::string> & dataset_names), (const override));
-  MOCK_METHOD(uint32_t, Method4, (const std::string& name, uint32_t& value), (const override));
-  MOCK_METHOD(uint32_t, Method5, (const std::string& name, const uint32_t& value), (override));
 };
 
 class FakeDecorator : public CfgItf
@@ -64,27 +61,12 @@ public:
   FakeDecorator(CfgItf& config) : m_configuration(config){};
   uint32_t Method1(const std::string& name, bool& dynamic) const
   {
-    return m_configuration.Method1(name, dynamic);
+    return Multiplier*m_configuration.Method1(name, dynamic);
   }
 
   uint32_t Method2(const std::string& name, uint32_t& value) const
   {
-    return m_configuration.Method2(name, value);
-  }
-
-  uint32_t Method3(std::vector<std::string>& dataset_names) const
-  {
-    return m_configuration.Method3(dataset_names);
-  }
-
-  uint32_t Method4(const std::string& name, uint32_t& value) const
-  {
-    return m_configuration.Method4(name, value);
-  }
-
-  uint32_t Method5(const std::string& name, const uint32_t& value)
-  {
-    return m_configuration.Method5(name, value);
+    return static_cast<uint32_t>(m_configuration.Method2(name, value)/Divisor);
   }
 };
 
@@ -102,94 +84,40 @@ protected:
 TEST_F(DecorateWithTest, Pass_Mock_Method1_Is_Called)
 {
   EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method1(testing::_, testing::_))
-      .WillOnce(testing::Return(SUCCESS));
+      .WillOnce(testing::Return(DefaultReturnValue));
 
-  EXPECT_EQ(mock_decorator->Method1(name, dynamic), SUCCESS);
+  EXPECT_EQ(mock_decorator->Method1(name, dynamic), DefaultReturnValue);
 }
 
 TEST_F(DecorateWithTest, Pass_Mock_Method2_Is_Called)
 {
   EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method2(testing::_, testing::_))
-      .WillOnce(testing::Return(SUCCESS));
+      .WillOnce(testing::Return(DefaultReturnValue));
 
-  EXPECT_EQ(mock_decorator->Method2(name, value), SUCCESS);
+  EXPECT_EQ(mock_decorator->Method2(name, value), DefaultReturnValue);
 }
 
-TEST_F(DecorateWithTest, Pass_Mock_Method3_Is_Called)
-{
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method3(testing::_))
-      .WillOnce(testing::Return(SUCCESS));
-
-  std::vector<std::string> dataset_names;
-  EXPECT_EQ(mock_decorator->Method3(dataset_names), SUCCESS);
-}
-
-TEST_F(DecorateWithTest, Pass_Mock_Method4_Is_Called)
-{
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method4(testing::_, testing::_))
-      .WillOnce(testing::Return(SUCCESS));
-
-  EXPECT_EQ(mock_decorator->Method4(name, value), SUCCESS);
-}
-
-TEST_F(DecorateWithTest, Pass_Mock_Method5_Is_Called)
-{
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method5(testing::_, testing::_))
-      .WillOnce(testing::Return(SUCCESS));
-
-  EXPECT_EQ(mock_decorator->Method5(name, value), SUCCESS);
-}
 
 // Fake Decorator
 TEST_F(DecorateWithTest, Pass_Fake_Method1_Is_Called)
 {
   EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method1(testing::_, testing::_))
-      .WillOnce(testing::Return(SUCCESS));
+      .WillOnce(testing::Return(DefaultReturnValue));
 
   std::unique_ptr<CfgItf> fake_decorator = DecorateWith<FakeDecorator>(std::move(mock_decorator));
-  EXPECT_EQ(fake_decorator->Method1(name, dynamic), SUCCESS);
+  EXPECT_EQ(fake_decorator->Method1(name, dynamic), MultiplierResult);
 }
 
 TEST_F(DecorateWithTest, Pass_Fake_Method2_Is_Called)
 {
   EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method2(testing::_, testing::_))
-      .WillOnce(testing::Return(SUCCESS));
+      .WillOnce(testing::Return(DefaultReturnValue));
 
   std::unique_ptr<CfgItf> fake_decorator = DecorateWith<FakeDecorator>(std::move(mock_decorator));
 
-  EXPECT_EQ(fake_decorator->Method2(name, value), SUCCESS);
+  EXPECT_EQ(fake_decorator->Method2(name, value), DivisorResult);
 }
 
-TEST_F(DecorateWithTest, Pass_Fake_Method3_Is_Called)
-{
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method3(testing::_))
-      .WillOnce(testing::Return(SUCCESS));
-
-  std::unique_ptr<CfgItf> fake_decorator = DecorateWith<FakeDecorator>(std::move(mock_decorator));
-
-  std::vector<std::string> dataset_names;
-  EXPECT_EQ(fake_decorator->Method3(dataset_names), SUCCESS);
-}
-
-TEST_F(DecorateWithTest, Pass_Fake_Method4_Is_Called)
-{
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method4(testing::_, testing::_))
-      .WillOnce(testing::Return(SUCCESS));
-
-  std::unique_ptr<CfgItf> fake_decorator = DecorateWith<FakeDecorator>(std::move(mock_decorator));
-
-  EXPECT_EQ(fake_decorator->Method4(name, value), SUCCESS);
-}
-
-TEST_F(DecorateWithTest, Pass_Fake_Method5_Is_Called)
-{
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Method5(testing::_, testing::_))
-      .WillOnce(testing::Return(SUCCESS));
-
-  std::unique_ptr<CfgItf> fake_decorator = DecorateWith<FakeDecorator>(std::move(mock_decorator));
-
-  EXPECT_EQ(fake_decorator->Method5(name, value), SUCCESS);
-}
 }  // namespace tests
 
 }  // namespace unit
