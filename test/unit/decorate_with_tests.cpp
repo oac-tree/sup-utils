@@ -44,11 +44,11 @@ public:
   virtual uint32_t GetDivision(const std::string& name, uint32_t value) const = 0;
 };
 
-class MockDecorator : public TestInterface
+class MockInterface : public TestInterface
 {
 public:
-  MockDecorator() = default;
-  virtual ~MockDecorator() { Die(); }
+  MockInterface() = default;
+  virtual ~MockInterface() { Die(); }
   MOCK_METHOD(uint32_t, GetMultiplication, (const std::string& name, uint32_t value),
               (const override));
   MOCK_METHOD(uint32_t, GetDivision, (const std::string& name, uint32_t value), (const override));
@@ -80,22 +80,24 @@ class DecorateWithTest : public ::testing::Test
 protected:
   DecorateWithTest() {}
   ~DecorateWithTest() = default;
-  std::unique_ptr<TestInterface> mock_decorator{new MockDecorator()};
+  std::unique_ptr<TestInterface> mock_interface{new MockInterface()};
   std::string name{"test"};
   uint32_t value{1};
 };
 
+using ::testing::InSequence;
+
 TEST_F(DecorateWithTest, Pass_Test_Decorator_Method1_Is_Called)
 {
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()),
+  EXPECT_CALL(*dynamic_cast<MockInterface*>(mock_interface.get()),
               GetMultiplication(testing::_, testing::_))
       .WillOnce(testing::Return(DefaultReturnValue));
 
   // Mock destructor should be called
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Die());
+  EXPECT_CALL(*dynamic_cast<MockInterface*>(mock_interface.get()), Die());
 
   std::unique_ptr<TestInterface> test_decorator =
-      DecorateWith<TestDecorator>(std::move(mock_decorator));
+      DecorateWith<TestDecorator>(std::move(mock_interface));
 
   // Test Decorator destructor should be called
   EXPECT_CALL(*dynamic_cast<TestDecorator*>(test_decorator.get()), Die());
@@ -105,15 +107,15 @@ TEST_F(DecorateWithTest, Pass_Test_Decorator_Method1_Is_Called)
 
 TEST_F(DecorateWithTest, Pass_Test_Decorator_Method2_Is_Called)
 {
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()),
+  EXPECT_CALL(*dynamic_cast<MockInterface*>(mock_interface.get()),
               GetDivision(testing::_, testing::_))
       .WillOnce(testing::Return(DefaultReturnValue));
 
   // Mock destructor should be called
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Die());
+  EXPECT_CALL(*dynamic_cast<MockInterface*>(mock_interface.get()), Die());
 
   std::unique_ptr<TestInterface> test_decorator =
-      DecorateWith<TestDecorator>(std::move(mock_decorator));
+      DecorateWith<TestDecorator>(std::move(mock_interface));
 
   // Test_Decorator destructor should be called
   EXPECT_CALL(*dynamic_cast<TestDecorator*>(test_decorator.get()), Die());
@@ -125,16 +127,17 @@ TEST_F(DecorateWithTest, Pass_Mock_And_Test_Decorator_Destructors_Are_Called)
 {
   // Mock destructor should be called (added to prevent GMOCK WARNING: Uninteresting mock function
   // call - returning directly).
-  EXPECT_CALL(*dynamic_cast<MockDecorator*>(mock_decorator.get()), Die());
+  EXPECT_CALL(*dynamic_cast<MockInterface*>(mock_interface.get()), Die());
 
   {
-    std::unique_ptr<TestInterface> _mock_decorator{new MockDecorator()};
-    // Mock destructor should be called
-    EXPECT_CALL(*dynamic_cast<MockDecorator*>(_mock_decorator.get()), Die());
-
+    InSequence seq;
+    std::unique_ptr<TestInterface> _mock_interface{new MockInterface()};
+    auto mock_p = _mock_interface.get();
     std::unique_ptr<TestInterface> _test_decorator =
-        DecorateWith<TestDecorator>(std::move(_mock_decorator));
-    // Test_Decorator destructor should be called
+        DecorateWith<TestDecorator>(std::move(_mock_interface));
+
+    // Decorator's base destructor body should be called after its direct member destructor:
+    EXPECT_CALL(*dynamic_cast<MockInterface*>(mock_p), Die());
     EXPECT_CALL(*dynamic_cast<TestDecorator*>(_test_decorator.get()), Die());
   }
 }
