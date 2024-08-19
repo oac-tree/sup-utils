@@ -52,7 +52,7 @@ T* AssertNoNullptr(T* ptr, E exception)
 class MessageException : public std::exception
 {
 public:
-  MessageException(std::string message);
+  MessageException(std::string message_);
   const char* what() const noexcept override;
 private:
   std::string message;
