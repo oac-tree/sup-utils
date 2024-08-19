@@ -53,7 +53,7 @@ std::unique_ptr<TreeData> ParseXMLDoc(xmlDocPtr doc)
   return data_tree;
 }
 
-std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, xmlNodePtr node)
+std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, const xmlNodePtr node)
 {
   auto node_name = ToString(node->name);
   std::unique_ptr<TreeData> result(new TreeData(node_name));
@@ -64,7 +64,7 @@ std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, xmlNodePtr node)
   return result;
 }
 
-void AddXMLAttributes(TreeData* tree, xmlNodePtr node)
+void AddXMLAttributes(TreeData* tree, const xmlNodePtr node)
 {
   auto attribute = node->properties;
   while (attribute != nullptr)
@@ -78,7 +78,7 @@ void AddXMLAttributes(TreeData* tree, xmlNodePtr node)
   }
 }
 
-void AddXMLChildren(TreeData* tree, xmlDocPtr doc, xmlNodePtr node)
+void AddXMLChildren(TreeData* tree, xmlDocPtr doc, const xmlNodePtr node)
 {
   auto child_node = node->children;
   while (child_node != nullptr)

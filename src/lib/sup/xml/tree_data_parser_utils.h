@@ -37,11 +37,11 @@ bool FileExists(const std::string& filename);
 
 std::unique_ptr<TreeData> ParseXMLDoc(xmlDocPtr doc);
 
-std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, xmlNodePtr node);
+std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, const xmlNodePtr node);
 
-void AddXMLAttributes(TreeData* tree, xmlNodePtr node);
+void AddXMLAttributes(TreeData* tree, const xmlNodePtr node);
 
-void AddXMLChildren(TreeData* tree, xmlDocPtr doc, xmlNodePtr node);
+void AddXMLChildren(TreeData* tree, xmlDocPtr doc, const xmlNodePtr node);
 
 }  // namespace xml
 
