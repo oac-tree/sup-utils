@@ -51,13 +51,13 @@ public:
    * @brief Copy/move Constructor.
    */
   TreeData(const TreeData& other);
-  TreeData(TreeData&& other);
+  TreeData(TreeData&& other) noexcept;
 
   /**
    * @brief Copy/move Assignment.
    */
   TreeData& operator=(const TreeData& other);
-  TreeData& operator=(TreeData&& other);
+  TreeData& operator=(TreeData&& other) noexcept;
 
   /**
    * @brief Comparison operators.

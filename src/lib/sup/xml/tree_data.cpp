@@ -46,10 +46,10 @@ TreeData::TreeData(const std::string& node_name)
 TreeData::~TreeData() = default;
 
 TreeData::TreeData(const TreeData& other) = default;
-TreeData::TreeData(TreeData&& other) = default;
+TreeData::TreeData(TreeData&& other) noexcept = default;
 
 TreeData& TreeData::operator=(const TreeData& other) = default;
-TreeData& TreeData::operator=(TreeData&& other) = default;
+TreeData& TreeData::operator=(TreeData&& other) noexcept = default;
 
 bool TreeData::operator==(const TreeData& other) const
 {
