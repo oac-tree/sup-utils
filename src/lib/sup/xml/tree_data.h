@@ -62,8 +62,8 @@ public:
   /**
    * @brief Comparison operators.
    */
-  bool operator==(const TreeData& other) const;
-  bool operator!=(const TreeData& other) const;
+  friend bool operator==(const TreeData& rhs, const TreeData& lhs);
+  friend bool operator!=(const TreeData& rhs, const TreeData& lhs);
 
   /**
    * @brief Retrieve the name of the current node.
