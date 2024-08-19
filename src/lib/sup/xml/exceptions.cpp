@@ -27,7 +27,7 @@ namespace xml
 {
 
 MessageException::MessageException(std::string message_)
-  : message{std::move(message_)}
+  : std::exception(), message{std::move(message_)}
 {}
 
 const char* MessageException::what() const noexcept
