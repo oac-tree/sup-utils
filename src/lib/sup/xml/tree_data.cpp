@@ -49,7 +49,7 @@ TreeData::TreeData(const TreeData& other) = default;
 TreeData::TreeData(TreeData&& other) noexcept = default;
 
 TreeData& TreeData::operator=(const TreeData& other) & = default;
-TreeData& TreeData::operator=(TreeData&& other) noexcept = default;
+TreeData& TreeData::operator=(TreeData&& other) & noexcept = default;
 
 bool operator==(const TreeData& rhs, const TreeData& lhs)
 {
@@ -101,7 +101,7 @@ std::string TreeData::GetAttribute(const std::string& name) const
   return it->second;
 }
 
-const std::vector<TreeData::Attribute>& TreeData::Attributes() const
+const std::vector<TreeData::Attribute>& TreeData::Attributes() const &
 {
   return m_attributes;
 }
@@ -127,7 +127,7 @@ void TreeData::AddChild(const TreeData& child)
   m_children.push_back(child);
 }
 
-const std::vector<TreeData>& TreeData::Children() const
+const std::vector<TreeData>& TreeData::Children() const &
 {
   return m_children;
 }

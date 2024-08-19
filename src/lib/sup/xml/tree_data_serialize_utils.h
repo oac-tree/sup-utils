@@ -41,7 +41,7 @@ public:
   XMLBufferHandle(const XMLBufferHandle&) = delete;
   XMLBufferHandle& operator=(const XMLBufferHandle&) = delete;
 
-  xmlBufferPtr Buffer() const;
+  xmlBufferPtr Buffer() const &;
 private:
   xmlBufferPtr m_buffer;
 };
@@ -55,7 +55,7 @@ public:
   XMLTextWriterHandle(const XMLTextWriterHandle&) = delete;
   XMLTextWriterHandle& operator=(const XMLTextWriterHandle&) = delete;
 
-  xmlTextWriterPtr Writer() const;
+  xmlTextWriterPtr Writer() const &;
 private:
   xmlTextWriterPtr m_writer;
 };

@@ -57,7 +57,7 @@ public:
    * @brief Copy/move Assignment.
    */
   TreeData& operator=(const TreeData& other) &;
-  TreeData& operator=(TreeData&& other) noexcept;
+  TreeData& operator=(TreeData&& other) & noexcept;
 
   /**
    * @brief Comparison operators.
@@ -104,7 +104,7 @@ public:
    *
    * @return List of all attributes.
    */
-  const std::vector<Attribute>& Attributes() const;
+  const std::vector<Attribute>& Attributes() const &;
 
   /**
    * @brief Add attribute with given name and value.
@@ -137,7 +137,7 @@ public:
    *
    * @return List of child data elements.
    */
-  const std::vector<TreeData>& Children() const;
+  const std::vector<TreeData>& Children() const &;
 
   /**
    * @brief Set element content string.

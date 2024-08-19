@@ -41,7 +41,7 @@ XMLBufferHandle::~XMLBufferHandle()
   }
 }
 
-xmlBufferPtr XMLBufferHandle::Buffer() const
+xmlBufferPtr XMLBufferHandle::Buffer() const &
 {
   return m_buffer;
 }
@@ -58,7 +58,7 @@ XMLTextWriterHandle::~XMLTextWriterHandle()
   }
 }
 
-xmlTextWriterPtr XMLTextWriterHandle::Writer() const
+xmlTextWriterPtr XMLTextWriterHandle::Writer() const &
 {
   return m_writer;
 }
