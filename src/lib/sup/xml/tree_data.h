@@ -43,7 +43,7 @@ public:
    *
    * @param node_name Name of the current node.
    */
-  TreeData(const std::string& node_name);
+  explicit TreeData(const std::string& node_name);
 
   ~TreeData();
 

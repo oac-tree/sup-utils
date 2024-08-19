@@ -49,7 +49,7 @@ private:
 class XMLTextWriterHandle
 {
 public:
-  XMLTextWriterHandle(xmlTextWriterPtr writer);
+  explicit XMLTextWriterHandle(xmlTextWriterPtr writer);
   ~XMLTextWriterHandle();
 
   XMLTextWriterHandle(const XMLTextWriterHandle&) = delete;
