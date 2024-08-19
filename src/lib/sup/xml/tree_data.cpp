@@ -48,7 +48,7 @@ TreeData::~TreeData() = default;
 TreeData::TreeData(const TreeData& other) = default;
 TreeData::TreeData(TreeData&& other) noexcept = default;
 
-TreeData& TreeData::operator=(const TreeData& other) = default;
+TreeData& TreeData::operator=(const TreeData& other) & = default;
 TreeData& TreeData::operator=(TreeData&& other) noexcept = default;
 
 bool operator==(const TreeData& rhs, const TreeData& lhs)

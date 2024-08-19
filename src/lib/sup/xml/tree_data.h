@@ -56,7 +56,7 @@ public:
   /**
    * @brief Copy/move Assignment.
    */
-  TreeData& operator=(const TreeData& other);
+  TreeData& operator=(const TreeData& other) &;
   TreeData& operator=(TreeData&& other) noexcept;
 
   /**

@@ -23,7 +23,6 @@
 #define SUP_LOG_BASIC_LOGGER_H_
 
 #include <functional>
-#include <stdio.h>
 #include <string>
 
 namespace sup

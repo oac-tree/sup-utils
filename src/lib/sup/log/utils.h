@@ -22,7 +22,6 @@
 #ifndef SUP_LOG_UTILS_H_
 #define SUP_LOG_UTILS_H_
 
-#include <stdio.h>
 #include <string>
 
 namespace sup
