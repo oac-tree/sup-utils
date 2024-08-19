@@ -51,7 +51,7 @@ const std::vector<const CommandLineOption *> GetFilteredOptions(
   std::vector<const CommandLineOption *> result;
   auto on_options = [positional_flag](const sup::cli::CommandLineOption *option)
   { return option->IsPositional() == positional_flag; };
-  std::copy_if(std::begin(options), std::end(options), std::back_inserter(result), on_options);
+  (void)std::copy_if(std::begin(options), std::end(options), std::back_inserter(result), on_options);
   return result;
 }
 

@@ -141,7 +141,7 @@ CommandLineOption &CommandLineParser::AddOption(const std::vector<std::string> &
 {
   p_impl->m_options.emplace_back(new CommandLineOption(option_names));
   auto &result = *p_impl->m_options.back();
-  result.SetDescription(description);
+  (void)result.SetDescription(description);
   return result;
 }
 
@@ -153,7 +153,7 @@ CommandLineOption &CommandLineParser::AddHelpOption()
 void CommandLineParser::AddPositionalOption(const std::string &option_name,
                                             const std::string &description)
 {
-  AddOption({option_name}).SetDescription(description).SetPositional(true);
+  (void)AddOption({option_name}).SetDescription(description).SetPositional(true);
 }
 
 CommandLineOption *CommandLineParser::GetOption(const std::string &option_name) const

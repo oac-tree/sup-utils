@@ -66,18 +66,18 @@ xmlTextWriterPtr XMLTextWriterHandle::Writer() const &
 void SerializeUsingWriter(xmlTextWriterPtr writer, const TreeData& tree_data)
 {
   SetupWriterIndentation(writer);
-  xmlTextWriterStartDocument(writer, nullptr, "UTF-8", nullptr);
+  (void)xmlTextWriterStartDocument(writer, nullptr, "UTF-8", nullptr);
 
   AddTreeData(writer, tree_data);
 
-  xmlTextWriterEndDocument(writer);
+  (void)xmlTextWriterEndDocument(writer);
 }
 
 void SetupWriterIndentation(xmlTextWriterPtr writer)
 {
   const int indentation_on = 1;
-  xmlTextWriterSetIndent(writer, indentation_on);
-  xmlTextWriterSetIndentString(writer, FromString(std::string("  ")));
+  (void)xmlTextWriterSetIndent(writer, indentation_on);
+  (void)xmlTextWriterSetIndentString(writer, FromString(std::string("  ")));
 }
 
 void AddTreeData(xmlTextWriterPtr writer, const TreeData& tree_data)
