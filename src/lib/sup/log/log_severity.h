@@ -28,7 +28,7 @@ namespace sup
 {
 namespace log
 {
-enum Severity
+enum Severity : int
 {
   SUP_LOG_EMERG = 0,
   SUP_LOG_ALERT,
