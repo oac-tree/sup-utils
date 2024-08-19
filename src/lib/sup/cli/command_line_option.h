@@ -63,7 +63,7 @@ public:
    *
    * @param option_names Option names.
    */
-  CommandLineOption(const std::vector<std::string>& option_names);
+  explicit CommandLineOption(const std::vector<std::string>& option_names);
 
   /**
    * @brief Returns option names.
@@ -78,7 +78,7 @@ public:
   /**
    * @brief Sets the default value.
    */
-  CommandLineOption& SetDefaultValue(const std::string& default_value);
+  CommandLineOption& SetDefaultValue(const std::string& default_value) &;
 
   /**
    * @brief Sets option description.
@@ -88,7 +88,7 @@ public:
   /**
    * @brief Returns option description.
    */
-  CommandLineOption& SetDescription(const std::string& description);
+  CommandLineOption& SetDescription(const std::string& description) &;
 
   /**
    * @brief Checks if the option is required.
@@ -98,7 +98,7 @@ public:
   /**
    * @brief Sets requirement flag to a given value.
    */
-  CommandLineOption& SetRequired(bool value);
+  CommandLineOption& SetRequired(bool value) &;
 
   /**
    * @brief Returns the name of the value.
@@ -110,7 +110,7 @@ public:
   /**
    * @brief Sets the name to a given value.
    */
-  CommandLineOption& SetValueName(const std::string& value_name);
+  CommandLineOption& SetValueName(const std::string& value_name) &;
 
   /**
    * @brief Checks if option is positional.
@@ -120,7 +120,7 @@ public:
   /**
    * @brief Set the positional flag to a given value.
    */
-  CommandLineOption& SetPositional(bool value);
+  CommandLineOption& SetPositional(bool value) &;
 
   /**
    * @brief Checks if given option is a flag with required parameter.
@@ -130,7 +130,7 @@ public:
   /**
    * @brief Sets parameter flag to a given value.
    */
-  CommandLineOption& SetParameter(bool value);
+  CommandLineOption& SetParameter(bool value) &;
 
 private:
   std::vector<std::string> m_option_names;
