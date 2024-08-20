@@ -112,7 +112,7 @@ public:
    * @brief Parses command line arguments.
    * @return True in the case of success.
    */
-  bool Parse(int argc, const char* const argv[]);
+  bool Parse(int32_t argc, const char* const argv[]);
 
   /**
    * @brief Checks whether option_name was passed to the application.
@@ -135,7 +135,7 @@ public:
    * considered as a positional option. The method will return -1 if parsing doesn't have a place
    * yet.
    */
-  int GetPositionalOptionCount() const;
+  int32_t GetPositionalOptionCount() const;
 
   /**
    * @brief Returns list of positional options found.

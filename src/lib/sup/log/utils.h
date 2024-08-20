@@ -32,7 +32,7 @@ namespace log
 /**
  * @brief Send the given log message to the system log with the given severity level.
  */
-void SysLog(int severity, const std::string& message);
+void SysLog(int32_t severity, const std::string& message);
 
 /**
  * @brief Print the given log message directly to std::out.

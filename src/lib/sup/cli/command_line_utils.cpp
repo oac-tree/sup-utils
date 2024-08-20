@@ -28,7 +28,7 @@
 
 namespace
 {
-const int kDesiredOptionStringLength = 30;
+const int32_t kDesiredOptionStringLength = 30;
 
 /**
  * Returns value name.

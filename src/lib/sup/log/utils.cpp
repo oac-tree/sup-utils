@@ -32,7 +32,7 @@ namespace sup
 namespace log
 {
 
-void SysLog(int severity, const std::string& message)
+void SysLog(int32_t severity, const std::string& message)
 {
   syslog(severity, message.c_str());
 }

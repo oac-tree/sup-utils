@@ -75,7 +75,7 @@ void SerializeUsingWriter(xmlTextWriterPtr writer, const TreeData& tree_data)
 
 void SetupWriterIndentation(xmlTextWriterPtr writer)
 {
-  const int indentation_on = 1;
+  const int32_t indentation_on = 1;
   (void)xmlTextWriterSetIndent(writer, indentation_on);
   (void)xmlTextWriterSetIndentString(writer, FromString(std::string("  ")));
 }
@@ -89,7 +89,7 @@ void AddTreeData(xmlTextWriterPtr writer, const TreeData& tree_data)
   }
 
   // opening element
-  int rc = xmlTextWriterStartElement(writer, FromString(tree_data.GetNodeName()));
+  int32_t rc = xmlTextWriterStartElement(writer, FromString(tree_data.GetNodeName()));
   if (rc < 0)
   {
     std::string message = "AddTreeData(): Error at xmlTextWriterStartElement";
@@ -129,7 +129,7 @@ void AddTreeAttributes(xmlTextWriterPtr writer, const TreeData& tree_data)
 {
   for (const auto& attr : tree_data.Attributes())
   {
-    int rc = xmlTextWriterWriteAttribute(writer, FromString(attr.first), FromString(attr.second));
+    int32_t rc = xmlTextWriterWriteAttribute(writer, FromString(attr.first), FromString(attr.second));
     if (rc < 0)
     {
       std::string message = "AddTreeAttributes(): Error at xmlTextWriterWriteAttribute";

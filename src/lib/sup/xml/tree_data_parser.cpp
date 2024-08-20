@@ -25,8 +25,6 @@
 #include <sup/xml/tree_data_parser_utils.h>
 #include <sup/xml/xml_utils.h>
 
-#include <string.h>
-
 namespace sup
 {
 namespace xml

@@ -26,8 +26,8 @@ namespace sup
 namespace log
 {
 
-BasicLogger::BasicLogger(std::function<void(int, const std::string&, const std::string&)> log_func,
-                         const std::string& source, int max_severity)
+  BasicLogger::BasicLogger(std::function<void(int32_t, const std::string&, const std::string&)> log_func,
+                         const std::string& source, int32_t max_severity)
   : m_log_function{log_func}
   , m_source{source}
   , m_max_severity{max_severity}
@@ -35,7 +35,7 @@ BasicLogger::BasicLogger(std::function<void(int, const std::string&, const std::
 
 BasicLogger::~BasicLogger() = default;
 
-int BasicLogger::SetMaxSeverity(int max_severity)
+int32_t BasicLogger::SetMaxSeverity(int32_t max_severity)
 {
   auto current_max_severity = m_max_severity;
   m_max_severity = max_severity;
@@ -49,7 +49,7 @@ std::string BasicLogger::SetSource(const std::string& source)
   return current_source;
 }
 
-void BasicLogger::LogMessage(int severity, const std::string& message) const
+void BasicLogger::LogMessage(int32_t severity, const std::string& message) const
 {
   if (severity > m_max_severity)
   {

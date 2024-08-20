@@ -28,7 +28,7 @@ namespace sup
 {
 namespace log
 {
-enum Severity : int
+enum Severity : int32_t
 {
   SUP_LOG_EMERG = 0,
   SUP_LOG_ALERT,
@@ -45,7 +45,7 @@ enum Severity : int
 /**
  * @brief Retrieve a string representation of the given severity level.
  */
-std::string SeverityString(int severity);
+std::string SeverityString(int32_t severity);
 
 }  // namespace log
 

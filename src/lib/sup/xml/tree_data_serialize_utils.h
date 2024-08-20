@@ -26,8 +26,6 @@
 
 #include <libxml/xmlwriter.h>
 
-#include <string>
-
 namespace sup
 {
 namespace xml
