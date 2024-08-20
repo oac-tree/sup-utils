@@ -26,13 +26,13 @@ namespace sup
 namespace xml
 {
 
-MessageException::MessageException(std::string message_)
-  : std::exception(), message{std::move(message_)}
+MessageException::MessageException(const std::string& message)
+  : std::exception(), m_message{std::move(message)}
 {}
 
 const char* MessageException::what() const noexcept
 {
-  return message.c_str();
+  return m_message.c_str();
 }
 
 InvalidOperationException::InvalidOperationException(const std::string& message)

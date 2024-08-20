@@ -22,7 +22,6 @@
 #ifndef SUP_LOG_DEFAULT_LOGGERS_H_
 #define SUP_LOG_DEFAULT_LOGGERS_H_
 
-#include "basic_logger.h"
 #include "logger_t.h"
 
 namespace sup
