@@ -95,8 +95,7 @@ void AddXMLChildren(TreeData* tree, xmlDocPtr doc, const xmlNodePtr node)
     }
     else
     {
-      std::string message = "sup::xml::AddXMLChildren(): Unknown node type.";
-      throw ParseException(message);
+      // All other node types are ignored in this process
     }
     child_node = child_node->next;
   }
