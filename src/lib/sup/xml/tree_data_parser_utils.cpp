@@ -20,6 +20,7 @@
  ******************************************************************************/
 
 #include "tree_data_parser_utils.h"
+#include "sup/codec/base_types.h"
 
 #include <sup/xml/exceptions.h>
 #include <sup/xml/xml_utils.h>
@@ -28,28 +29,21 @@
 
 #include <fstream>
 #include <stack>
-#include <utility>
 
 namespace
 {
 using namespace sup::xml;
-using childData = std::pair<TreeData, xmlNodePtr>;
-using childDataPtr = std::pair<TreeData*, xmlNodePtr>;
 
 struct stackData
 {
-  TreeData* current_tree;
-  TreeData* parent_tree;
-  xmlNodePtr current_node;
+  TreeData tree;
+  xmlNodePtr xml_node;
+  sup::codec::uint32 next_child_index;
 };
 
 std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, const xmlNodePtr node);
 
-void addChildrenToStack(std::stack<stackData>& myStack, std::deque<childData>& childVector,
-                        childDataPtr node);
-
-void buildStack(std::stack<stackData>& myStack, std::deque<childData>& childVector,
-                TreeData* startTree, xmlNodePtr startNode);
+bool addChildrenToStack(std::stack<stackData>& myStack);
 
 void AddXMLAttributes(TreeData* tree, const xmlNodePtr node);
 
@@ -88,59 +82,59 @@ std::unique_ptr<TreeData> ParseXMLDoc(xmlDocPtr doc)
 
 namespace
 {
-void addChildrenToStack(std::stack<stackData>& myStack, std::deque<childData>& childVector,
-                        childDataPtr node)
+
+bool addChildrenToStack(std::stack<stackData>& myStack)
 {
-  auto local_parent = node.second;
-  auto child_node = local_parent->last;
+  auto topStack = myStack.top();
+  auto child_node = topStack.xml_node->children;
+  auto next_child_index = &myStack.top().next_child_index;
+  sup::codec::uint32 child_index = 0;
   while (child_node != nullptr)
   {
-    if (child_node->type == XML_ELEMENT_NODE)
+    if ((child_index >= *next_child_index) && (child_node->type == XML_ELEMENT_NODE))
     {
-      childVector.push_back({TreeData(ToString(child_node->name)), child_node});
-      myStack.push({&childVector.back().first, node.first, child_node});
+      *next_child_index = ++child_index;
+      myStack.push({TreeData(ToString(child_node->name)), child_node, 0});
+      return true;
     }
-    child_node = child_node->prev;
+    child_node = child_node->next;
+    ++child_index;
   }
-}
-
-void buildStack(std::stack<stackData>& myStack, std::deque<childData>& childVector,
-                TreeData* startTree, xmlNodePtr startNode)
-{
-  addChildrenToStack(myStack, childVector, {startTree, startNode});
-
-  for (auto& child : childVector)
-  {
-    addChildrenToStack(myStack, childVector, {&child.first, child.second});
-  }
+  return false;
 }
 
 std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, xmlNodePtr node)
 {
   std::stack<stackData> myStack;
-  std::deque<childData> childVector;
-  std::unique_ptr<TreeData> startTree(new TreeData(ToString(node->name)));
-  myStack.push({startTree.get(), nullptr, node});
-  buildStack(myStack, childVector, startTree.get(), node);
+
+  myStack.push({TreeData(ToString(node->name)), node, 0});
 
   while (!myStack.empty())  // process each node
   {
-    auto stack_top = myStack.top();
-    myStack.pop();
-
-    auto current_tree = stack_top.current_tree;
-    auto parent_tree = stack_top.parent_tree;
-    auto current_node = stack_top.current_node;
-
-    AddXMLAttributes(current_tree, current_node);
-    AddXMLContent(current_tree, doc, current_node);
-
-    if (parent_tree)
+    if (!addChildrenToStack(myStack))
     {
-      parent_tree->AddChild(*current_tree);
+      auto stack_top = myStack.top();
+      myStack.pop();
+
+      auto current_tree = &stack_top.tree;
+      auto current_node = stack_top.xml_node;
+
+      AddXMLAttributes(current_tree, current_node);
+      AddXMLContent(current_tree, doc, current_node);
+
+      if (!myStack.empty())
+      {
+        auto parent_tree = &myStack.top().tree;
+        parent_tree->AddChild(*current_tree);
+      }
+      else
+      {
+        std::unique_ptr<TreeData> result(new TreeData(*current_tree));
+        return result;
+      }
     }
   }
-  return startTree;
+  return nullptr;
 }
 
 void AddXMLAttributes(TreeData* tree, const xmlNodePtr node)
