@@ -24,7 +24,38 @@
 #include <sup/xml/exceptions.h>
 #include <sup/xml/xml_utils.h>
 
+#include <libxml/parser.h>
+
 #include <fstream>
+#include <stack>
+#include <utility>
+
+namespace
+{
+using namespace sup::xml;
+using childData = std::pair<TreeData, xmlNodePtr>;
+using childDataPtr = std::pair<TreeData*, xmlNodePtr>;
+
+struct stackData
+{
+  TreeData* current_tree;
+  TreeData* parent_tree;
+  xmlNodePtr current_node;
+};
+
+std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, const xmlNodePtr node);
+
+void addChildrenToStack(std::stack<stackData>& myStack, std::deque<childData>& childVector,
+                        childDataPtr node);
+
+void buildStack(std::stack<stackData>& myStack, std::deque<childData>& childVector,
+                TreeData* startTree, xmlNodePtr startNode);
+
+void AddXMLAttributes(TreeData* tree, const xmlNodePtr node);
+
+void AddXMLContent(TreeData* tree, xmlDocPtr doc, const xmlNodePtr node);
+
+}  // unnamed namespace
 
 namespace sup
 {
@@ -51,6 +82,12 @@ std::unique_ptr<TreeData> ParseXMLDoc(xmlDocPtr doc)
   return data_tree;
 }
 
+}  // namespace xml
+
+}  // namespace sup
+
+namespace
+{
 void addChildrenToStack(std::stack<stackData>& myStack, std::deque<childData>& childVector,
                         childDataPtr node)
 {
@@ -140,6 +177,4 @@ void AddXMLContent(TreeData* tree, xmlDocPtr doc, const xmlNodePtr node)
   }
 }
 
-}  // namespace xml
-
-}  // namespace sup
+}  // unnamed namespace
