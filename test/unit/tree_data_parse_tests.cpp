@@ -283,6 +283,84 @@ TEST_F(TreeDataParserTest, FromStringAndRoundtrip)
   EXPECT_EQ(*tree_data_roundtrip, *tree_data);
 }
 
+TEST_F(TreeDataParserTest, DepthFour)
+{
+  std::string body = R"RAW(
+    <MemberList>
+      <Group name="patrons">
+        <Member key="433">
+          <Name format="full">Martha Thompson</Name>
+        </Member>
+        <Member key="23">
+          <Name format="prename">Anna</Name>
+        </Member>
+      </Group>
+    </MemberList>
+  )RAW";
+
+  // Parse XML from string
+  auto xml_str = AddXMLHeader(body);
+  auto tree_data = TreeDataFromString(xml_str);
+  ASSERT_TRUE(static_cast<bool>(tree_data));
+
+  // Inspect root node
+  EXPECT_EQ(tree_data->GetNodeName(), "MemberList");
+  EXPECT_EQ(tree_data->GetNumberOfAttributes(), 0);
+  EXPECT_EQ(tree_data->GetNumberOfChildren(), 1);
+  EXPECT_TRUE(ContentEmpty(tree_data->GetContent()));
+  auto& root_children = tree_data->Children();
+  ASSERT_EQ(root_children.size(), 1);
+
+  // Inspect Group node
+  auto group_node = root_children[0];
+  EXPECT_EQ(group_node.GetNodeName(), "Group");
+  EXPECT_EQ(group_node.GetNumberOfAttributes(), 1);
+  EXPECT_TRUE(group_node.HasAttribute("name"));
+  EXPECT_EQ(group_node.GetAttribute("name"), "patrons");
+  EXPECT_EQ(group_node.GetNumberOfChildren(), 2);
+  EXPECT_TRUE(ContentEmpty(group_node.GetContent()));
+  auto& children = group_node.Children();
+  ASSERT_EQ(children.size(), 2);
+
+  // Inspect first child node
+  auto member1 = children[0];
+  EXPECT_EQ(member1.GetNodeName(), "Member");
+  EXPECT_EQ(member1.GetNumberOfAttributes(), 1);
+  EXPECT_TRUE(member1.HasAttribute("key"));
+  EXPECT_EQ(member1.GetAttribute("key"), "433");
+  EXPECT_EQ(member1.GetNumberOfChildren(), 1);
+  EXPECT_TRUE(ContentEmpty(member1.GetContent()));
+  auto& mem1_children = member1.Children();
+  ASSERT_EQ(mem1_children.size(), 1);
+  // Inspect first child's Name node
+  auto mem1_name = mem1_children[0];
+  EXPECT_EQ(mem1_name.GetNodeName(), "Name");
+  EXPECT_EQ(mem1_name.GetNumberOfAttributes(), 1);
+  EXPECT_TRUE(mem1_name.HasAttribute("format"));
+  EXPECT_EQ(mem1_name.GetAttribute("format"), "full");
+  EXPECT_EQ(mem1_name.GetNumberOfChildren(), 0);
+  EXPECT_EQ(mem1_name.GetContent(), "Martha Thompson");
+
+  // Inspect second child node
+  auto member2 = children[1];
+  EXPECT_EQ(member2.GetNodeName(), "Member");
+  EXPECT_EQ(member2.GetNumberOfAttributes(), 1);
+  EXPECT_TRUE(member2.HasAttribute("key"));
+  EXPECT_EQ(member2.GetAttribute("key"), "23");
+  EXPECT_EQ(member2.GetNumberOfChildren(), 1);
+  EXPECT_TRUE(ContentEmpty(member2.GetContent()));
+  auto& mem2_children = member2.Children();
+  ASSERT_EQ(mem2_children.size(), 1);
+  // Inspect second child's Name node
+  auto mem2_name = mem2_children[0];
+  EXPECT_EQ(mem2_name.GetNodeName(), "Name");
+  EXPECT_EQ(mem2_name.GetNumberOfAttributes(), 1);
+  EXPECT_TRUE(mem2_name.HasAttribute("format"));
+  EXPECT_EQ(mem2_name.GetAttribute("format"), "prename");
+  EXPECT_EQ(mem2_name.GetNumberOfChildren(), 0);
+  EXPECT_EQ(mem2_name.GetContent(), "Anna");
+}
+
 TEST_F(TreeDataParserTest, ParseExceptions)
 {
   EXPECT_THROW(ParseXMLDoc(nullptr), ParseException);
