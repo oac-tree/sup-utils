@@ -27,6 +27,7 @@ target_sources(sup-log
 install(TARGETS sup-log EXPORT sup-utils-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES
+  base_types.h
   basic_logger.h
   default_loggers.h
   log_severity.h

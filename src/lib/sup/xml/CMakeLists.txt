@@ -33,6 +33,7 @@ target_link_libraries(sup-xml PRIVATE LibXml2::LibXml2)
 install(TARGETS sup-xml EXPORT sup-utils-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES
+  base_types.h
   exceptions.h
   tree_data_parser.h
   tree_data_serialize.h

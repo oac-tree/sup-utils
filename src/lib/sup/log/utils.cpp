@@ -21,8 +21,6 @@
 
 #include "utils.h"
 
-#include "log_severity.h"
-
 #include <iostream>
 
 #include <syslog.h>
@@ -32,9 +30,9 @@ namespace sup
 namespace log
 {
 
-void SysLog(int32_t severity, const std::string& message)
+void SysLog(int32 severity, const std::string& message)
 {
-  syslog(severity, message.c_str());
+  syslog(severity, "%s", message.c_str());
 }
 
 void StdoutLog(const std::string& message)

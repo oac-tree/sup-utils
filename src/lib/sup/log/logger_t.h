@@ -24,6 +24,7 @@
 
 #include "log_severity.h"
 #include "basic_logger.h"
+#include "base_types.h"
 
 #include <functional>
 #include <string>
@@ -45,7 +46,7 @@ namespace log
  * on the thread-safety of the logging function passed in the constructor. Note also that the
  * non-const member functions should never be called concurrently with any other member function.
  */
-template <int32_t max_enabled>
+template <int32 max_enabled>
 class LoggerT
 {
 public:
@@ -56,8 +57,8 @@ public:
    * @param source Source identifier (will be passed to the logging function).
    * @param max_severity Maximum severity to log (used during runtime filtering).
    */
-  LoggerT(std::function<void(int32_t, const std::string&, const std::string&)> log_func,
-          const std::string& source, int32_t max_severity = max_enabled);
+  LoggerT(std::function<void(int32, const std::string&, const std::string&)> log_func,
+          const std::string& source, int32 max_severity = max_enabled);
   /**
    * @brief Destructor.
    */
@@ -70,7 +71,7 @@ public:
    *
    * @return Previous maximum severity.
    */
-  int32_t SetMaxSeverity(int32_t max_severity);
+  int32 SetMaxSeverity(int32 max_severity);
 
   /**
    * @brief Change the source identifier for logging.
@@ -165,89 +166,89 @@ public:
 
 private:
   template <bool b, typename std::enable_if<b, bool>::type = true>
-  void ConditionalLog(int32_t severity, const std::string& message) const
+  void ConditionalLog(int32 severity, const std::string& message) const
   {
     m_logger_impl.LogMessage(severity, message);
   }
 
   template <bool b, typename std::enable_if<!b, bool>::type = true>
-  void ConditionalLog(int32_t, const std::string&) const
+  void ConditionalLog(int32, const std::string&) const
   {}
 
   BasicLogger m_logger_impl;
 };
 
-template <int32_t max_enabled>
+template <int32 max_enabled>
 LoggerT<max_enabled>::LoggerT(
-  std::function<void(int32_t, const std::string&, const std::string&)> log_func,
-  const std::string& source, int32_t max_severity)
+  std::function<void(int32, const std::string&, const std::string&)> log_func,
+  const std::string& source, int32 max_severity)
   : m_logger_impl(log_func, source, max_severity)
 {}
 
-template <int32_t max_enabled>
+template <int32 max_enabled>
 LoggerT<max_enabled>::~LoggerT() = default;
 
-template <int32_t max_enabled>
-int32_t LoggerT<max_enabled>::SetMaxSeverity(int32_t max_severity)
+template <int32 max_enabled>
+int32 LoggerT<max_enabled>::SetMaxSeverity(int32 max_severity)
 {
   return m_logger_impl.SetMaxSeverity(max_severity);
 }
 
-template <int32_t max_enabled>
+template <int32 max_enabled>
 std::string LoggerT<max_enabled>::SetSource(const std::string& source)
 {
   return m_logger_impl.SetSource(source);
 }
 
-template <int32_t max_enabled>
+template <int32 max_enabled>
 void LoggerT<max_enabled>::Emergency(const std::string& message) const
 {
   ConditionalLog<(max_enabled >= SUP_LOG_EMERG)>(SUP_LOG_EMERG, message);
 }
 
-template <int32_t max_enabled>
+template <int32 max_enabled>
 void LoggerT<max_enabled>::Alert(const std::string& message) const
 {
   ConditionalLog<(max_enabled >= SUP_LOG_ALERT)>(SUP_LOG_ALERT, message);
 }
 
-template <int32_t max_enabled>
+template <int32 max_enabled>
 void LoggerT<max_enabled>::Critical(const std::string& message) const
 {
   ConditionalLog<(max_enabled >= SUP_LOG_CRIT)>(SUP_LOG_CRIT, message);
 }
 
-template <int32_t max_enabled>
+template <int32 max_enabled>
 void LoggerT<max_enabled>::Error(const std::string& message) const
 {
   ConditionalLog<(max_enabled >= SUP_LOG_ERR)>(SUP_LOG_ERR, message);
 }
 
-template <int32_t max_enabled>
+template <int32 max_enabled>
 void LoggerT<max_enabled>::Warning(const std::string& message) const
 {
   ConditionalLog<(max_enabled >= SUP_LOG_WARNING)>(SUP_LOG_WARNING, message);
 }
 
-template <int32_t max_enabled>
+template <int32 max_enabled>
 void LoggerT<max_enabled>::Notice(const std::string& message) const
 {
   ConditionalLog<(max_enabled >= SUP_LOG_NOTICE)>(SUP_LOG_NOTICE, message);
 }
 
-template <int32_t max_enabled>
+template <int32 max_enabled>
 void LoggerT<max_enabled>::Info(const std::string& message) const
 {
   ConditionalLog<(max_enabled >= SUP_LOG_INFO)>(SUP_LOG_INFO, message);
 }
 
-template <int32_t max_enabled>
+template <int32 max_enabled>
 void LoggerT<max_enabled>::Debug(const std::string& message) const
 {
   ConditionalLog<(max_enabled >= SUP_LOG_DEBUG)>(SUP_LOG_DEBUG, message);
 }
 
-template <int32_t max_enabled>
+template <int32 max_enabled>
 void LoggerT<max_enabled>::Trace(const std::string& message) const
 {
   ConditionalLog<(max_enabled >= SUP_LOG_TRACE)>(SUP_LOG_TRACE, message);

@@ -22,13 +22,14 @@
 #include "command_line_utils.h"
 
 #include <sup/cli/command_line_option.h>
+#include "base_types.h"
 
 #include <algorithm>
 #include <numeric>
 
 namespace
 {
-const int32_t kDesiredOptionStringLength = 30;
+  const sup::cli::int32 kDesiredOptionStringLength = 30;
 
 /**
  * Returns value name.

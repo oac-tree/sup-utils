@@ -22,6 +22,8 @@
 #ifndef SUP_LOG_UTILS_H_
 #define SUP_LOG_UTILS_H_
 
+#include "base_types.h"
+
 #include <string>
 
 namespace sup
@@ -32,7 +34,7 @@ namespace log
 /**
  * @brief Send the given log message to the system log with the given severity level.
  */
-void SysLog(int32_t severity, const std::string& message);
+void SysLog(int32 severity, const std::string& message);
 
 /**
  * @brief Print the given log message directly to std::out.

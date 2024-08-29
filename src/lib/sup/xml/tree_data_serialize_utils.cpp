@@ -23,6 +23,7 @@
 
 #include <sup/xml/exceptions.h>
 #include <sup/xml/xml_utils.h>
+#include "base_types.h"
 
 namespace sup
 {
@@ -75,7 +76,7 @@ void SerializeUsingWriter(xmlTextWriterPtr writer, const TreeData& tree_data)
 
 void SetupWriterIndentation(xmlTextWriterPtr writer)
 {
-  const int32_t indentation_on = 1;
+  const int32 indentation_on = 1;
   (void)xmlTextWriterSetIndent(writer, indentation_on);
   (void)xmlTextWriterSetIndentString(writer, FromString(std::string("  ")));
 }
@@ -89,7 +90,7 @@ void AddTreeData(xmlTextWriterPtr writer, const TreeData& tree_data)
   }
 
   // opening element
-  int32_t rc = xmlTextWriterStartElement(writer, FromString(tree_data.GetNodeName()));
+  int32 rc = xmlTextWriterStartElement(writer, FromString(tree_data.GetNodeName()));
   if (rc < 0)
   {
     std::string message = "AddTreeData(): Error at xmlTextWriterStartElement";
@@ -129,7 +130,7 @@ void AddTreeAttributes(xmlTextWriterPtr writer, const TreeData& tree_data)
 {
   for (const auto& attr : tree_data.Attributes())
   {
-    int32_t rc = xmlTextWriterWriteAttribute(writer, FromString(attr.first), FromString(attr.second));
+    int32 rc = xmlTextWriterWriteAttribute(writer, FromString(attr.first), FromString(attr.second));
     if (rc < 0)
     {
       std::string message = "AddTreeAttributes(): Error at xmlTextWriterWriteAttribute";

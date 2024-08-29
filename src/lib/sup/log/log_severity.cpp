@@ -25,7 +25,7 @@
 
 namespace
 {
-const std::map<int32_t, std::string>& GetSeverityMap();
+  const std::map<sup::log::int32, std::string>& GetSeverityMap();
 }
 
 namespace sup
@@ -42,7 +42,7 @@ const std::string InfoString = "INFO";
 const std::string DebugString = "DEBUG";
 const std::string TraceString = "TRACE";
 
-std::string SeverityString(int32_t severity)
+std::string SeverityString(int32 severity)
 {
   const auto& sev_map = GetSeverityMap();
   auto it = sev_map.find(severity);
@@ -59,9 +59,9 @@ std::string SeverityString(int32_t severity)
 
 namespace
 {
-const std::map<int32_t, std::string>& GetSeverityMap()
+const std::map<sup::log::int32, std::string>& GetSeverityMap()
 {
-  static std::map<int32_t, std::string> severity_map = {
+  static std::map<sup::log::int32, std::string> severity_map = {
     { sup::log::SUP_LOG_EMERG, sup::log::EmergencyString},
     { sup::log::SUP_LOG_ALERT, sup::log::AlertString},
     { sup::log::SUP_LOG_CRIT, sup::log::CriticalString},

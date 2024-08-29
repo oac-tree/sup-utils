@@ -4,9 +4,9 @@
  *
  * Project       : Supervision and Automation System Utilities
  *
- * Description   : SUP logging
+ * Description   : Command line argument parsing
  *
- * Author        : Walter Van Herck (IO)
+ * Author        : Gennady Pospelov (IO)
  *
  * Copyright (c) : 2010-2023 ITER Organization,
  *                 CS 90 046
@@ -19,38 +19,17 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_LOG_LOG_SEVERITY_H_
-#define SUP_LOG_LOG_SEVERITY_H_
-
-#include "base_types.h"
-
-#include <string>
+#ifndef SUP_CLI_BASE_TYPES_H_
+#define SUP_CLI_BASE_TYPES_H_
 
 namespace sup
 {
-namespace log
+namespace cli
 {
-enum Severity : int32
-{
-  SUP_LOG_EMERG = 0,
-  SUP_LOG_ALERT,
-  SUP_LOG_CRIT,
-  SUP_LOG_ERR,
-  SUP_LOG_WARNING,
-  SUP_LOG_NOTICE,
-  SUP_LOG_INFO,
-  SUP_LOG_DEBUG,
-  SUP_LOG_TRACE,
-  NUMBER_OF_LOG_LEVELS
-};
+using int32 = signed int;
 
-/**
- * @brief Retrieve a string representation of the given severity level.
- */
-std::string SeverityString(int32 severity);
-
-}  // namespace log
+}  // namespace cli
 
 }  // namespace sup
 
-#endif  // SUP_LOG_LOG_SEVERITY_H_
+#endif  // SUP_CLI_BASE_TYPES_H_

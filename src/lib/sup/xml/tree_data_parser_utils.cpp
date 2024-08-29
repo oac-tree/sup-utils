@@ -20,7 +20,7 @@
  ******************************************************************************/
 
 #include "tree_data_parser_utils.h"
-#include "sup/codec/base_types.h"
+#include "base_types.h"
 
 #include <sup/xml/exceptions.h>
 #include <sup/xml/xml_utils.h>
@@ -38,7 +38,7 @@ struct stackData
 {
   TreeData tree;
   xmlNodePtr xml_node;
-  sup::codec::uint32 next_child_index;
+  uint32 next_child_index;
 };
 
 std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, const xmlNodePtr node);
@@ -88,7 +88,7 @@ bool addChildrenToStack(std::stack<stackData>& myStack)
   auto topStack = myStack.top();
   auto child_node = topStack.xml_node->children;
   auto next_child_index = &myStack.top().next_child_index;
-  sup::codec::uint32 child_index = 0;
+  uint32 child_index = 0;
   while (child_node != nullptr)
   {
     if ((child_index >= *next_child_index) && (child_node->type == XML_ELEMENT_NODE))

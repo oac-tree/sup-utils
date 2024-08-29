@@ -31,6 +31,7 @@ target_sources(${library_name} PRIVATE
 install(TARGETS ${library_name} EXPORT sup-utils-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES
+  base_types.h
   command_line_option.h
   command_line_parser.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/cli

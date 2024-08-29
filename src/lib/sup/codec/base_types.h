@@ -27,6 +27,7 @@ namespace sup
 namespace codec
 {
 using uint8 = unsigned char;
+using int32 = signed int;
 using uint32 = unsigned int;
 
 }  // namespace codec

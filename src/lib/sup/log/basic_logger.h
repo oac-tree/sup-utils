@@ -22,6 +22,8 @@
 #ifndef SUP_LOG_BASIC_LOGGER_H_
 #define SUP_LOG_BASIC_LOGGER_H_
 
+#include <sup/log/base_types.h>
+
 #include <string>
 #include <functional>
 
@@ -48,8 +50,8 @@ public:
    * @param source Source identifier (will be passed to the logging function).
    * @param max_severity Maximum severity to log (used during runtime filtering).
    */
-  BasicLogger(std::function<void(int32_t, const std::string&, const std::string&)> log_func,
-              const std::string& source, int32_t max_severity);
+  BasicLogger(std::function<void(int32, const std::string&, const std::string&)> log_func,
+              const std::string& source, int32 max_severity);
   /**
    * @brief Destructor.
    */
@@ -62,7 +64,7 @@ public:
    *
    * @return Previous maximum severity.
    */
-  int32_t SetMaxSeverity(int32_t max_severity);
+  int32 SetMaxSeverity(int32 max_severity);
 
   /**
    * @brief Change the source identifier for logging.
@@ -82,12 +84,12 @@ public:
    * @note The log message may be discarded when its severity level is higher than the current
    * maximum severity level.
    */
-  void LogMessage(int32_t severity, const std::string& message) const;
+  void LogMessage(int32 severity, const std::string& message) const;
 
 private:
-  std::function<void(int32_t, const std::string&, const std::string&)> m_log_function;
+  std::function<void(int32, const std::string&, const std::string&)> m_log_function;
   std::string m_source;
-  int32_t m_max_severity;
+  int32 m_max_severity;
 };
 
 }  // namespace log

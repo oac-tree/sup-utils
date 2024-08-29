@@ -49,7 +49,8 @@ std::string Base64Encode(const std::vector<uint8>& data)
 {
   std::string result(modp_b64_encode_len(data.size()), '\0');
   // Ignore return value, since there are no invalid inputs
-  (void)modp_b64_encode(const_cast<char*>(result.data()), GetCharBuffer(data), static_cast<int32_t>(data.size()));
+  (void)modp_b64_encode(const_cast<char*>(result.data()), GetCharBuffer(data),
+                        static_cast<int>(data.size()));
   // Remove null terminator
   result.pop_back();
   return result;
@@ -58,7 +59,7 @@ std::string Base64Encode(const std::vector<uint8>& data)
 std::vector<uint8> Base64Decode(const std::string& str)
 {
   std::vector<uint8> result(modp_b64_decode_len(str.size()), 0);
-  int32_t d = modp_b64_decode(GetCharBuffer(result), str.data(), str.size());
+  int32 d = modp_b64_decode(GetCharBuffer(result), str.data(), str.size());
   if (d < 0)
   {
     throw std::runtime_error("sup::codec::Base64Decode(): failure to decode");
