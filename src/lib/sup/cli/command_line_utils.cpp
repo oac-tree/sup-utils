@@ -80,7 +80,7 @@ std::string GetOptionNameString(const CommandLineOption &option)
     return {};
   }
 
-  auto fold = [](std::string result, const std::string& name) { return std::move(result) + ", " + name; };
+  auto fold = [](std::string result, const std::string& name) { return result + ", " + name; };
   std::string result = std::accumulate(std::next(names.begin()), names.end(), names[0], fold);
 
   if (option.IsParameter())

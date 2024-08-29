@@ -26,7 +26,7 @@ namespace sup
 namespace xml
 {
 
-MessageException::MessageException(const std::string& message)
+MessageException::MessageException(std::string message)
   : std::exception(), m_message{std::move(message)}
 {}
 
@@ -35,19 +35,19 @@ const char* MessageException::what() const noexcept
   return m_message.c_str();
 }
 
-InvalidOperationException::InvalidOperationException(const std::string& message)
+InvalidOperationException::InvalidOperationException(std::string message)
   : MessageException{message}
 {}
 
-ValidationException::ValidationException(const std::string& message)
+ValidationException::ValidationException(std::string message)
   : MessageException{message}
 {}
 
-ParseException::ParseException(const std::string& message)
+ParseException::ParseException(std::string message)
   : MessageException{message}
 {}
 
-SerializeException::SerializeException(const std::string& message)
+SerializeException::SerializeException(std::string message)
   : MessageException{message}
 {}
 

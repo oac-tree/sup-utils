@@ -23,7 +23,6 @@
 
 #include "argh.h"
 #include "command_line_utils.h"
-#include <sup/cli/command_line_option.h>
 
 #include <algorithm>
 #include <memory>
@@ -121,7 +120,7 @@ struct CommandLineParser::CommandLineParserImpl
   bool IsValidParsing()
   {
     bool result{true};
-    for (const std::unique_ptr<CommandLineOption> &option : m_options)
+    for (auto& option : m_options)
     {
       result &= (IsParameterArgumentsProvided(*option) && IsValidRequiredOption(*option));
     }
@@ -158,7 +157,7 @@ void CommandLineParser::AddPositionalOption(const std::string &option_name,
 
 CommandLineOption *CommandLineParser::GetOption(const std::string &option_name) const
 {
-  for (const std::unique_ptr<CommandLineOption> &option : p_impl->m_options)
+  for (auto& option : p_impl->m_options)
   {
     if (Contains(option->GetOptionNames(), option_name))
     {
@@ -176,7 +175,7 @@ bool CommandLineParser::Parse(int32 argc, const char *const argv[])
     // be registered before parsing.
     if (option->IsParameter())
     {
-      for (const std::string &option_name : option->GetOptionNames())
+      for (const auto& option_name : option->GetOptionNames())
       {
         p_impl->m_parser.add_param(option_name);
       }
@@ -234,7 +233,7 @@ std::stringstream CommandLineParser::GetValueStream(const std::string &option_na
 
   if (auto option = GetOption(option_name))
   {
-    for (const std::string &alias_name : option->GetOptionNames())
+    for (const auto& alias_name : option->GetOptionNames())
     {
       if ((p_impl->m_parser(alias_name) >> parse_result))
       {

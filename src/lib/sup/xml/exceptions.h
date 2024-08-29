@@ -52,7 +52,7 @@ T* AssertNoNullptr(T* ptr, E exception)
 class MessageException : public std::exception
 {
 public:
-  explicit MessageException(const std::string& message);
+  explicit MessageException(std::string message);
   const char* what() const noexcept override;
 private:
   std::string m_message;
@@ -64,7 +64,7 @@ private:
 class InvalidOperationException : public MessageException
 {
 public:
-  explicit InvalidOperationException(const std::string& message);
+  explicit InvalidOperationException(std::string message);
 };
 
 /**
@@ -73,7 +73,7 @@ public:
 class ValidationException : public MessageException
 {
 public:
-  explicit ValidationException(const std::string& message);
+  explicit ValidationException(std::string message);
 };
 
 /**
@@ -82,7 +82,7 @@ public:
 class ParseException : public MessageException
 {
 public:
-  explicit ParseException(const std::string& message);
+  explicit ParseException(std::string message);
 };
 
 /**
@@ -91,7 +91,7 @@ public:
 class SerializeException : public MessageException
 {
 public:
-  explicit SerializeException(const std::string& message);
+  explicit SerializeException(std::string message);
 };
 
 }  // namespace xml

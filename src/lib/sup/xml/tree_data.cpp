@@ -51,18 +51,18 @@ TreeData::TreeData(TreeData&& other) noexcept = default;
 TreeData& TreeData::operator=(const TreeData& other) & = default;
 TreeData& TreeData::operator=(TreeData&& other) & noexcept = default;
 
-bool operator==(const TreeData& rhs, const TreeData& lhs)
+bool TreeData::operator==(const TreeData& other) const
 {
-  bool result = (rhs.m_node_name == lhs.m_node_name)
-                && (rhs.m_content == lhs.m_content)
-                && EqualAttributes(rhs.m_attributes, lhs.m_attributes)
-                && (rhs.m_children == lhs.m_children);
+  bool result = (m_node_name == other.m_node_name)
+                && (m_content == other.m_content)
+                && (EqualAttributes(m_attributes, other.m_attributes))
+                && (m_children == other.m_children);
   return result;
 }
 
-bool operator!=(const TreeData& rhs, const TreeData& lhs)
+bool TreeData::operator!=(const TreeData& other) const
 {
-  return !operator==(rhs, lhs);
+  return !this->operator==(other);
 }
 
 std::string TreeData::GetNodeName() const
