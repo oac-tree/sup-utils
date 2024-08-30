@@ -77,7 +77,7 @@ TEST_F(TreeDataSerializeTest, ToFile)
 {
   // Serialize to XML file
   std::string filename = "memberlist_test";
-  sup::unit_test_helper::TemporaryTestFile(filename, "");
+  sup::unit_test_helper::TemporaryTestFile tmp_file(filename, "");
   EXPECT_NO_THROW(TreeDataToFile(filename, m_tree));
 
   // Read back from file
