@@ -34,7 +34,7 @@ namespace
 {
 using namespace sup::xml;
 
-struct stackData
+struct StackNode
 {
   TreeData tree;
   xmlNodePtr xml_node;
@@ -43,11 +43,13 @@ struct stackData
 
 std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, const xmlNodePtr node);
 
-bool addChildrenToStack(std::stack<stackData>& myStack);
+TreeData CreateTreeData(xmlDocPtr doc, xmlNodePtr node);
 
-void AddXMLAttributes(TreeData* tree, const xmlNodePtr node);
+xmlNodePtr NextChild(xmlNodePtr parent, uint32& next_child_idx);
 
-void AddXMLContent(TreeData* tree, xmlDocPtr doc, const xmlNodePtr node);
+void AddXMLAttributes(TreeData& tree, const xmlNodePtr node);
+
+void AddXMLContent(TreeData& tree, xmlDocPtr doc, const xmlNodePtr node);
 
 }  // unnamed namespace
 
@@ -82,54 +84,31 @@ std::unique_ptr<TreeData> ParseXMLDoc(xmlDocPtr doc)
 
 namespace
 {
-
-bool addChildrenToStack(std::stack<stackData>& myStack)
-{
-  auto topStack = myStack.top();
-  auto child_node = topStack.xml_node->children;
-  auto next_child_index = &myStack.top().next_child_index;
-  uint32 child_index = 0;
-  while (child_node != nullptr)
-  {
-    if ((child_index >= *next_child_index) && (child_node->type == XML_ELEMENT_NODE))
-    {
-      *next_child_index = ++child_index;
-      myStack.push({TreeData(ToString(child_node->name)), child_node, 0});
-      return true;
-    }
-    child_node = child_node->next;
-    ++child_index;
-  }
-  return false;
-}
-
 std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, xmlNodePtr node)
 {
-  std::stack<stackData> myStack;
+  std::stack<StackNode> stack;
+  stack.push({CreateTreeData(doc, node), node, 0});
 
-  myStack.push({TreeData(ToString(node->name)), node, 0});
-
-  while (!myStack.empty())  // process each node
+  while (!stack.empty())  // process each node
   {
-    if (!addChildrenToStack(myStack))
+    auto& top_node = stack.top();
+    auto next_child = NextChild(top_node.xml_node, top_node.next_child_index);
+    if (next_child != nullptr)
     {
-      auto stack_top = myStack.top();
-      myStack.pop();
-
-      auto current_tree = &stack_top.tree;
-      auto current_node = stack_top.xml_node;
-
-      AddXMLAttributes(current_tree, current_node);
-      AddXMLContent(current_tree, doc, current_node);
-
-      if (!myStack.empty())
+      stack.push({CreateTreeData(doc, next_child), next_child, 0});
+    }
+    else
+    {
+      auto current_tree = top_node.tree;  // Creates a copy
+      stack.pop();
+      if (!stack.empty())
       {
-        auto parent_tree = &myStack.top().tree;
-        parent_tree->AddChild(*current_tree);
+        auto& parent = stack.top();
+        parent.tree.AddChild(current_tree);
       }
       else
       {
-        std::unique_ptr<TreeData> result(new TreeData(*current_tree));
+        std::unique_ptr<TreeData> result(new TreeData(current_tree));
         return result;
       }
     }
@@ -137,7 +116,32 @@ std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, xmlNodePtr node)
   return nullptr;
 }
 
-void AddXMLAttributes(TreeData* tree, const xmlNodePtr node)
+TreeData CreateTreeData(xmlDocPtr doc, xmlNodePtr node)
+{
+  TreeData result{ToString(node->name)};
+  AddXMLAttributes(result, node);
+  AddXMLContent(result, doc, node);
+  return result;
+}
+
+xmlNodePtr NextChild(xmlNodePtr parent, uint32& next_child_idx)
+{
+  auto child = parent->children;
+  uint32 child_idx = 0;
+  while (child != nullptr)
+  {
+    if ((child_idx >= next_child_idx) && (child->type == XML_ELEMENT_NODE))
+    {
+      next_child_idx = ++child_idx;
+      return child;
+    }
+    child = child->next;
+    ++child_idx;
+  }
+  return nullptr;
+}
+
+void AddXMLAttributes(TreeData& tree, const xmlNodePtr node)
 {
   auto attribute = node->properties;
   while (attribute != nullptr)
@@ -146,12 +150,12 @@ void AddXMLAttributes(TreeData* tree, const xmlNodePtr node)
     auto xml_val = xmlGetProp(node, attribute->name);
     auto value = ToString(xml_val);
     xmlFree(xml_val);
-    tree->AddAttribute(name, value);
+    tree.AddAttribute(name, value);
     attribute = attribute->next;
   }
 }
 
-void AddXMLContent(TreeData* tree, xmlDocPtr doc, const xmlNodePtr node)
+void AddXMLContent(TreeData& tree, xmlDocPtr doc, const xmlNodePtr node)
 {
   auto child_node = node->children;
   while (child_node != nullptr)
@@ -161,7 +165,7 @@ void AddXMLContent(TreeData* tree, xmlDocPtr doc, const xmlNodePtr node)
       auto xml_content = xmlNodeListGetString(doc, child_node, 1);
       auto content = ToString(xml_content);
       xmlFree(xml_content);
-      tree->SetContent(content);
+      tree.SetContent(content);
     }
     else
     {
