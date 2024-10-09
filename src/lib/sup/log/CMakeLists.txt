@@ -1,8 +1,6 @@
 add_library(sup-log SHARED "")
 add_library(sup-utils::sup-log ALIAS sup-log) # alias for build-tree usage
 
-target_compile_features(sup-log PRIVATE cxx_std_11)
-
 set_target_properties(sup-log PROPERTIES
   EXPORT_NAME sup-log
   SOVERSION ${LIBSOVERSION}

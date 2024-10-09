@@ -1,7 +1,5 @@
 add_executable(unit-tests)
 
-target_compile_features(unit-tests PRIVATE cxx_std_11)
-
 target_sources(unit-tests PRIVATE
   base64_tests.cpp
   basic_logger_tests.cpp

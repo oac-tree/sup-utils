@@ -1,8 +1,6 @@
 add_library(sup-codec SHARED "")
 add_library(sup-utils::sup-codec ALIAS sup-codec) # alias for build-tree usage
 
-target_compile_features(sup-codec PRIVATE cxx_std_11)
-
 set_target_properties(sup-codec PROPERTIES
   EXPORT_NAME sup-codec
   SOVERSION ${LIBSOVERSION}

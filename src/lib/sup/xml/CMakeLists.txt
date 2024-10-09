@@ -1,8 +1,6 @@
 add_library(sup-xml SHARED "")
 add_library(sup-utils::sup-xml ALIAS sup-xml) # alias for build-tree usage
 
-target_compile_features(sup-xml PRIVATE cxx_std_11)
-
 set_target_properties(sup-xml PROPERTIES
   EXPORT_NAME sup-xml
   SOVERSION ${LIBSOVERSION}
