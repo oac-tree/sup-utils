@@ -68,8 +68,19 @@ std::string MergeWithNewLine(std::initializer_list<std::string> strings)
 std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLineOption *> &options)
 {
   (void)options;
+  std::string result = "[options]";
+  for (const auto* option : options)
+  {
+    if (option->IsPositional())
+    {
+      for (const auto& name : option->GetOptionNames())
+      {
+        result += " " + name;
+      }
+    }
+  }
   // currently returns simplified representation of all options
-  return {"[options]"};
+  return result;
 }
 
 std::string GetOptionNameString(const CommandLineOption &option)

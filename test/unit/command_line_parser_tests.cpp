@@ -526,7 +526,7 @@ TEST_F(CommandLineParserTests, GetUsageStringForPositionalOptions)
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
-  std::string expected(R"RAW(Usage: progname [options]
+  std::string expected(R"RAW(Usage: progname [options] <target>
 
 Options:
 
