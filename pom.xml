@@ -43,7 +43,7 @@
         <!-- sonar scan / coverage configuration -->
         <sonar.language>cpp</sonar.language>
         <sonar.sources.cpp>src</sonar.sources.cpp>
-        <sonar.exclusions>src/lib/sup/cli/argh.h</sonar.exclusions>
+        <sonar.exclusions>src/lib/sup/cli/argh.h, src/lib/sup/codec/modp_b64/**</sonar.exclusions>
     </properties>
 
     <!-- Parent pom.xml -->

@@ -59,7 +59,7 @@ std::string Base64Encode(const std::vector<uint8>& data)
 std::vector<uint8> Base64Decode(const std::string& str)
 {
   std::vector<uint8> result(modp_b64_decode_len(str.size()), 0);
-  int32 d = modp_b64_decode(GetCharBuffer(result), str.data(), str.size());
+  int32 d = modp_b64_decode(GetCharBuffer(result), str.data(), static_cast<int>(str.size()));
   if (d < 0)
   {
     throw std::runtime_error("sup::codec::Base64Decode(): failure to decode");
