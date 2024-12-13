@@ -118,7 +118,7 @@ std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, xmlNodePtr node)
 
 TreeData CreateTreeData(xmlDocPtr doc, xmlNodePtr node)
 {
-  TreeData result{ToString(node->name)};
+  auto result = TreeData{ToString(node->name)};
   AddXMLAttributes(result, node);
   AddXMLContent(result, doc, node);
   return result;

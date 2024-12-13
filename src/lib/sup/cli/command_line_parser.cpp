@@ -53,29 +53,29 @@ struct CommandLineParser::CommandLineParserImpl
 
   //! Returns true if parameter options with given name was set in command line and parameter can be
   //! parsed.
-  bool IsParameterSet(const std::string &option_name);
+  bool IsParameterSet(const std::string &option_name) const;
 
   //! Returns true if flag with given name was set in comand line.
-  bool IsFlagSet(const std::string &option_name);
+  bool IsFlagSet(const std::string &option_name) const;
 
   //! Returns true if option is properly set.
-  bool IsFlagOptionSet(const CommandLineOption &option);
+  bool IsFlagOptionSet(const CommandLineOption &option) const;
 
   //! Returns true if option is properly set.
-  bool IsParameterOptionSet(const CommandLineOption &option);
+  bool IsParameterOptionSet(const CommandLineOption &option) const;
 
   //! Returns true if option is properly set.
-  bool IsSet(const CommandLineOption &option);
+  bool IsSet(const CommandLineOption &option) const;
 
   std::vector<const CommandLineOption *> GetOptions();
 
   //! Returns true if option is required and valid.
-  bool IsValidRequiredOption(const CommandLineOption &option);
+  bool IsValidRequiredOption(const CommandLineOption &option) const;
 
   //! Returns true if necessary parameter arguments have been provided.
-  bool IsParameterArgumentsProvided(const CommandLineOption &option);
+  bool IsParameterArgumentsProvided(const CommandLineOption &option) const;
 
-  bool IsValidParsing();
+  bool IsValidParsing() const;
 };
 
 CommandLineParser::CommandLineParser() : p_impl(new CommandLineParserImpl) {}
@@ -212,25 +212,27 @@ CommandLineParser::CommandLineParserImpl::CommandLineParserImpl()
   , m_footer()
 {}
 
-bool CommandLineParser::CommandLineParserImpl::IsParameterSet(const std::string &option_name)
+bool CommandLineParser::CommandLineParserImpl::IsParameterSet(const std::string &option_name) const
 {
   std::string result;
   return static_cast<bool>(m_parser(option_name) >> result);
 }
 
-bool CommandLineParser::CommandLineParserImpl::IsFlagSet(const std::string &option_name)
+bool CommandLineParser::CommandLineParserImpl::IsFlagSet(const std::string &option_name) const
 {
   return m_parser[option_name];
 }
 
-bool CommandLineParser::CommandLineParserImpl::IsFlagOptionSet(const CommandLineOption &option)
+bool CommandLineParser::CommandLineParserImpl::IsFlagOptionSet(
+  const CommandLineOption &option) const
 {
   auto names = option.GetOptionNames();
   auto predicate = [this](const std::string &str) { return IsFlagSet(str); };
   return std::find_if(names.begin(), names.end(), predicate) != names.end();
 }
 
-bool CommandLineParser::CommandLineParserImpl::IsParameterOptionSet(const CommandLineOption &option)
+bool CommandLineParser::CommandLineParserImpl::IsParameterOptionSet(
+  const CommandLineOption &option) const
 {
   if (IsFlagOptionSet(option) && !option.GetDefaultValue().empty())
   {
@@ -241,7 +243,7 @@ bool CommandLineParser::CommandLineParserImpl::IsParameterOptionSet(const Comman
   return std::find_if(names.begin(), names.end(), predicate) != names.end();
 }
 
-bool CommandLineParser::CommandLineParserImpl::IsSet(const CommandLineOption &option)
+bool CommandLineParser::CommandLineParserImpl::IsSet(const CommandLineOption &option) const
 {
   return option.IsParameter() ? IsParameterOptionSet(option) : IsFlagOptionSet(option);
 }
@@ -255,12 +257,14 @@ std::vector<const CommandLineOption *> CommandLineParser::CommandLineParserImpl:
   return result;
 }
 
-bool CommandLineParser::CommandLineParserImpl::IsValidRequiredOption(const CommandLineOption &option)
+bool CommandLineParser::CommandLineParserImpl::IsValidRequiredOption(
+  const CommandLineOption &option) const
 {
   return option.IsRequired() ? IsSet(option) : true;
 }
 
-bool CommandLineParser::CommandLineParserImpl::IsParameterArgumentsProvided(const CommandLineOption &option)
+bool CommandLineParser::CommandLineParserImpl::IsParameterArgumentsProvided(
+  const CommandLineOption &option) const
 {
   if (!option.IsParameter())
   {
@@ -273,7 +277,7 @@ bool CommandLineParser::CommandLineParserImpl::IsParameterArgumentsProvided(cons
   return option.GetDefaultValue().empty() ? !IsFlagOptionSet(option) : true;
 }
 
-bool CommandLineParser::CommandLineParserImpl::IsValidParsing()
+bool CommandLineParser::CommandLineParserImpl::IsValidParsing() const
 {
   bool result{true};
   for (auto& option : m_options)
