@@ -33,7 +33,8 @@ namespace log
   , m_max_severity{max_severity}
 {}
 
-BasicLogger::~BasicLogger() = default;
+BasicLogger::~BasicLogger()
+{}
 
 BasicLogger::BasicLogger(const BasicLogger& other)
   : m_log_function{other.m_log_function}
@@ -43,9 +44,12 @@ BasicLogger::BasicLogger(const BasicLogger& other)
 
 BasicLogger& BasicLogger::operator=(const BasicLogger& other)
 {
-  m_log_function = other.m_log_function;
-  m_source = other.m_source;
-  m_max_severity = other.m_max_severity;
+  if (this != std::addressof(other))
+  {
+    m_log_function = other.m_log_function;
+    m_source = other.m_source;
+    m_max_severity = other.m_max_severity;
+  }
   return *this;
 }
 

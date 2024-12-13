@@ -113,7 +113,7 @@ public:
    * @brief Parses command line arguments.
    * @return True in the case of success.
    */
-  bool Parse(int32 argc, const char *const argv[]);
+  bool Parse(int32 argc, const char* const* argv);
 
   /**
    * @brief Checks whether option_name was passed to the application.

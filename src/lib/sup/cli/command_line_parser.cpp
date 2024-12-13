@@ -114,7 +114,7 @@ CommandLineOption *CommandLineParser::GetOption(const std::string &option_name) 
   return nullptr;
 }
 
-bool CommandLineParser::Parse(int32 argc, const char *const argv[])
+bool CommandLineParser::Parse(int32 argc, const char* const* argv)
 {
   for (auto &option : p_impl->m_options)
   {
