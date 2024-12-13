@@ -43,7 +43,6 @@
         <!-- sonar scan / coverage configuration -->
         <sonar.language>cpp</sonar.language>
         <sonar.sources.cpp>src</sonar.sources.cpp>
-        <sonar.tests.cpp>test</sonar.tests.cpp>
         <sonar.exclusions>src/lib/sup/cli/argh.h</sonar.exclusions>
     </properties>
 
@@ -63,15 +62,6 @@
             <email>walter.vanherck@iter.org</email>
             <roles>
                 <role>unit owner</role>
-                <role>developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>gracasr</id>
-            <name>Rafael Silva</name>
-            <organization>CSW</organization>
-            <email>rg-silva@criticalsoftware.com</email>
-            <roles>
                 <role>developer</role>
             </roles>
         </developer>
