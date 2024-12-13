@@ -214,8 +214,8 @@ CommandLineParser::CommandLineParserImpl::CommandLineParserImpl()
 
 bool CommandLineParser::CommandLineParserImpl::IsParameterSet(const std::string &option_name) const
 {
-  std::string result;
-  return static_cast<bool>(m_parser(option_name) >> result);
+  std::string result = m_parser(option_name).str();
+  return !result.empty();
 }
 
 bool CommandLineParser::CommandLineParserImpl::IsFlagSet(const std::string &option_name) const
