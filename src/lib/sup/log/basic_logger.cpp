@@ -35,6 +35,11 @@ namespace log
 
 BasicLogger::~BasicLogger() = default;
 
+BasicLogger::BasicLogger(const BasicLogger&) = default;
+BasicLogger& BasicLogger::operator=(const BasicLogger&) = default;
+BasicLogger::BasicLogger(BasicLogger&&) = default;
+BasicLogger& BasicLogger::operator=(BasicLogger&&) = default;
+
 int32 BasicLogger::SetMaxSeverity(int32 max_severity)
 {
   auto current_max_severity = m_max_severity;
