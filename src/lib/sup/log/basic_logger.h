@@ -60,8 +60,6 @@ public:
   // Copy/move
   BasicLogger(const BasicLogger& other);
   BasicLogger& operator=(const BasicLogger& other);
-  BasicLogger(BasicLogger&& other);
-  BasicLogger& operator=(BasicLogger&& other);
 
   /**
    * @brief Change the maximum severity for filtering.
