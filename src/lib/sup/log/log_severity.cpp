@@ -61,7 +61,7 @@ namespace
 {
 const std::map<sup::log::int32, std::string>& GetSeverityMap()
 {
-  static std::map<sup::log::int32, std::string> severity_map = {
+  static const std::map<sup::log::int32, std::string> severity_map = {
     { sup::log::SUP_LOG_EMERG, sup::log::EmergencyString},
     { sup::log::SUP_LOG_ALERT, sup::log::AlertString},
     { sup::log::SUP_LOG_CRIT, sup::log::CriticalString},
