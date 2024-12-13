@@ -57,6 +57,12 @@ public:
    */
   ~BasicLogger();
 
+  // Copy/move
+  BasicLogger(const BasicLogger&) = default;
+  BasicLogger& operator=(const BasicLogger&) = default;
+  BasicLogger(BasicLogger&&) = default;
+  BasicLogger& operator=(BasicLogger&&) = default;
+
   /**
    * @brief Change the maximum severity for filtering.
    *
