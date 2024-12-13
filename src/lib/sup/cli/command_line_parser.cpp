@@ -279,12 +279,14 @@ bool CommandLineParser::CommandLineParserImpl::IsParameterArgumentsProvided(
 
 bool CommandLineParser::CommandLineParserImpl::IsValidParsing() const
 {
-  bool result{true};
   for (auto& option : m_options)
   {
-    result &= (IsParameterArgumentsProvided(*option) && IsValidRequiredOption(*option));
+    if ((!IsParameterArgumentsProvided(*option)) || (!IsValidRequiredOption(*option)))
+    {
+      return false;
+    }
   }
-  return result;
+  return true;
 }
 
 }  // namespace cli
