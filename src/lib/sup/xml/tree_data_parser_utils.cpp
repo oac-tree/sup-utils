@@ -41,16 +41,6 @@ struct StackNode
   uint32 next_child_index;
 };
 
-std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, const xmlNodePtr node);
-
-TreeData CreateTreeData(xmlDocPtr doc, xmlNodePtr node);
-
-xmlNodePtr NextChild(xmlNodePtr parent, uint32& next_child_idx);
-
-void AddXMLAttributes(TreeData& tree, const xmlNodePtr node);
-
-void AddXMLContent(TreeData& tree, xmlDocPtr doc, const xmlNodePtr node);
-
 }  // unnamed namespace
 
 namespace sup
@@ -78,12 +68,6 @@ std::unique_ptr<TreeData> ParseXMLDoc(xmlDocPtr doc)
   return data_tree;
 }
 
-}  // namespace xml
-
-}  // namespace sup
-
-namespace
-{
 std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, xmlNodePtr node)
 {
   std::stack<StackNode> stack;
@@ -175,4 +159,6 @@ void AddXMLContent(TreeData& tree, xmlDocPtr doc, const xmlNodePtr node)
   }
 }
 
-}  // unnamed namespace
+}  // namespace xml
+
+}  // namespace sup
