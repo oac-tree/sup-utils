@@ -59,7 +59,9 @@ public:
 
   // Copy/move
   BasicLogger(const BasicLogger& other);
-  BasicLogger& operator=(const BasicLogger& other);
+  BasicLogger& operator=(const BasicLogger& other) &;
+  BasicLogger(BasicLogger&& other);
+  BasicLogger& operator=(BasicLogger&& other) &;
 
   /**
    * @brief Change the maximum severity for filtering.
@@ -91,6 +93,7 @@ public:
   void LogMessage(int32 severity, const std::string& message) const;
 
 private:
+  void Swap(BasicLogger& other);
   std::function<void(int32, const std::string&, const std::string&)> m_log_function;
   std::string m_source;
   int32 m_max_severity;
