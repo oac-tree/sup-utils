@@ -37,21 +37,11 @@ BasicLogger::~BasicLogger() = default;
 
 BasicLogger::BasicLogger(const BasicLogger& other) = default;
 
-BasicLogger& BasicLogger::operator=(const BasicLogger& other) &
-{
-  BasicLogger tmp{other};
-  Swap(tmp);
-  return *this;
-}
+BasicLogger& BasicLogger::operator=(const BasicLogger& other) & = default;
 
-BasicLogger::BasicLogger(BasicLogger&&) = default;
+BasicLogger::BasicLogger(BasicLogger&&) noexcept = default;
 
-BasicLogger& BasicLogger::operator=(BasicLogger&& other) &
-{
-  BasicLogger tmp{std::move(other)};
-  Swap(tmp);
-  return *this;
-}
+BasicLogger& BasicLogger::operator=(BasicLogger&& other) & noexcept = default;
 
 int32 BasicLogger::SetMaxSeverity(int32 max_severity)
 {
@@ -74,13 +64,6 @@ void BasicLogger::LogMessage(int32 severity, const std::string& message) const
     return;
   }
   m_log_function(severity, m_source, message);
-}
-
-void BasicLogger::Swap(BasicLogger& other)
-{
-  std::swap(m_log_function, other.m_log_function);
-  std::swap(m_source, other.m_source);
-  std::swap(m_max_severity, other.m_max_severity);
 }
 
 }  // namespace log
