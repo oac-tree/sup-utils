@@ -78,14 +78,14 @@ struct CommandLineParser::CommandLineParserImpl
   bool IsValidParsing() const;
 };
 
-CommandLineParser::CommandLineParser() : p_impl(new CommandLineParserImpl) {}
+CommandLineParser::CommandLineParser() : p_impl(std::make_unique<CommandLineParserImpl>()) {}
 
 CommandLineParser::~CommandLineParser() = default;
 
 CommandLineOption &CommandLineParser::AddOption(const std::vector<std::string> &option_names,
                                                 const std::string &description)
 {
-  p_impl->m_options.emplace_back(new CommandLineOption(option_names));
+  p_impl->m_options.emplace_back(std::make_unique<CommandLineOption>(option_names));
   auto &result = *p_impl->m_options.back();
   (void)result.SetDescription(description);
   return result;

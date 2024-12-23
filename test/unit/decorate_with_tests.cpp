@@ -80,7 +80,7 @@ class DecorateWithTest : public ::testing::Test
 protected:
   DecorateWithTest() {}
   ~DecorateWithTest() = default;
-  std::unique_ptr<TestInterface> mock_interface{new MockInterface()};
+  std::unique_ptr<TestInterface> mock_interface = std::make_unique<MockInterface>();
   std::string name{"test"};
   uint32_t value{1};
 };
@@ -131,7 +131,7 @@ TEST_F(DecorateWithTest, Pass_Mock_And_Test_Decorator_Destructors_Are_Called)
 
   {
     InSequence seq;
-    std::unique_ptr<TestInterface> _mock_interface{new MockInterface()};
+    std::unique_ptr<TestInterface> _mock_interface = std::make_unique<MockInterface>();
     auto mock_p = _mock_interface.get();
     std::unique_ptr<TestInterface> _test_decorator =
         DecorateWith<TestDecorator>(std::move(_mock_interface));

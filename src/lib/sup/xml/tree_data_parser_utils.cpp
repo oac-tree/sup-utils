@@ -92,8 +92,7 @@ std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, xmlNodePtr node)
       }
       else
       {
-        std::unique_ptr<TreeData> result(new TreeData(current_tree));
-        return result;
+        return std::make_unique<TreeData>(current_tree);
       }
     }
   }
