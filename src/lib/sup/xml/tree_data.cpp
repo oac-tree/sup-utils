@@ -114,7 +114,7 @@ void TreeData::AddAttribute(const std::string& name, const std::string& value)
       name + "] already exists";
     throw InvalidOperationException(message);
   }
-  m_attributes.emplace_back(name, value);
+  (void)m_attributes.emplace_back(name, value);
 }
 
 size_t TreeData::GetNumberOfChildren() const

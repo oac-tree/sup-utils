@@ -85,7 +85,7 @@ CommandLineParser::~CommandLineParser() = default;
 CommandLineOption &CommandLineParser::AddOption(const std::vector<std::string> &option_names,
                                                 const std::string &description)
 {
-  p_impl->m_options.emplace_back(std::make_unique<CommandLineOption>(option_names));
+  (void)p_impl->m_options.emplace_back(std::make_unique<CommandLineOption>(option_names));
   auto &result = *p_impl->m_options.back();
   (void)result.SetDescription(description);
   return result;
