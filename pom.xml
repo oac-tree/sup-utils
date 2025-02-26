@@ -26,7 +26,7 @@
     <artifactId>sup-utils</artifactId>
     <packaging>codac</packaging>
     <!-- See ChangeLog file for details -->
-    <version>1.5.0</version>
+    <version>1.6.0</version>
     <name>SUP utilities</name>
     <description>Utility libraries for the Supervision and Automation System.</description>
     <url>http://www.iter.org/</url>
