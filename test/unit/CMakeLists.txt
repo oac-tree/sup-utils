@@ -1,6 +1,8 @@
-add_executable(unit-tests)
+add_executable(sup-utils-unit-tests)
 
-target_sources(unit-tests PRIVATE
+set_target_properties(sup-utils-unit-tests PROPERTIES OUTPUT_NAME "unit-tests")
+
+target_sources(sup-utils-unit-tests PRIVATE
   base64_tests.cpp
   basic_logger_tests.cpp
   command_line_option_tests.cpp
@@ -18,7 +20,7 @@ target_sources(unit-tests PRIVATE
   xml_exception_tests.cpp
 )
 
-target_link_libraries(unit-tests
+target_link_libraries(sup-utils-unit-tests
   PRIVATE
   GTest::GTest
   GTest::Main
@@ -30,6 +32,6 @@ target_link_libraries(unit-tests
   LibXml2::LibXml2
 )
 
-set_target_properties(unit-tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TEST_OUTPUT_DIRECTORY})
+set_target_properties(sup-utils-unit-tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TEST_OUTPUT_DIRECTORY})
 
-gtest_discover_tests(unit-tests)
+gtest_discover_tests(sup-utils-unit-tests)
