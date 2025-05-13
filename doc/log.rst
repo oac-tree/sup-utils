@@ -1,6 +1,6 @@
-===================
- Logging Utilities
-===================
+=================
+Logging Utilities
+=================
 
 The ``sup/log`` package provides a flexible and efficient logging framework.
 
@@ -15,8 +15,7 @@ The ``sup/log`` package provides a flexible and efficient logging framework.
   1. ``LoggerT``: A templated logger class with compile-time severity filtering.
   2. ``BasicLogger``: Encapsulates basic logging functionality.
   3. ``DefaultLogger``: A logger with default configurations for standard output and system logs.
-  4. ``Log Severity Levels``:
-     - ``SUP_LOG_EMERG``, ``SUP_LOG_ALERT``, ``SUP_LOG_CRIT``, ``SUP_LOG_ERR``, ``SUP_LOG_WARNING``, ``SUP_LOG_NOTICE``, ``SUP_LOG_INFO``, ``SUP_LOG_DEBUG``, ``SUP_LOG_TRACE``.
+  4. ``Log Severity Levels``: ``SUP_LOG_EMERG``, ``SUP_LOG_ALERT``, ``SUP_LOG_CRIT``, ``SUP_LOG_ERR``, ``SUP_LOG_WARNING``, ``SUP_LOG_NOTICE``, ``SUP_LOG_INFO``, ``SUP_LOG_DEBUG``, ``SUP_LOG_TRACE``.
 
 **Example**:
 

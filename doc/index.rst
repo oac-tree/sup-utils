@@ -1,10 +1,7 @@
 Welcome to sup-utils's documentation!
 =====================================
 
-The ``sup-utils`` library is an essential component of the ``CODAC`` project, providing a variety of utility packages and functionalities. These utilities are designed to simplify common tasks such as command-line argument parsing, logging, XML processing, and more. In the following sections is a structured overview of the available packages and their functionalities.
-
-
-
+The ``sup-utils`` package is an essential component of CODAC Operation Applications, providing a variety of utility packages and functionalities. These utilities are designed to simplify common tasks such as command-line argument parsing, logging, XML processing, and more. In the following sections is a structured overview of the available packages and their functionalities.
 
 .. toctree::
    :maxdepth: 2

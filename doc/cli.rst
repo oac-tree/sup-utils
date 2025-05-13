@@ -1,6 +1,6 @@
-========================
- Command-Line Utilities
-========================
+======================
+Command-Line Utilities
+======================
 
 The ``sup/cli`` package provides tools for parsing and handling command-line arguments.
 
@@ -18,4 +18,3 @@ The ``sup/cli`` package provides tools for parsing and handling command-line arg
        parser.AddOption({"-v", "--verbose"})->SetDescription("Enable verbose mode");
        parser.AddOption("--file")->SetParameter(true)->SetRequired(true);
        parser.Parse(argc, argv);
-

@@ -1,8 +1,8 @@
-===========
- Templates
-===========
+=========
+Templates
+=========
 
-The ``sup/templates`` package provides utilities for working with design patterns and templates.
+The ``sup/templates`` package provides template functions and classes.
 
 **Key Features**:
   - Support for decorator patterns with ownership semantics.

@@ -1,6 +1,6 @@
-==========================
- Base64 Encoding/Decoding
-==========================
+========================
+Base64 Encoding/Decoding
+========================
 
 The ``sup/codec`` package provides utilities for Base64 encoding and decoding.
 
