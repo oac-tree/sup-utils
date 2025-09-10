@@ -9,10 +9,10 @@ include(COASetupParasoft)
 cpptest_add_executable(sup-utils-cpptest
   CPPTEST_PROJECT_LOC ${CMAKE_CURRENT_BINARY_DIR}
   CPPTEST_PROJECT_FOLDERS
-    sup-cli=${CMAKE_CURRENT_SOURCE_DIR}/src/lib/sup/cli
-    sup-codec=${CMAKE_CURRENT_SOURCE_DIR}/src/lib/sup/codec
-    sup-log=${CMAKE_CURRENT_SOURCE_DIR}/src/lib/sup/log
-    sup-xml=${CMAKE_CURRENT_SOURCE_DIR}/src/lib/sup/xml
+    sup-cli=${CMAKE_SOURCE_DIR}/src/lib/sup/cli
+    sup-codec=${CMAKE_SOURCE_DIR}/src/lib/sup/codec
+    sup-log=${CMAKE_SOURCE_DIR}/src/lib/sup/log
+    sup-xml=${CMAKE_SOURCE_DIR}/src/lib/sup/xml
   TARGETS sup-cli sup-codec sup-log sup-xml
 )
 
