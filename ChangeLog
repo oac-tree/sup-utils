@@ -1,3 +1,7 @@
+Changes for 1.7.0:
+
+- Code quality improvements
+
 Changes for 1.6.0:
 
 - CMake changes to allow for pulling sup-dto as a github dependency
