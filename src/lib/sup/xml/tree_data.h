@@ -61,12 +61,6 @@ public:
   TreeData& operator=(TreeData&& other) & noexcept;
 
   /**
-   * @brief Comparison operators.
-   */
-  bool operator==(const TreeData& other) const;
-  bool operator!=(const TreeData& other) const;
-
-  /**
    * @brief Retrieve the name of the current node.
    *
    * @return Name of the current node.
@@ -162,6 +156,9 @@ private:
   std::vector<Attribute> m_attributes;
   std::vector<TreeData> m_children;
 };
+
+bool operator==(const TreeData& left, const TreeData& right);
+bool operator!=(const TreeData& left, const TreeData& right);
 
 }  // namespace xml
 

@@ -52,20 +52,6 @@ TreeData::TreeData(TreeData&& other) noexcept = default;
 TreeData& TreeData::operator=(const TreeData& other) & = default;
 TreeData& TreeData::operator=(TreeData&& other) & noexcept = default;
 
-bool TreeData::operator==(const TreeData& other) const
-{
-  bool result = (m_node_name == other.m_node_name)
-                && (m_content == other.m_content)
-                && (EqualAttributes(m_attributes, other.m_attributes))
-                && (m_children == other.m_children);
-  return result;
-}
-
-bool TreeData::operator!=(const TreeData& other) const
-{
-  return !this->operator==(other);
-}
-
 std::string TreeData::GetNodeName() const
 {
   return m_node_name;
@@ -141,6 +127,28 @@ void TreeData::SetContent(const std::string& content)
 std::string TreeData::GetContent() const
 {
   return m_content;
+}
+
+bool operator==(const TreeData& left, const TreeData& right)
+{
+  if (left.GetNodeName() != right.GetNodeName())
+  {
+    return false;
+  }
+  if (left.GetContent() != right.GetContent())
+  {
+    return false;
+  }
+  if (!EqualAttributes(left.Attributes(), right.Attributes()))
+  {
+    return false;
+  }
+  return left.Children() == right.Children();
+}
+
+bool operator!=(const TreeData& left, const TreeData& right)
+{
+  return !(left == right);
 }
 
 }  // namespace xml
