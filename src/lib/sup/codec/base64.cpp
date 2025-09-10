@@ -35,7 +35,7 @@ const char* GetCharBuffer(const std::vector<uint8>& data)
 }
 char* GetCharBuffer(std::vector<uint8>& data)
 {
-  return const_cast<char *>(GetCharBuffer(const_cast<const std::vector<uint8>&>(data)));
+  return const_cast<char *>(GetCharBuffer(std::as_const(data)));
 }
 }  // unnamed namespace
 

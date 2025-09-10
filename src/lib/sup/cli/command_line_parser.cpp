@@ -123,7 +123,8 @@ bool CommandLineParser::Parse(int32 argc, const char* const* argv)
     // be registered before parsing.
     if (option->IsParameter())
     {
-      for (const auto& option_name : option->GetOptionNames())
+      const auto option_names = option->GetOptionNames();
+      for (const auto& option_name : option_names)
       {
         p_impl->m_parser.add_param(option_name);
       }

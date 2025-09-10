@@ -68,7 +68,6 @@ std::string MergeWithNewLine(std::initializer_list<std::string> strings)
 
 std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLineOption *> &options)
 {
-  (void)options;
   std::string result = "[options]";
   for (const auto* option : options)
   {
