@@ -37,19 +37,19 @@ const char* MessageException::what() const noexcept
 }
 
 InvalidOperationException::InvalidOperationException(std::string message)
-  : MessageException{message}
+  : MessageException{std::move(message)}
 {}
 
 ValidationException::ValidationException(std::string message)
-  : MessageException{message}
+  : MessageException{std::move(message)}
 {}
 
 ParseException::ParseException(std::string message)
-  : MessageException{message}
+  : MessageException{std::move(message)}
 {}
 
 SerializeException::SerializeException(std::string message)
-  : MessageException{message}
+  : MessageException{std::move(message)}
 {}
 
 }  // namespace xml
