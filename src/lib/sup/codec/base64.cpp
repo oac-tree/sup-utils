@@ -25,6 +25,7 @@
 #include <sup/codec/modp_b64/modp_b64.h>
 
 #include <stdexcept>
+#include <utility>
 
 namespace
 {
