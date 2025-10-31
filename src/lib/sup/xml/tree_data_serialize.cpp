@@ -56,7 +56,7 @@ std::string TreeDataToString(const TreeData& tree_data)
   std::string writer_message = "sup::xml::TreeDataToString(): could not create an XML writer";
   auto writer = AssertNoNullptr(h_writer.Writer(), SerializeException(writer_message));
   SerializeUsingWriter(writer, tree_data);
-  return ToString(buf->content);
+  return ToString(xmlBufferContent(buf));
 }
 
 }  // namespace xml
