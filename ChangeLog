@@ -1,5 +1,7 @@
 Changes for 1.8.0:
 
+- Fix libxml deprecated warning
+
 Changes for 1.7.0:
 
 - Code quality improvements
