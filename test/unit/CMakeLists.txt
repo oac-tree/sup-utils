@@ -12,6 +12,7 @@ target_sources(${unit-tests} PRIVATE
   command_line_utils_tests.cpp
   decorate_with_tests.cpp
   default_loggers_tests.cpp
+  library_names_tests.cpp
   log_severity_tests.cpp
   logger_t_tests.cpp
   tree_data_tests.cpp
@@ -30,6 +31,7 @@ target_link_libraries(${unit-tests}
   sup-cli
   sup-codec
   sup-log
+  sup-platform
   sup-xml
   LibXml2::LibXml2
 )
