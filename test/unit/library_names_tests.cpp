@@ -60,7 +60,7 @@ TEST_F(LibraryNamesTests, StripFunctions)
   }
   {
     // non-empty pre- or postfix removal on an empty string
-    const std::string pfix{};
+    const std::string pfix{"fix"};
     const std::string empty{};
     EXPECT_EQ(StripPrefix(pfix + empty, pfix), empty);
     EXPECT_EQ(StripPostfix(empty + pfix, pfix), empty);
