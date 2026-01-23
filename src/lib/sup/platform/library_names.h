@@ -24,6 +24,7 @@
 #define SUP_PLATFORM_LIBRARY_NAMES_H_
 
 #include <string>
+#include <utility>
 
 namespace sup
 {
@@ -62,6 +63,23 @@ std::string StripDynamicLibName(const std::string& base_lib_name);
  * @return Dynamic library name with platform dependent pre/postfixes.
  */
 std::string CreateDynamicLibName(const std::string& stripped_lib_name);
+
+/**
+ * @brief Split a filename into its path and a stripped basename.
+ *
+ * @param filename Filename to split.
+ * @return Pair of path and a stripped basename. If path is non-empty, it will end with `/`.
+ */
+std::pair<std::string, std::string> SplitDynamicLibFilename(const std::string& filename);
+
+/**
+ * @brief Construct a full path for a dynamic library.
+ *
+ * @param path Directory path.
+ * @param stripped_basename Stripped basename of the library (without path, pre- or postfix).
+ * @return Full path for the library.
+ */
+std::string CreateFullDynamicLibPath(const std::string& path, const std::string& stripped_basename);
 
 }  // namespace platform
 

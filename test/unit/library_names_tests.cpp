@@ -67,3 +67,72 @@ TEST_F(LibraryNamesTests, CreateDynamicLibName)
   EXPECT_EQ(StripDynamicLibName(CreateDynamicLibName(test)), test);
   EXPECT_EQ(CreateDynamicLibName(test), "libMyLibrary.so");
 }
+
+TEST_F(LibraryNamesTests, SplitDynamicLibFilename)
+{
+  const std::string lib_base_name = "MyLibrary";
+  {
+    // Without path
+    const std::string lib_name = GetDynamicLibPrefix() + lib_base_name + GetDynamicLibPostfix();
+    const auto [path, stripped_name] = SplitDynamicLibFilename(lib_name);
+    EXPECT_TRUE(path.empty());
+    EXPECT_EQ(stripped_name, lib_base_name);
+  }
+  {
+    // In root folder with only prefix
+    const std::string lib_path = "/";
+    const std::string lib_name = lib_path + GetDynamicLibPrefix() + lib_base_name;
+    const auto [path, stripped_name] = SplitDynamicLibFilename(lib_name);
+    EXPECT_EQ(path, lib_path);
+    EXPECT_EQ(stripped_name, lib_base_name);
+  }
+  {
+    // In relative folder with only postfix
+    const std::string lib_path = "home/user/";
+    const std::string lib_name = lib_path + lib_base_name + GetDynamicLibPostfix();
+    const auto [path, stripped_name] = SplitDynamicLibFilename(lib_name);
+    EXPECT_EQ(path, lib_path);
+    EXPECT_EQ(stripped_name, lib_base_name);
+  }
+  {
+    // In absolute folder with only prefix
+    const std::string lib_path = "/home/user/";
+    const std::string lib_name = lib_path + GetDynamicLibPrefix() + lib_base_name;
+    const auto [path, stripped_name] = SplitDynamicLibFilename(lib_name);
+    EXPECT_EQ(path, lib_path);
+    EXPECT_EQ(stripped_name, lib_base_name);
+  }
+}
+
+TEST_F(LibraryNamesTests, CreateFullDynamicLibPath)
+{
+  const std::string lib_base_name = "MyLibrary";
+  const std::string lib_full_name = CreateDynamicLibName(lib_base_name);
+  {
+    // Without path
+    const std::string lib_name = GetDynamicLibPrefix() + lib_base_name + GetDynamicLibPostfix();
+    const auto [path, stripped_name] = SplitDynamicLibFilename(lib_name);
+    EXPECT_EQ(CreateFullDynamicLibPath(path, stripped_name), lib_name);
+  }
+  {
+    // In root folder with only prefix
+    const std::string lib_path = "/";
+    const std::string lib_name = lib_path + GetDynamicLibPrefix() + lib_base_name;
+    const auto [path, stripped_name] = SplitDynamicLibFilename(lib_name);
+    EXPECT_EQ(CreateFullDynamicLibPath(path, stripped_name), lib_path + lib_full_name);
+  }
+  {
+    // In relative folder with only postfix
+    const std::string lib_path = "home/user/";
+    const std::string lib_name = lib_path + lib_base_name + GetDynamicLibPostfix();
+    const auto [path, stripped_name] = SplitDynamicLibFilename(lib_name);
+    EXPECT_EQ(CreateFullDynamicLibPath(path, stripped_name), lib_path + lib_full_name);
+  }
+  {
+    // In absolute folder with only prefix
+    const std::string lib_path = "/home/user/";
+    const std::string lib_name = lib_path + GetDynamicLibPrefix() + lib_base_name;
+    const auto [path, stripped_name] = SplitDynamicLibFilename(lib_name);
+    EXPECT_EQ(CreateFullDynamicLibPath(path, stripped_name), lib_path + lib_full_name);
+  }
+}

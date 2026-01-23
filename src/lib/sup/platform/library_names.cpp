@@ -90,6 +90,31 @@ std::string CreateDynamicLibName(const std::string& stripped_lib_name)
   return GetDynamicLibPrefix() + stripped_lib_name + GetDynamicLibPostfix();
 }
 
+std::pair<std::string, std::string> SplitDynamicLibFilename(const std::string& filename)
+{
+  const auto separator = '/';
+  const auto pos = filename.rfind(separator);
+  std::string path{};
+  if (pos != std::string::npos)
+  {
+    path = filename.substr(0, pos + 1);
+  }
+  const auto stripped_basename = StripDynamicLibName(filename.substr(pos + 1));
+  return { path, stripped_basename };
+}
+
+std::string CreateFullDynamicLibPath(const std::string& path, const std::string& stripped_basename)
+{
+  const auto separator = '/';
+  auto tmp_path = path;
+  if (!tmp_path.empty() && (tmp_path[tmp_path.size() -1] != separator))
+  {
+    tmp_path.push_back(separator);
+  }
+  const auto full_basename = CreateDynamicLibName(stripped_basename);
+  return tmp_path + full_basename;
+}
+
 namespace
 {
 std::string StripPrefix(const std::string& input, const std::string& prefix)
