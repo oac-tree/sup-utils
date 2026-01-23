@@ -4,7 +4,7 @@
  *
  * Project       : Supervision and Automation System Utilities
  *
- * Description   : SUP templates
+ * Description   : SUP platform dependent utilities
  *
  * Author        : Gennady Pospelov (IO)
  *
