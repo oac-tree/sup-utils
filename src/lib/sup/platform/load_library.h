@@ -43,8 +43,9 @@ void* LoadLibrary(const std::string& library_path);
  * @brief Try to unload a dynamically loaded library.
  *
  * @param handle Handle to loaded library.
+ * @return Boolean indicating success.
  */
-void UnloadLibrary(void* handle);
+bool UnloadLibrary(void* handle);
 
 }  // namespace platform
 

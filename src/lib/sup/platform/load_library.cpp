@@ -44,16 +44,16 @@ void* LoadLibrary(const std::string& library_path)
 #endif
 }
 
-void UnloadLibrary(void* handle)
+bool UnloadLibrary(void* handle)
 {
   if (!handle)
   {
-    return;
+    return true;
   }
 #if defined(_WIN32)
-  ::FreeLibrary(reinterpret_cast<HMODULE>(handle));
+  return (::FreeLibrary(reinterpret_cast<HMODULE>(handle)) != 0);
 #else
-  (void)::dlclose(handle);
+  return (::dlclose(handle) == 0);
 #endif
 }
 
