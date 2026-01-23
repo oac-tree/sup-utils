@@ -135,4 +135,13 @@ TEST_F(LibraryNamesTests, CreateFullDynamicLibPath)
     const auto [path, stripped_name] = SplitDynamicLibFilename(lib_name);
     EXPECT_EQ(CreateFullDynamicLibPath(path, stripped_name), lib_path + lib_full_name);
   }
+  {
+    // Passing a path that doesn't end in '/'
+    const std::string orig_path = "home";
+    const std::string lib_path = orig_path + "/";
+    const std::string lib_name = lib_path + GetDynamicLibPrefix() + lib_base_name;
+    const auto [path, stripped_name] = SplitDynamicLibFilename(lib_name);
+    EXPECT_EQ(path, lib_path);
+    EXPECT_EQ(CreateFullDynamicLibPath(orig_path, stripped_name), lib_path + lib_full_name);
+  }
 }
