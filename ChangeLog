@@ -1,3 +1,7 @@
+Changes for 1.9.0:
+
+- Added functions to discover OS platform
+
 Changes for 1.8.0:
 
 - Fix libxml deprecated warning
