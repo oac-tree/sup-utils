@@ -38,43 +38,60 @@ const std::string kMacOSLibPostfix = ".dylib";
 const std::string kWindowsLibPrefix = "";
 const std::string kWindowsLibPostfix = ".dll";
 
-std::string StripPrefix(const std::string& input, const std::string& prefix);
-std::string StripPostfix(const std::string& input, const std::string& postfix);
-
 }  // unnamed namespace
+
+std::string StripPrefix(const std::string& input, const std::string& prefix)
+{
+  if (prefix.empty() || (prefix.size() > input.size()))
+  {
+    return input;
+  }
+  if (input.substr(0, prefix.size()) == prefix)
+  {
+    return input.substr(prefix.size());
+  }
+  return input;
+}
+
+std::string StripPostfix(const std::string& input, const std::string& postfix)
+{
+  if (postfix.empty() || (postfix.size() > input.size()))
+  {
+    return input;
+  }
+  const auto input_size = input.size();
+  const auto postfix_size = postfix.size();
+  if (input.substr(input_size - postfix_size, postfix_size) == postfix)
+  {
+    return input.substr(0, input_size - postfix_size);
+  }
+  return input;
+}
 
 std::string GetDynamicLibPrefix()
 {
-  if (IsLinuxHost())
-  {
-    return kLinuxLibPrefix;
-  }
-  else if (IsMacHost())
-  {
-    return kMacOSLibPrefix;
-  }
-  else if (IsWindowsHost())
-  {
-    return kWindowsLibPrefix;
-  }
+#if defined(__linux__)
+  return kLinuxLibPrefix;
+#elif defined(__APPLE__) && defined(__MACH__)
+  return kMacOSLibPrefix;
+#elif defined(_WIN32) || defined(__CYGWIN__)
+  return kWindowsLibPrefix;
+#else
   return "";
+#endif
 }
 
 std::string GetDynamicLibPostfix()
 {
-  if (IsLinuxHost())
-  {
-    return kLinuxLibPostfix;
-  }
-  else if (IsMacHost())
-  {
-    return kMacOSLibPostfix;
-  }
-  else if (IsWindowsHost())
-  {
-    return kWindowsLibPostfix;
-  }
+#if defined(__linux__)
+  return kLinuxLibPostfix;
+#elif defined(__APPLE__) && defined(__MACH__)
+  return kMacOSLibPostfix;
+#elif defined(_WIN32) || defined(__CYGWIN__)
+  return kWindowsLibPostfix;
+#else
   return "";
+#endif
 }
 
 std::string StripDynamicLibName(const std::string& base_lib_name)
@@ -114,38 +131,6 @@ std::string CreateFullDynamicLibPath(const std::string& path, const std::string&
   const auto full_basename = CreateDynamicLibName(stripped_basename);
   return tmp_path + full_basename;
 }
-
-namespace
-{
-std::string StripPrefix(const std::string& input, const std::string& prefix)
-{
-  if (prefix.empty() || (prefix.size() > input.size()))
-  {
-    return input;
-  }
-  if (input.substr(0, prefix.size()) == prefix)
-  {
-    return input.substr(prefix.size());
-  }
-  return input;
-}
-
-std::string StripPostfix(const std::string& input, const std::string& postfix)
-{
-  if (postfix.empty() || (postfix.size() > input.size()))
-  {
-    return input;
-  }
-  const auto input_size = input.size();
-  const auto postfix_size = postfix.size();
-  if (input.substr(input_size - postfix_size, postfix_size) == postfix)
-  {
-    return input.substr(0, input_size - postfix_size);
-  }
-  return input;
-}
-
-}  // unnamed namespace
 
 }  // namespace platform
 

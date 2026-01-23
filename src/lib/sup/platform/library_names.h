@@ -31,6 +31,23 @@ namespace sup
 namespace platform
 {
 
+/**
+ * @brief Strip the given prefix from an input string, if it's present.
+ *
+ * @param input Input string.
+ * @param prefix Prefix to strip.
+ * @return Input string with given prefix stripped, if it was present.
+ */
+std::string StripPrefix(const std::string& input, const std::string& prefix);
+
+/**
+ * @brief Strip the given postfix from an input string, if it's present.
+ *
+ * @param input Input string.
+ * @param prefix postfix to strip.
+ * @return Input string with given postfix stripped, if it was present.
+ */
+std::string StripPostfix(const std::string& input, const std::string& postfix);
 
 /**
  * @brief Return the platform dependent prefix for dynamic library names.

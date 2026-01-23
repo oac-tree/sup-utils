@@ -31,6 +31,42 @@ class LibraryNamesTests : public ::testing::Test
 {
 };
 
+TEST_F(LibraryNamesTests, StripFunctions)
+{
+  const std::string base_str = "Hello";
+  {
+    // Empty pre- or postfix removal is a no-op
+    const std::string pfix{};
+    EXPECT_EQ(StripPrefix(base_str, pfix), base_str);
+    EXPECT_EQ(StripPostfix(base_str, pfix), base_str);
+  }
+  {
+    // non-empty pre- or postfix removal
+    const std::string pfix{"world"};
+    EXPECT_EQ(StripPrefix(pfix + base_str, pfix), base_str);
+    EXPECT_EQ(StripPostfix(base_str + pfix, pfix), base_str);
+  }
+  {
+    // large pre- or postfix removal that is present
+    const std::string pfix{"LongerThanBaseString"};
+    EXPECT_EQ(StripPrefix(pfix + base_str, pfix), base_str);
+    EXPECT_EQ(StripPostfix(base_str + pfix, pfix), base_str);
+  }
+  {
+    // large pre- or postfix removal that is not present
+    const std::string pfix{"LongerThanBaseString"};
+    EXPECT_EQ(StripPrefix(base_str, pfix), base_str);
+    EXPECT_EQ(StripPostfix(base_str, pfix), base_str);
+  }
+  {
+    // non-empty pre- or postfix removal on an empty string
+    const std::string pfix{};
+    const std::string empty{};
+    EXPECT_EQ(StripPrefix(pfix + empty, pfix), empty);
+    EXPECT_EQ(StripPostfix(empty + pfix, pfix), empty);
+  }
+}
+
 TEST_F(LibraryNamesTests, StripDynamicLibName)
 {
   const std::string lib_base_name = "MyLibrary";
