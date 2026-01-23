@@ -1,5 +1,6 @@
 add_subdirectory(cli)
 add_subdirectory(codec)
 add_subdirectory(log)
+add_subdirectory(platform)
 add_subdirectory(xml)
 add_subdirectory(templates)

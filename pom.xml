@@ -122,6 +122,9 @@
                             <include type="file" source="include/sup/log" target="include/sup/log">
                                 <include>*.h</include>
                             </include>
+                            <include type="file" source="include/sup/platform" target="include/sup/platform">
+                                <include>*.h</include>
+                            </include>
                             <include type="file" source="include/sup/xml" target="include/sup/xml">
                                 <include>*.h</include>
                             </include>
