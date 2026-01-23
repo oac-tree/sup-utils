@@ -15,6 +15,7 @@ target_include_directories(sup-platform PUBLIC
 target_sources(sup-platform
   PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/host.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/load_library.cpp
 )
 
 # -- Installation --
@@ -23,5 +24,6 @@ install(TARGETS sup-platform EXPORT sup-utils-targets LIBRARY DESTINATION ${CMAK
 
 install(FILES
   host.h
+  load_library.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/platform
 )
