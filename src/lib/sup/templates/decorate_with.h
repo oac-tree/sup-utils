@@ -30,20 +30,23 @@ namespace sup
 namespace templates
 {
 
-template <typename Decorator, typename T>
+template <typename Decorator, typename T, typename... Args>
 class OwningDecorator : public Decorator
 {
 public:
-  OwningDecorator(std::unique_ptr<T> dep) : Decorator(*dep), m_dep{std::move(dep)}
+  OwningDecorator(std::unique_ptr<T> dep, Args&&... args)
+    : Decorator(*dep, std::forward<Args>(args)...)
+    , m_dep{std::move(dep)}
   {}
 private:
   std::unique_ptr<T> m_dep;
 };
 
-template <typename Decorator, typename T>
-std::unique_ptr<T> DecorateWith(std::unique_ptr<T> dep)
+template <typename Decorator, typename T, typename... Args>
+std::unique_ptr<T> DecorateWith(std::unique_ptr<T> dep, Args&&... args)
 {
-  return std::unique_ptr<T>{new OwningDecorator<Decorator, T>{std::move(dep)}};
+  return std::unique_ptr<T>{new OwningDecorator<Decorator, T, Args...>(
+                                  std::move(dep), std::forward<Args>(args)...)};
 }
 
 }  // namespace templates

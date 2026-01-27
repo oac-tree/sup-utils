@@ -31,10 +31,6 @@ namespace tests
 using namespace sup::templates;
 
 const uint32_t DefaultReturnValue = 5;
-const uint32_t Multiplier = 5;
-const uint32_t Divisor = 5;
-const uint32_t MultiplicationResult = DefaultReturnValue * Multiplier;
-const uint32_t DivisionResult = DefaultReturnValue / Divisor;
 
 // Interface used in the tests.
 class TestInterface
@@ -60,19 +56,22 @@ class TestDecorator : public TestInterface
 {
 protected:
   TestInterface& m_configuration;
+  uint32_t m_multiplier;
+  uint32_t m_divisor;
 
 public:
-  TestDecorator(TestInterface& config) : m_configuration(config){};
+  TestDecorator(TestInterface& config, uint32_t multiplier, uint32_t divisor)
+    : m_configuration(config), m_multiplier{multiplier}, m_divisor{divisor} {};
   ~TestDecorator() { Die(); }
   MOCK_METHOD0(Die, void());
   uint32_t GetMultiplication(const std::string& name, uint32_t value) const
   {
-    return Multiplier * m_configuration.GetMultiplication(name, value);
+    return m_multiplier * m_configuration.GetMultiplication(name, value);
   }
 
   uint32_t GetDivision(const std::string& name, uint32_t value) const
   {
-    return static_cast<uint32_t>(m_configuration.GetDivision(name, value) / Divisor);
+    return static_cast<uint32_t>(m_configuration.GetDivision(name, value) / m_divisor);
   }
 };
 
@@ -98,12 +97,12 @@ TEST_F(DecorateWithTest, Pass_Test_Decorator_Method1_Is_Called)
   EXPECT_CALL(*dynamic_cast<MockInterface*>(mock_interface.get()), Die());
 
   std::unique_ptr<TestInterface> test_decorator =
-      DecorateWith<TestDecorator>(std::move(mock_interface));
+      DecorateWith<TestDecorator>(std::move(mock_interface), 5, 5);
 
   // Test Decorator destructor should be called
   EXPECT_CALL(*dynamic_cast<TestDecorator*>(test_decorator.get()), Die());
 
-  EXPECT_EQ(test_decorator->GetMultiplication(name, value), MultiplicationResult);
+  EXPECT_EQ(test_decorator->GetMultiplication(name, value), 5*DefaultReturnValue);
 }
 
 TEST_F(DecorateWithTest, Pass_Test_Decorator_Method2_Is_Called)
@@ -116,12 +115,12 @@ TEST_F(DecorateWithTest, Pass_Test_Decorator_Method2_Is_Called)
   EXPECT_CALL(*dynamic_cast<MockInterface*>(mock_interface.get()), Die());
 
   std::unique_ptr<TestInterface> test_decorator =
-      DecorateWith<TestDecorator>(std::move(mock_interface));
+      DecorateWith<TestDecorator>(std::move(mock_interface), 5, 5);
 
   // Test_Decorator destructor should be called
   EXPECT_CALL(*dynamic_cast<TestDecorator*>(test_decorator.get()), Die());
 
-  EXPECT_EQ(test_decorator->GetDivision(name, value), DivisionResult);
+  EXPECT_EQ(test_decorator->GetDivision(name, value), DefaultReturnValue/5);
 }
 
 TEST_F(DecorateWithTest, Pass_Mock_And_Test_Decorator_Destructors_Are_Called)
@@ -135,7 +134,7 @@ TEST_F(DecorateWithTest, Pass_Mock_And_Test_Decorator_Destructors_Are_Called)
     std::unique_ptr<TestInterface> _mock_interface = std::make_unique<MockInterface>();
     auto mock_p = _mock_interface.get();
     std::unique_ptr<TestInterface> _test_decorator =
-        DecorateWith<TestDecorator>(std::move(_mock_interface));
+        DecorateWith<TestDecorator>(std::move(_mock_interface), 5, 5);
 
     // Decorator's base destructor body should be called after its direct member destructor:
     EXPECT_CALL(*dynamic_cast<MockInterface*>(mock_p), Die());
