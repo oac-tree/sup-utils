@@ -11,5 +11,6 @@ install(TARGETS sup-templates EXPORT sup-utils-targets LIBRARY DESTINATION ${CMA
 
 install(FILES
   decorate_with.h
+  inject_as_unique_ptr.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/templates
 )
