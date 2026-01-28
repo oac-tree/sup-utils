@@ -30,6 +30,18 @@ namespace sup
 namespace templates
 {
 
+/**
+ * @brief Function template that allows to inject a service into a client as a unique_ptr, when
+ * the client expects injection by reference. The returned unique_ptr will also manage the
+ * lifetime of the injected service.
+ *
+ * @tparam Client Client type.
+ * @tparam Service Service type.
+ * @tparam Args Optional extra argument types for the Client ctor.
+ * @param dep Unique pointer to a Service object.
+ * @param args Optional extra arguments for the Client ctor.
+ * @return Unique pointer to a Client that also manages the lifetime of the injected Service.
+ */
 template <typename Client, typename Service, typename... Args>
 std::unique_ptr<Client> InjectAsUniquePtr(std::unique_ptr<Service> dep, Args&&... args)
 {
