@@ -62,6 +62,7 @@ struct CommandLineParser::CommandLineParserImpl
   std::string m_footer;
   const CommandLineOption* m_help_option;
   std::string m_parse_error;
+  bool m_parsed;
 
   CommandLineParserImpl();
   ~CommandLineParserImpl() = default;
@@ -97,6 +98,9 @@ struct CommandLineParser::CommandLineParserImpl
 
   //! Returns true if necessary parameter arguments have been provided.
   bool IsParameterArgumentsProvided(const CommandLineOption& option) const;
+
+  //! Returns the number of positional values found, excluding the program name.
+  std::size_t GetPositionalValueCount() const;
 
   //! Returns the reason why the options don't add up, or an empty string if they do.
   std::string GetValidationError() const;
@@ -144,10 +148,10 @@ CommandLineOption& CommandLineParser::AddHelpOption()
   return result;
 }
 
-void CommandLineParser::AddPositionalOption(const std::string& option_name,
-                                            const std::string& description)
+CommandLineOption& CommandLineParser::AddPositionalOption(const std::string& option_name,
+                                                          const std::string& description)
 {
-  (void)AddOption({option_name}).SetDescription(description).SetPositional(true);
+  return AddOption({option_name}).SetDescription(description).SetPositional(true);
 }
 
 CommandLineOption* CommandLineParser::GetOption(const std::string& option_name)
@@ -178,6 +182,7 @@ bool CommandLineParser::Parse(std::int32_t argc, const char* const* argv)
 
   p_impl->m_parser.parse(argc, argv);
 
+  p_impl->m_parsed = true;
   p_impl->m_parse_error.clear();
 
   if (IsHelpRequested())
@@ -212,12 +217,14 @@ bool CommandLineParser::IsSet(const std::string& option_name) const
   return p_impl->IsSet(*option);
 }
 
-std::int32_t CommandLineParser::GetPositionalOptionCount() const
+bool CommandLineParser::HasParsed() const
 {
-  const auto parser_result = static_cast<std::int32_t>(p_impl->m_parser.size());
-  // Argh library always treats program name as a positional option and returns 1 event if no
-  // positional options are present.
-  return parser_result - 1;
+  return p_impl->m_parsed;
+}
+
+std::size_t CommandLineParser::GetPositionalOptionCount() const
+{
+  return p_impl->GetPositionalValueCount();
 }
 
 std::vector<std::string> CommandLineParser::GetPositionalValues() const
@@ -299,8 +306,22 @@ std::string CommandLineParser::GetPositionalValueAsText(size_t index) const
 }
 
 CommandLineParser::CommandLineParserImpl::CommandLineParserImpl()
-    : m_options(), m_parser(), m_header(), m_footer(), m_help_option(nullptr), m_parse_error()
+    : m_options()
+    , m_parser()
+    , m_header()
+    , m_footer()
+    , m_help_option(nullptr)
+    , m_parse_error()
+    , m_parsed(false)
 {
+}
+
+std::size_t CommandLineParser::CommandLineParserImpl::GetPositionalValueCount() const
+{
+  const auto size = m_parser.size();
+  // Argh always counts the program name as a positional argument, and reports 1 even when no
+  // positional value is present.
+  return size > 0U ? size - 1U : 0U;
 }
 
 CommandLineOption* CommandLineParser::CommandLineParserImpl::FindOption(
@@ -385,6 +406,12 @@ std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
 {
   for (const auto& option : m_options)
   {
+    if (option->IsPositional())
+    {
+      // Positional options never appear in the command line by name, so IsSet has no answer for
+      // them: they are checked below, against the values that were found.
+      continue;
+    }
     if (!IsParameterArgumentsProvided(*option))
     {
       return "Option '" + GetOptionNameString(*option) + "' was given without a value";
@@ -394,6 +421,24 @@ std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
       return "Required option '" + GetOptionNameString(*option) + "' is missing";
     }
   }
+
+  // A positional option takes the value found at the same place in the command line, so a required
+  // one is missing when there are not enough values to reach it.
+  const auto value_count = GetPositionalValueCount();
+  std::size_t index = 0U;
+  for (const auto& option : m_options)
+  {
+    if (!option->IsPositional())
+    {
+      continue;
+    }
+    if (option->IsRequired() && (index >= value_count))
+    {
+      return "Required positional option '" + GetOptionNameString(*option) + "' is missing";
+    }
+    ++index;
+  }
+
   return {};
 }
 

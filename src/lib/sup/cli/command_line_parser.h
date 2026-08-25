@@ -27,6 +27,7 @@
 #include <sup/cli/exceptions.h>
 #include <sup/cli/value_conversion.h>
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -121,8 +122,13 @@ public:
    *
    * @param option_name Option name.
    * @param description Option description.
+   * @return Created option.
+   *
+   * @details Positional options are matched to the values found in the command line in the order
+   * they were added, so marking one required means that a value has to reach it.
    */
-  void AddPositionalOption(const std::string& option_name, const std::string& description = {});
+  CommandLineOption& AddPositionalOption(const std::string& option_name,
+                                        const std::string& description = {});
 
   /**
    * @brief Returns option with given name, or nullptr if no such option was added.
@@ -218,13 +224,21 @@ public:
   T GetValueInRange(const std::string& option_name, T lowest, T highest) const;
 
   /**
-   * @brief Returns a number of positional options found after the parsing.
+   * @brief Checks whether the command line was parsed.
+   *
+   * Tells an empty command line apart from one that was never given, which the number of
+   * positional values found cannot.
+   */
+  bool HasParsed() const;
+
+  /**
+   * @brief Returns the number of positional values found after the parsing.
    *
    * The name of a program (which always appears as a first element of *argv array) is not
-   * considered as a positional option. The method will return -1 if parsing doesn't have a place
-   * yet.
+   * considered as a positional value. The method returns 0 if the parsing didn't take place yet,
+   * which HasParsed tells apart from a command line that carried no positional value.
    */
-  std::int32_t GetPositionalOptionCount() const;
+  std::size_t GetPositionalOptionCount() const;
 
   /**
    * @brief Returns list of positional options found.

@@ -15,6 +15,12 @@ Changes for 1.11.0:
   message names the option at fault.
 - sup-cli: only the option created by AddHelpOption counts as the help option, instead of Parse
   looking for the name "--help".
+- sup-cli: a positional option can be marked required, which used to make Parse fail even when
+  the value was given (bugfix). Positional options are matched to the values in the order they
+  were added, and AddPositionalOption returns the created option.
+- sup-cli: GetPositionalOptionCount returns std::size_t and 0 before the parsing, instead of
+  std::int32_t and -1. Use the new CommandLineParser::HasParsed to tell an empty command line
+  from one that was never parsed.
 - sup-cli: an empty command line argument no longer aborts the application (bugfix).
 - sup-cli: an empty string is a default value like any other, see CommandLineOption::HasDefaultValue.
 - sup-cli: added collection of own exceptions for cli.

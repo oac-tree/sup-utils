@@ -25,6 +25,7 @@
 
 #include <sup/cli/command_line_parser.h>
 
+#include <cstddef>
 #include <iostream>
 
 int main(int argc, char* argv[])
@@ -75,7 +76,7 @@ int main(int argc, char* argv[])
   std::cout << "severity  : " << parser.GetValue<std::string>("--verbose") << "\n";
   std::cout << "validate  : " << parser.IsSet("--validate") << "\n";
   std::cout << "Number of positional options found:" << parser.GetPositionalOptionCount() << "\n";
-  for (size_t i = 0; i < parser.GetPositionalOptionCount(); ++i)
+  for (std::size_t i = 0; i < parser.GetPositionalOptionCount(); ++i)
   {
     std::cout << "positional option #" << i << " " << parser.GetPositionalValue<std::string>(i)
               << "\n";
