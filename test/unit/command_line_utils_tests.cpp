@@ -83,6 +83,41 @@ TEST_F(CommandLineUtilsTests, GetOptionNameString)
   }
 }
 
+//! Testing GetOptionUsageString function.
+TEST_F(CommandLineUtilsTests, GetOptionUsageString)
+{
+  {  // description is aligned on a fixed column
+    CommandLineOption option({"-v", "--verbose"});
+    (void)option.SetDescription("description");
+    EXPECT_EQ(GetOptionUsageString(option),
+              std::string("-v, --verbose                 description"));
+  }
+
+  {  // no description, hence no padding and no trailing whitespace
+    CommandLineOption option({"-v", "--verbose"});
+    EXPECT_EQ(GetOptionUsageString(option), std::string("-v, --verbose"));
+  }
+
+  {  // a name too long for the description to follow on the same line is not truncated: the
+     // description continues on the next line, aligned with all the others
+    CommandLineOption option({"-r", "--receive-buffer-size"});
+    (void)option.SetDescription("description").SetParameter(true).SetValueName("bytes");
+
+    const std::string name_string("-r, --receive-buffer-size <bytes>");
+    EXPECT_EQ(GetOptionNameString(option), name_string);
+    EXPECT_GT(name_string.size(), 30U);
+
+    EXPECT_EQ(GetOptionUsageString(option),
+              name_string + "\n" + std::string(30U, ' ') + "description");
+  }
+
+  {  // a long name with no description stays on a single line
+    CommandLineOption option({"-r", "--receive-buffer-size"});
+    (void)option.SetParameter(true).SetValueName("bytes");
+    EXPECT_EQ(GetOptionUsageString(option), std::string("-r, --receive-buffer-size <bytes>"));
+  }
+}
+
 //! Testing GetUsageString function.
 TEST_F(CommandLineUtilsTests, GetOptionBlockString)
 {

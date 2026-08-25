@@ -22,16 +22,15 @@
 
 #include "command_line_utils.h"
 
-#include "base_types.h"
-
 #include <sup/cli/command_line_option.h>
 
 #include <algorithm>
+#include <cstddef>
 #include <numeric>
 
 namespace
 {
-const sup::cli::int32 kDesiredOptionStringLength = 30;
+const std::size_t kDesiredOptionStringLength = 30;
 
 /**
  * Returns value name.
@@ -106,9 +105,24 @@ std::string GetOptionNameString(const CommandLineOption& option)
 
 std::string GetOptionUsageString(const CommandLineOption& option)
 {
-  auto result = GetOptionNameString(option);
-  result.resize(kDesiredOptionStringLength, ' ');
-  return result + option.GetDescription();
+  const auto name_string = GetOptionNameString(option);
+  const auto description = option.GetDescription();
+
+  if (description.empty())
+  {
+    return name_string;
+  }
+
+  if (name_string.size() < kDesiredOptionStringLength)
+  {
+    const std::string padding(kDesiredOptionStringLength - name_string.size(), ' ');
+    return name_string + padding + description;
+  }
+
+  // The name is too long to leave room for the description on the same line. Rather than truncate
+  // the name, the description continues on the next line, aligned with the other descriptions.
+  const std::string indent(kDesiredOptionStringLength, ' ');
+  return name_string + "\n" + indent + description;
 }
 
 std::string GetUsageString(const std::string& app_name, const std::string& header,

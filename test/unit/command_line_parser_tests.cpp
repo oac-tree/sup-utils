@@ -626,6 +626,31 @@ Positional Options:
   EXPECT_EQ(parser.GetUsageString(), expected);
 }
 
+//! Validate `usage` help when an option name is too long to leave room for the description.
+TEST_F(CommandLineParserTests, GetUsageStringWithLongOptionName)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"-r", "--receive-buffer-size"}, "Receive socket buffer size")
+      .SetParameter(true)
+      .SetValueName("bytes");
+  (void)parser.AddOption({"-v", "--verbose"}, "Report progress");
+
+  const int argc = 2;
+  std::array<const char*, argc> argv{"progname", "--verbose"};
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  // the long name keeps all of its characters, and every description stays in the same column
+  std::string expected(R"RAW(Usage: progname [options]
+
+Options:
+-r, --receive-buffer-size <bytes>
+                              Receive socket buffer size
+-v, --verbose                 Report progress
+
+)RAW");
+  EXPECT_EQ(parser.GetUsageString(), expected);
+}
+
 //! Validate multiline :usage" string when header and foor are provided.
 TEST_F(CommandLineParserTests, GetUsageStringWithHeaderAndFooter)
 {
