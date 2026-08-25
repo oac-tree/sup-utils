@@ -24,6 +24,7 @@
 
 #include "argh.h"
 #include "command_line_utils.h"
+#include "exceptions.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -187,37 +188,45 @@ void CommandLineParser::SetDescription(const std::string& header, const std::str
 
 std::stringstream CommandLineParser::GetValueStream(const std::string& option_name) const
 {
-  std::string parse_result;
-
-  if (auto option = GetOption(option_name))
+  const auto* option = GetOption(option_name);
+  if (option == nullptr)
   {
-    for (const auto& alias_name : option->GetOptionNames())
+    throw InvalidOptionException("Option '" + option_name
+                                 + "' is not among the options added to the parser");
+  }
+
+  std::string parse_result;
+  for (const auto& alias_name : option->GetOptionNames())
+  {
+    auto value_stream = p_impl->m_parser(alias_name);
+    // The extraction serves only as a presence test: an option that was not given yields a
+    // stream in a failed state. The value itself is taken from the stream buffer, since the
+    // extraction stops at the first whitespace and would truncate a value containing spaces.
+    if ((value_stream >> parse_result))
     {
-      auto value_stream = p_impl->m_parser(alias_name);
-      // The extraction serves only as a presence test: an option that was not given yields a
-      // stream in a failed state. The value itself is taken from the stream buffer, since the
-      // extraction stops at the first whitespace and would truncate a value containing spaces.
-      if ((value_stream >> parse_result))
-      {
-        return std::stringstream(value_stream.str());
-      }
-    }
-    if (!option->GetDefaultValue().empty())
-    {
-      return std::stringstream(option->GetDefaultValue());
+      return std::stringstream(value_stream.str());
     }
   }
 
-  throw std::runtime_error("Can't parse the value");
+  if (!option->GetDefaultValue().empty())
+  {
+    return std::stringstream(option->GetDefaultValue());
+  }
+
+  throw MissingValueException("Option '" + option_name
+                              + "' was not given in the command line and has no default value");
 }
 
 std::stringstream CommandLineParser::GetPositionalValueStream(size_t index) const
 {
-  if (static_cast<std::int32_t>(index) >= GetPositionalOptionCount())
+  const auto values = GetPositionalValues();
+  if (index >= values.size())
   {
-    throw std::runtime_error("Positional index exceeds number of positional options found");
+    throw MissingValueException("Positional value with index " + std::to_string(index)
+                                + " doesn't exist, the number of positional values found is "
+                                + std::to_string(values.size()));
   }
-  return std::stringstream(GetPositionalValues().at(index));
+  return std::stringstream(values.at(index));
 }
 
 CommandLineParser::CommandLineParserImpl::CommandLineParserImpl()

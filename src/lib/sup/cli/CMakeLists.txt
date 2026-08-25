@@ -22,6 +22,8 @@ target_sources(${library_name} PRIVATE
   command_line_parser.h
   command_line_utils.cpp
   command_line_utils.h
+  exceptions.cpp
+  exceptions.h
 )
 
 # -- Installation --
@@ -31,5 +33,6 @@ install(TARGETS ${library_name} EXPORT sup-utils-targets LIBRARY DESTINATION ${C
 install(FILES
   command_line_option.h
   command_line_parser.h
+  exceptions.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/cli
 )

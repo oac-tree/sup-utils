@@ -10,6 +10,7 @@ target_sources(${unit-tests} PRIVATE
   command_line_option_tests.cpp
   command_line_parser_tests.cpp
   command_line_utils_tests.cpp
+  cli_exception_tests.cpp
   decorate_with_tests.cpp
   default_loggers_tests.cpp
   inject_as_unique_ptr_tests.cpp
