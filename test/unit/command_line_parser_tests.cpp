@@ -646,53 +646,22 @@ TEST_F(CommandLineParserTests, ExceptionsWhenValueIsNotAvailable)
   std::array<const char*, argc> argv{"progname", "target.xml"};
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
-  {  // an option name that was never added to the parser: a mistake in the application
-    EXPECT_THROW(parser.GetValue<std::string>("--typo"), InvalidOptionException);
-    EXPECT_THROW(parser.GetValue<std::string>("--typo"), CommandLineException);
+  // an option name that was never added to the parser: a mistake in the application, and the
+  // message names the option that was asked about
+  EXPECT_THAT([&] { (void)parser.GetValue<std::string>("--typo"); },
+              ::testing::ThrowsMessage<InvalidOptionException>(::testing::HasSubstr("--typo")));
 
-    try
-    {
-      (void)parser.GetValue<std::string>("--typo");
-      FAIL() << "expected an exception";
-    }
-    catch (const InvalidOptionException& err)
-    {
-      // the message names the option that was asked about
-      EXPECT_THAT(err.what(), ::testing::HasSubstr("--typo"));
-    }
-  }
+  // a registered option that was not given and has no default value
+  EXPECT_THAT([&] { (void)parser.GetValue<double>("--timeout"); },
+              ::testing::ThrowsMessage<MissingValueException>(::testing::AllOf(
+                  ::testing::HasSubstr("--timeout"), ::testing::HasSubstr("no default value"))));
 
-  {  // a registered option that was not given and has no default value
-    EXPECT_THROW(parser.GetValue<double>("--timeout"), MissingValueException);
-
-    try
-    {
-      (void)parser.GetValue<double>("--timeout");
-      FAIL() << "expected an exception";
-    }
-    catch (const MissingValueException& err)
-    {
-      EXPECT_THAT(err.what(), ::testing::HasSubstr("--timeout"));
-      EXPECT_THAT(err.what(), ::testing::HasSubstr("no default value"));
-    }
-  }
-
-  {  // a positional value beyond the ones found
-    EXPECT_EQ(parser.GetPositionalValue<std::string>(0), std::string("target.xml"));
-    EXPECT_THROW(parser.GetPositionalValue<std::string>(1), MissingValueException);
-
-    try
-    {
-      (void)parser.GetPositionalValue<std::string>(1);
-      FAIL() << "expected an exception";
-    }
-    catch (const MissingValueException& err)
-    {
-      // the message reports both the index asked for and how many values there are
-      EXPECT_THAT(err.what(), ::testing::HasSubstr("index 1"));
-      EXPECT_THAT(err.what(), ::testing::HasSubstr("found is 1"));
-    }
-  }
+  // a positional value beyond the ones found: the message reports both the index asked for and
+  // how many values there are
+  EXPECT_EQ(parser.GetPositionalValue<std::string>(0), std::string("target.xml"));
+  EXPECT_THAT([&] { (void)parser.GetPositionalValue<std::string>(1); },
+              ::testing::ThrowsMessage<MissingValueException>(::testing::AllOf(
+                  ::testing::HasSubstr("index 1"), ::testing::HasSubstr("found is 1"))));
 
   // an option with a default value never fails
   EXPECT_EQ(parser.GetValue<int>("--with-default"), 42);

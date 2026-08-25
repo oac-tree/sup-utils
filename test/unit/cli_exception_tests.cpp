@@ -26,6 +26,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 
 using namespace sup::cli;
 
@@ -46,25 +47,16 @@ TEST_F(CommandLineExceptionTests, MessageIsCarried)
 //! for any failure. Applications catching that keep working.
 TEST_F(CommandLineExceptionTests, Hierarchy)
 {
+  static_assert(std::is_base_of<std::runtime_error, CommandLineException>::value,
+                "applications catching std::runtime_error shall keep working");
+  static_assert(std::is_base_of<CommandLineException, InvalidOptionException>::value, "");
+  static_assert(std::is_base_of<CommandLineException, MissingValueException>::value, "");
+
+  // the two are unrelated to each other, so neither is ever caught in place of the other
+  static_assert(!std::is_base_of<InvalidOptionException, MissingValueException>::value, "");
+  static_assert(!std::is_base_of<MissingValueException, InvalidOptionException>::value, "");
+
   const std::string message{"message"};
-
-  EXPECT_THROW(throw CommandLineException{message}, std::runtime_error);
-  EXPECT_THROW(throw InvalidOptionException{message}, CommandLineException);
   EXPECT_THROW(throw InvalidOptionException{message}, std::runtime_error);
-  EXPECT_THROW(throw MissingValueException{message}, CommandLineException);
   EXPECT_THROW(throw MissingValueException{message}, std::runtime_error);
-
-  // the two are distinct: neither is caught in place of the other
-  EXPECT_THROW(
-      {
-        try
-        {
-          throw InvalidOptionException{message};
-        }
-        catch (const MissingValueException&)
-        {
-          FAIL() << "InvalidOptionException was caught as MissingValueException";
-        }
-      },
-      InvalidOptionException);
 }
