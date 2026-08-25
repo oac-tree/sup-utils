@@ -88,6 +88,12 @@ CommandLineParser::CommandLineParser() : p_impl(std::make_unique<CommandLinePars
 
 CommandLineParser::~CommandLineParser() = default;
 
+// Defined here rather than in the header: defaulting these requires CommandLineParserImpl to be a
+// complete type.
+CommandLineParser::CommandLineParser(CommandLineParser&& other) noexcept = default;
+
+CommandLineParser& CommandLineParser::operator=(CommandLineParser&& other) & noexcept = default;
+
 CommandLineOption& CommandLineParser::AddOption(const std::vector<std::string>& option_names,
                                                 const std::string& description)
 {

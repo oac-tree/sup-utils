@@ -28,6 +28,7 @@
 #include <array>
 #include <stdexcept>
 #include <type_traits>
+#include <utility>
 
 using namespace sup::cli;
 
@@ -152,6 +153,55 @@ TEST_F(CommandLineParserTests, AddOption)
 }
 
 //! Testing fluent interface of CommandLineOption.
+//! A configured parser can be moved, so that a function can hand one over. Copying is forbidden.
+TEST_F(CommandLineParserTests, MoveParser)
+{
+  static_assert(!std::is_copy_constructible<CommandLineParser>::value,
+                "the parser owns its options and shall not be copied");
+  static_assert(!std::is_copy_assignable<CommandLineParser>::value,
+                "the parser owns its options and shall not be copied");
+  static_assert(std::is_nothrow_move_constructible<CommandLineParser>::value,
+                "the parser shall be movable without throwing");
+  static_assert(std::is_nothrow_move_assignable<CommandLineParser>::value,
+                "the parser shall be movable without throwing");
+
+  // a function registering a shared set of options, and handing the parser over
+  auto create_parser = []()
+  {
+    CommandLineParser result;
+    (void)result.AddOption({"-f", "--file"}).SetParameter(true);
+    (void)result.AddOption({"-v", "--verbose"});
+    return result;
+  };
+
+  auto parser = create_parser();
+
+  const int argc = 4;
+  std::array<const char*, argc> argv{"progname", "-v", "--file", "a.xml"};
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  {  // move construction carries the options and the parsing result along
+    const CommandLineParser moved{std::move(parser)};
+    EXPECT_TRUE(moved.IsSet("-v"));
+    EXPECT_EQ(moved.GetValue<std::string>("--file"), std::string("a.xml"));
+    EXPECT_NE(moved.GetOption("--verbose"), nullptr);
+  }
+
+  {  // and so does move assignment
+    CommandLineParser other = create_parser();
+    other = create_parser();
+    EXPECT_FALSE(other.IsSet("-v"));
+
+    CommandLineParser source;
+    (void)source.AddOption({"-v", "--verbose"});
+    std::array<const char*, 2> source_argv{"progname", "-v"};
+    EXPECT_TRUE(source.Parse(2, &source_argv[0]));
+
+    other = std::move(source);
+    EXPECT_TRUE(other.IsSet("-v"));
+  }
+}
+
 //! Accessing options through a const parser: the option is handed out for reading only.
 TEST_F(CommandLineParserTests, GetOptionFromConstParser)
 {
