@@ -47,14 +47,14 @@ TEST_F(CommandLineExceptionTests, MessageIsCarried)
 //! for any failure. Applications catching that keep working.
 TEST_F(CommandLineExceptionTests, Hierarchy)
 {
-  static_assert(std::is_base_of<std::runtime_error, CommandLineException>::value,
+  static_assert(std::is_base_of_v<std::runtime_error, CommandLineException>,
                 "applications catching std::runtime_error shall keep working");
-  static_assert(std::is_base_of<CommandLineException, InvalidOptionException>::value, "");
-  static_assert(std::is_base_of<CommandLineException, MissingValueException>::value, "");
+  static_assert(std::is_base_of_v<CommandLineException, InvalidOptionException>);
+  static_assert(std::is_base_of_v<CommandLineException, MissingValueException>);
 
   // the two are unrelated to each other, so neither is ever caught in place of the other
-  static_assert(!std::is_base_of<InvalidOptionException, MissingValueException>::value, "");
-  static_assert(!std::is_base_of<MissingValueException, InvalidOptionException>::value, "");
+  static_assert(!std::is_base_of_v<InvalidOptionException, MissingValueException>);
+  static_assert(!std::is_base_of_v<MissingValueException, InvalidOptionException>);
 
   const std::string message{"message"};
   EXPECT_THROW(throw InvalidOptionException{message}, std::runtime_error);

@@ -158,13 +158,13 @@ TEST_F(CommandLineParserTests, AddOption)
 //! A configured parser can be moved, so that a function can hand one over. Copying is forbidden.
 TEST_F(CommandLineParserTests, MoveParser)
 {
-  static_assert(!std::is_copy_constructible<CommandLineParser>::value,
+  static_assert(!std::is_copy_constructible_v<CommandLineParser>,
                 "the parser owns its options and shall not be copied");
-  static_assert(!std::is_copy_assignable<CommandLineParser>::value,
+  static_assert(!std::is_copy_assignable_v<CommandLineParser>,
                 "the parser owns its options and shall not be copied");
-  static_assert(std::is_nothrow_move_constructible<CommandLineParser>::value,
+  static_assert(std::is_nothrow_move_constructible_v<CommandLineParser>,
                 "the parser shall be movable without throwing");
-  static_assert(std::is_nothrow_move_assignable<CommandLineParser>::value,
+  static_assert(std::is_nothrow_move_assignable_v<CommandLineParser>,
                 "the parser shall be movable without throwing");
 
   // a function registering a shared set of options, and handing the parser over
@@ -213,7 +213,7 @@ TEST_F(CommandLineParserTests, GetOptionFromConstParser)
   const auto& const_parser = parser;
 
   const auto* found = const_parser.GetOption("--file");
-  static_assert(std::is_same<decltype(found), const CommandLineOption*>::value,
+  static_assert(std::is_same_v<decltype(found), const CommandLineOption*>,
                 "const parser must hand out a const option");
 
   EXPECT_EQ(found, &option);
@@ -224,7 +224,7 @@ TEST_F(CommandLineParserTests, GetOptionFromConstParser)
 
   // the same lookup on a mutable parser gives an option that can be configured further
   auto* mutable_found = parser.GetOption("--file");
-  static_assert(std::is_same<decltype(mutable_found), CommandLineOption*>::value,
+  static_assert(std::is_same_v<decltype(mutable_found), CommandLineOption*>,
                 "mutable parser must hand out a mutable option");
   EXPECT_EQ(mutable_found, &option);
 }
