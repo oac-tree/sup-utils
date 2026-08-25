@@ -10,6 +10,11 @@ Changes for 1.11.0:
   answering that the option is not set. GetOption still returns nullptr for such a name.
 - sup-cli: AddOption reports a name that is already taken, instead of registering an option
   that could never be found.
+- sup-cli: added CommandLineParser::IsHelpRequested and GetParseError, telling the three outcomes
+  of Parse apart: success, help requested, and a command line that doesn't add up. The error
+  message names the option at fault.
+- sup-cli: only the option created by AddHelpOption counts as the help option, instead of Parse
+  looking for the name "--help".
 - sup-cli: an empty command line argument no longer aborts the application (bugfix).
 - sup-cli: an empty string is a default value like any other, see CommandLineOption::HasDefaultValue.
 - sup-cli: added collection of own exceptions for cli.

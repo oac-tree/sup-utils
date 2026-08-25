@@ -141,6 +141,21 @@ public:
   bool Parse(std::int32_t argc, const char* const* argv);
 
   /**
+   * @brief Checks whether the help option was given in the command line.
+   *
+   * Only the option created by AddHelpOption counts as the help option. Returns false if the
+   * application doesn't offer one, or if the parsing didn't take place yet.
+   */
+  bool IsHelpRequested() const;
+
+  /**
+   * @brief Returns the reason why the last parsing failed.
+   *
+   * @return A message naming the option at fault, or an empty string.
+   */
+  std::string GetParseError() const;
+
+  /**
    * @brief Checks whether option_name was passed to the application.
    *
    * In the case of parameter option it means that the parameter after the option exists and can be

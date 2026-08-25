@@ -28,6 +28,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <memory>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -893,6 +894,94 @@ TEST_F(CommandLineParserTests, ParseWithoutHelpOption)
   std::array<const char*, 2> help_argv{"progname", "--help"};
   EXPECT_FALSE(with_help.Parse(2, help_argv.data()));
   EXPECT_TRUE(with_help.IsSet("--help"));
+}
+
+//! The three outcomes of Parse are told apart: success, help requested, and a command line that
+//! doesn't add up.
+TEST_F(CommandLineParserTests, ParseErrorAndHelpRequested)
+{
+  auto create_parser = []()
+  {
+    auto result = std::make_unique<CommandLineParser>();
+    (void)result->AddHelpOption();
+    (void)result->AddOption({"-f", "--file"}, "File to load")
+        .SetParameter(true)
+        .SetValueName("filename")
+        .SetRequired(true);
+    (void)result->AddOption({"-t", "--timeout"}, "Timeout").SetParameter(true).SetValueName("sec");
+    return result;
+  };
+
+  {  // before any parsing there is nothing to report
+    const auto parser = create_parser();
+    EXPECT_FALSE(parser->IsHelpRequested());
+    EXPECT_TRUE(parser->GetParseError().empty());
+  }
+
+  {  // a command line that adds up
+    auto parser = create_parser();
+    std::array<const char*, 3> argv{"progname", "--file", "a.xml"};
+    EXPECT_TRUE(parser->Parse(3, argv.data()));
+    EXPECT_FALSE(parser->IsHelpRequested());
+    EXPECT_TRUE(parser->GetParseError().empty());
+  }
+
+  {  // help is a negative result, but not an error
+    auto parser = create_parser();
+    std::array<const char*, 2> argv{"progname", "--help"};
+    EXPECT_FALSE(parser->Parse(2, argv.data()));
+    EXPECT_TRUE(parser->IsHelpRequested());
+    EXPECT_TRUE(parser->GetParseError().empty());
+  }
+
+  {  // and so is the short spelling of it
+    auto parser = create_parser();
+    std::array<const char*, 2> argv{"progname", "-h"};
+    EXPECT_FALSE(parser->Parse(2, argv.data()));
+    EXPECT_TRUE(parser->IsHelpRequested());
+  }
+
+  {  // a required option that was not given, named in the message
+    auto parser = create_parser();
+    std::array<const char*, 1> argv{"progname"};
+    EXPECT_FALSE(parser->Parse(1, argv.data()));
+    EXPECT_FALSE(parser->IsHelpRequested());
+    EXPECT_THAT(parser->GetParseError(),
+                ::testing::AllOf(::testing::HasSubstr("--file"), ::testing::HasSubstr("missing")));
+  }
+
+  {  // a parameter option given without its value, named in the message
+    auto parser = create_parser();
+    std::array<const char*, 4> argv{"progname", "--file", "a.xml", "--timeout"};
+    EXPECT_FALSE(parser->Parse(4, argv.data()));
+    EXPECT_FALSE(parser->IsHelpRequested());
+    EXPECT_THAT(parser->GetParseError(), ::testing::AllOf(::testing::HasSubstr("--timeout"),
+                                                          ::testing::HasSubstr("without a value")));
+  }
+
+  {  // a second parsing forgets what the first one reported
+    auto parser = create_parser();
+    std::array<const char*, 1> bad_argv{"progname"};
+    EXPECT_FALSE(parser->Parse(1, bad_argv.data()));
+    EXPECT_FALSE(parser->GetParseError().empty());
+
+    std::array<const char*, 3> good_argv{"progname", "--file", "a.xml"};
+    EXPECT_TRUE(parser->Parse(3, good_argv.data()));
+    EXPECT_TRUE(parser->GetParseError().empty());
+  }
+}
+
+//! Only the option created by AddHelpOption counts as the help option.
+TEST_F(CommandLineParserTests, HelpRequestedNeedsAHelpOption)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"-v", "--verbose"});
+
+  const int argc = 2;
+  std::array<const char*, argc> argv{"progname", "-v"};
+  EXPECT_TRUE(parser.Parse(argc, argv.data()));
+  EXPECT_FALSE(parser.IsHelpRequested());
+  EXPECT_TRUE(parser.GetParseError().empty());
 }
 
 //! Validate multiline string representing `usage` help for the single option setup.

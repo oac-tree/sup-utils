@@ -60,8 +60,15 @@ struct CommandLineParser::CommandLineParserImpl
   argh::parser m_parser;
   std::string m_header;
   std::string m_footer;
+  const CommandLineOption* m_help_option;
+  std::string m_parse_error;
 
   CommandLineParserImpl();
+  ~CommandLineParserImpl() = default;
+  CommandLineParserImpl(const CommandLineParserImpl& other) = delete;
+  CommandLineParserImpl& operator=(const CommandLineParserImpl& other) & = delete;
+  CommandLineParserImpl(CommandLineParserImpl&&) = delete;
+  CommandLineParserImpl& operator=(CommandLineParserImpl&&) & = delete;
 
   //! Returns option with given name, or nullptr if no such option was added. The constness of the
   //! result is decided by the caller: the lookup itself doesn't modify the option.
@@ -91,7 +98,8 @@ struct CommandLineParser::CommandLineParserImpl
   //! Returns true if necessary parameter arguments have been provided.
   bool IsParameterArgumentsProvided(const CommandLineOption& option) const;
 
-  bool IsValidParsing() const;
+  //! Returns the reason why the options don't add up, or an empty string if they do.
+  std::string GetValidationError() const;
 };
 
 CommandLineParser::CommandLineParser() : p_impl(std::make_unique<CommandLineParserImpl>()) {}
@@ -130,7 +138,10 @@ CommandLineOption& CommandLineParser::AddOption(const std::vector<std::string>& 
 
 CommandLineOption& CommandLineParser::AddHelpOption()
 {
-  return AddOption({"-h", "--help"}).SetDescription("Displays help on command line options");
+  auto& result =
+      AddOption({"-h", "--help"}).SetDescription("Displays help on command line options");
+  p_impl->m_help_option = &result;
+  return result;
 }
 
 void CommandLineParser::AddPositionalOption(const std::string& option_name,
@@ -167,12 +178,28 @@ bool CommandLineParser::Parse(std::int32_t argc, const char* const* argv)
 
   p_impl->m_parser.parse(argc, argv);
 
-  // An application need not offer a help option, so the option is looked up rather than asked
-  // about: IsSet reports a name that was never added, which is not the question here.
-  const auto* help_option = GetOption("--help");
-  const auto help_requested = (help_option != nullptr) && p_impl->IsSet(*help_option);
+  p_impl->m_parse_error.clear();
 
-  return !help_requested && p_impl->IsValidParsing();
+  if (IsHelpRequested())
+  {
+    // Help is not a failure, but the application is expected to print the usage string and stop
+    // rather than carry on, hence the negative result with no error to report.
+    return false;
+  }
+
+  p_impl->m_parse_error = p_impl->GetValidationError();
+
+  return p_impl->m_parse_error.empty();
+}
+
+bool CommandLineParser::IsHelpRequested() const
+{
+  return (p_impl->m_help_option != nullptr) && p_impl->IsSet(*p_impl->m_help_option);
+}
+
+std::string CommandLineParser::GetParseError() const
+{
+  return p_impl->m_parse_error;
 }
 
 bool CommandLineParser::IsSet(const std::string& option_name) const
@@ -272,7 +299,7 @@ std::string CommandLineParser::GetPositionalValueAsText(size_t index) const
 }
 
 CommandLineParser::CommandLineParserImpl::CommandLineParserImpl()
-    : m_options(), m_parser(), m_header(), m_footer()
+    : m_options(), m_parser(), m_header(), m_footer(), m_help_option(nullptr), m_parse_error()
 {
 }
 
@@ -354,16 +381,20 @@ bool CommandLineParser::CommandLineParserImpl::IsParameterArgumentsProvided(
   return option.HasDefaultValue() ? true : !IsFlagOptionSet(option);
 }
 
-bool CommandLineParser::CommandLineParserImpl::IsValidParsing() const
+std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
 {
-  for (auto& option : m_options)
+  for (const auto& option : m_options)
   {
-    if ((!IsParameterArgumentsProvided(*option)) || (!IsValidRequiredOption(*option)))
+    if (!IsParameterArgumentsProvided(*option))
     {
-      return false;
+      return "Option '" + GetOptionNameString(*option) + "' was given without a value";
+    }
+    if (!IsValidRequiredOption(*option))
+    {
+      return "Required option '" + GetOptionNameString(*option) + "' is missing";
     }
   }
-  return true;
+  return {};
 }
 
 }  // namespace cli
