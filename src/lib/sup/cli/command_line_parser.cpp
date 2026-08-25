@@ -26,6 +26,7 @@
 #include "command_line_utils.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <memory>
 #include <string>
 
@@ -117,7 +118,7 @@ const CommandLineOption* CommandLineParser::GetOption(const std::string& option_
   return p_impl->FindOption(option_name);
 }
 
-bool CommandLineParser::Parse(int32 argc, const char* const* argv)
+bool CommandLineParser::Parse(std::int32_t argc, const char* const* argv)
 {
   for (auto& option : p_impl->m_options)
   {
@@ -144,9 +145,9 @@ bool CommandLineParser::IsSet(const std::string& option_name) const
   return option ? p_impl->IsSet(*option) : false;
 }
 
-int32 CommandLineParser::GetPositionalOptionCount() const
+std::int32_t CommandLineParser::GetPositionalOptionCount() const
 {
-  int32 parser_result = static_cast<int32>(p_impl->m_parser.size());
+  const auto parser_result = static_cast<std::int32_t>(p_impl->m_parser.size());
   // Argh library always treats program name as a positional option and returns 1 event if no
   // positional options are present.
   return parser_result - 1;
@@ -206,7 +207,7 @@ std::stringstream CommandLineParser::GetValueStream(const std::string& option_na
 
 std::stringstream CommandLineParser::GetPositionalValueStream(size_t index) const
 {
-  if (static_cast<int32>(index) >= GetPositionalOptionCount())
+  if (static_cast<std::int32_t>(index) >= GetPositionalOptionCount())
   {
     throw std::runtime_error("Positional index exceeds number of positional options found");
   }
