@@ -122,7 +122,7 @@ public:
    * In the case of parameter option it means that the parameter after the option exists and can be
    * parsed.
    */
-  bool IsSet(const std::string& option_name);
+  bool IsSet(const std::string& option_name) const;
 
   /**
    * @brief Returns the value of an option.

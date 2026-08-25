@@ -136,7 +136,7 @@ bool CommandLineParser::Parse(int32 argc, const char* const* argv)
   return !IsSet("--help") && p_impl->IsValidParsing();
 }
 
-bool CommandLineParser::IsSet(const std::string &option_name)
+bool CommandLineParser::IsSet(const std::string &option_name) const
 {
   auto option = GetOption(option_name);
   return option ? p_impl->IsSet(*option) : false;

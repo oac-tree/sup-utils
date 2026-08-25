@@ -162,6 +162,27 @@ TEST_F(CommandLineParserTests, FluentInterface)
   EXPECT_EQ(option.GetDefaultValue(), std::string("value"));
 }
 
+//! Querying a parser through a const reference, as an application that only reads the parsing
+//! result does.
+TEST_F(CommandLineParserTests, QueryConstParser)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"-v", "--verbose"});
+  (void)parser.AddOption({"-f", "--file"}).SetParameter(true);
+
+  const int argc = 4;
+  std::array<const char *, argc> argv{"progname", "-v", "--file", "a.xml"};
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  const auto &const_parser = parser;
+
+  EXPECT_TRUE(const_parser.IsSet("-v"));
+  EXPECT_TRUE(const_parser.IsSet("--verbose"));
+  EXPECT_TRUE(const_parser.IsSet("--file"));
+  EXPECT_FALSE(const_parser.IsSet("--non-existing"));
+  EXPECT_EQ(const_parser.GetValue<std::string>("--file"), std::string("a.xml"));
+}
+
 //! Parsing a single option without a parameter (a flag).
 TEST_F(CommandLineParserTests, ParseFlag)
 {
