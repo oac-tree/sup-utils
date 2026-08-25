@@ -23,6 +23,7 @@
 #ifndef SUP_CLI_COMMAND_LINE_OPTION_H_
 #define SUP_CLI_COMMAND_LINE_OPTION_H_
 
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -72,9 +73,17 @@ public:
   std::vector<std::string> GetOptionNames() const;
 
   /**
-   * @brief Returns the default value.
+   * @brief Returns the default value, or an empty string if no default value was set.
    */
   std::string GetDefaultValue() const;
+
+  /**
+   * @brief Checks if a default value was set.
+   *
+   * An empty string is a default value like any other, so this is what tells a default apart from
+   * the absence of one.
+   */
+  bool HasDefaultValue() const;
 
   /**
    * @brief Sets the default value.
@@ -135,7 +144,7 @@ public:
 
 private:
   std::vector<std::string> m_option_names;
-  std::string m_default_value;
+  std::optional<std::string> m_default_value;
   std::string m_description;
   std::string m_value_name;  //!< the text representing the value for help string
   bool m_is_required;

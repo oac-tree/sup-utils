@@ -325,7 +325,10 @@ inline bool parser::is_number(std::string const& arg) const
 
 inline bool parser::is_option(std::string const& arg) const
 {
-  assert(0 != arg.size());
+  // Local modification: an empty command line argument is a value, not an option. Upstream
+  // asserts here, which aborts an application given an empty argument, e.g. --name "".
+  if (arg.empty())
+    return false;
   if (is_number(arg))
     return false;
   return '-' == arg[0];

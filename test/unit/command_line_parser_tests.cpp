@@ -731,6 +731,93 @@ TEST_F(CommandLineParserTests, GetValueInRange)
   EXPECT_EQ(good.GetValueInRange<int>("--port", 1024, 65535), 8080);
 }
 
+//! An empty string is a default value like any other, and is told apart from the absence of one.
+TEST_F(CommandLineParserTests, EmptyDefaultValue)
+{
+  CommandLineParser parser;
+  auto& with_default = parser.AddOption({"--prefix"}).SetParameter(true).SetDefaultValue("");
+  auto& without_default = parser.AddOption({"--nodefault"}).SetParameter(true);
+
+  EXPECT_TRUE(with_default.HasDefaultValue());
+  EXPECT_EQ(with_default.GetDefaultValue(), std::string(""));
+  EXPECT_FALSE(without_default.HasDefaultValue());
+
+  const int argc = 1;
+  std::array<const char*, argc> argv{"progname"};
+  EXPECT_TRUE(parser.Parse(argc, argv.data()));
+
+  // the empty default is returned, rather than reported as no value at all
+  EXPECT_EQ(parser.GetValue<std::string>("--prefix"), std::string(""));
+  EXPECT_TRUE(parser.FindValue("--prefix").has_value());
+
+  // while an option with no default still has nothing to give
+  EXPECT_FALSE(parser.FindValue("--nodefault").has_value());
+  EXPECT_THROW(parser.GetValue<std::string>("--nodefault"), MissingValueException);
+}
+
+//! A value that was given counts as given even when it is empty. An empty command line argument
+//! also has to survive the parsing at all, which it did not before.
+TEST_F(CommandLineParserTests, EmptyValueGivenInCommandLine)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"-m", "--msg"}).SetParameter(true);
+  (void)parser.AddOption({"--other"}).SetParameter(true);
+
+  const int argc = 5;
+  std::array<const char*, argc> argv{"progname", "--msg", "", "--other", "x"};
+  EXPECT_TRUE(parser.Parse(argc, argv.data()));
+
+  EXPECT_TRUE(parser.IsSet("--msg"));
+  EXPECT_TRUE(parser.IsSet("-m"));
+  EXPECT_EQ(parser.GetValue<std::string>("--msg"), std::string(""));
+  EXPECT_TRUE(parser.FindValue("--msg").has_value());
+  EXPECT_EQ(parser.FindValue("--msg").value(), std::string(""));
+
+  // the option after the empty value is unaffected
+  EXPECT_EQ(parser.GetValue<std::string>("--other"), std::string("x"));
+}
+
+//! Asking for a value without having to know first whether it is there.
+TEST_F(CommandLineParserTests, FindValueAndFallback)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"--run-id"}).SetParameter(true);
+  (void)parser.AddOption({"--count"}).SetParameter(true);
+  (void)parser.AddOption({"--warmup"}).SetParameter(true).SetDefaultValue("100");
+
+  const int argc = 3;
+  std::array<const char*, argc> argv{"progname", "--count", "7"};
+  EXPECT_TRUE(parser.Parse(argc, argv.data()));
+
+  {  // an option that was given
+    EXPECT_EQ(parser.FindValue("--count").value(), std::string("7"));
+    EXPECT_EQ(parser.GetValue<int>("--count", 1), 7);
+  }
+
+  {  // an option that was not given and has no default value
+    EXPECT_FALSE(parser.FindValue("--run-id").has_value());
+    EXPECT_EQ(parser.GetValue<std::string>("--run-id", ""), std::string(""));
+    EXPECT_EQ(parser.GetValue<std::string>("--run-id", "fallback"), std::string("fallback"));
+    EXPECT_EQ(parser.GetValue<int>("--run-id", 42), 42);
+  }
+
+  {  // an option that was not given, but has a default value: the default wins over the fallback
+    EXPECT_EQ(parser.FindValue("--warmup").value(), std::string("100"));
+    EXPECT_EQ(parser.GetValue<int>("--warmup", 7), 100);
+  }
+
+  // the fallback stands in for an absent value, not for an unusable one
+  CommandLineParser bad;
+  (void)bad.AddOption({"--size"}).SetParameter(true);
+  std::array<const char*, 3> bad_argv{"progname", "--size", "64k"};
+  EXPECT_TRUE(bad.Parse(3, bad_argv.data()));
+  EXPECT_THROW(bad.GetValue<int>("--size", 1), InvalidValueException);
+
+  // an option name that was never added is a mistake, whichever accessor is used
+  EXPECT_THROW(parser.FindValue("--typo"), InvalidOptionException);
+  EXPECT_THROW(parser.GetValue<int>("--typo", 1), InvalidOptionException);
+}
+
 //! Validate multiline string representing `usage` help for the single option setup.
 TEST_F(CommandLineParserTests, GetUsageString)
 {

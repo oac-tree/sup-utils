@@ -29,6 +29,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 
 namespace sup
@@ -160,6 +161,36 @@ public:
   T GetValue(const std::string& option_name) const;
 
   /**
+   * @brief Returns the text of the value of an option, if there is one.
+   *
+   * Tells "the option was not given" apart from "the option was given this value" without an
+   * exception, which the value accessors cannot. A value that was given counts as given even when
+   * it is empty.
+   *
+   * @param option_name Name of the option.
+   * @return The value as it was given in the command line, or the default value, or an empty
+   * optional if the option was not given and has no default value.
+   *
+   * @throws InvalidOptionException if no option with this name was added to the parser.
+   */
+  std::optional<std::string> FindValue(const std::string& option_name) const;
+
+  /**
+   * @brief Returns the value of an option, or the given fallback if the option was not given.
+   *
+   * The fallback stands in for a value that is absent, and not for one that is unusable: a value
+   * that was given but doesn't convert is still reported.
+   *
+   * @param option_name Name of the option.
+   * @param fallback The value to return if the option was not given and has no default value.
+   *
+   * @throws InvalidOptionException if no option with this name was added to the parser.
+   * @throws InvalidValueException if the text of the value doesn't convert to the requested type.
+   */
+  template <typename T>
+  T GetValue(const std::string& option_name, const T& fallback) const;
+
+  /**
    * @brief Returns the value of an option, checked against the given bounds.
    *
    * @param option_name Name of the option.
@@ -218,6 +249,13 @@ template <typename T>
 T CommandLineParser::GetValue(const std::string& option_name) const
 {
   return ConvertValue<T>("option '" + option_name + "'", GetValueAsText(option_name));
+}
+
+template <typename T>
+T CommandLineParser::GetValue(const std::string& option_name, const T& fallback) const
+{
+  const auto text = FindValue(option_name);
+  return text.has_value() ? ConvertValue<T>("option '" + option_name + "'", *text) : fallback;
 }
 
 template <typename T>

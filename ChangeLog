@@ -5,6 +5,9 @@ Changes for 1.11.0:
   asked for as an unsigned type, a value that doesn't fit the requested type, leading
   whitespace and an empty value used to be accepted silently and are now reported.
 - sup-cli: added CommandLineParser::GetValueInRange<T> and conversion functions.
+- sup-cli: added CommandLineParser::FindValue and a GetValue<T> overload with a fallback.
+- sup-cli: an empty command line argument no longer aborts the application (bugfix).
+- sup-cli: an empty string is a default value like any other, see CommandLineOption::HasDefaultValue.
 - sup-cli: added collection of own exceptions for cli.
 - sup-cli: option and positional values keep the whitespace they were given (bugfix).
 - sup-cli: CommandLineParser::IsSet and GetOption are const, and the parser is movable.

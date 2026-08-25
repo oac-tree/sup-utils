@@ -45,7 +45,12 @@ std::vector<std::string> CommandLineOption::GetOptionNames() const
 
 std::string CommandLineOption::GetDefaultValue() const
 {
-  return m_default_value;
+  return m_default_value.value_or(std::string{});
+}
+
+bool CommandLineOption::HasDefaultValue() const
+{
+  return m_default_value.has_value();
 }
 
 CommandLineOption& CommandLineOption::SetDefaultValue(const std::string& default_value) &

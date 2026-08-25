@@ -37,6 +37,26 @@ TEST_F(CommandLineOptionTests, Construction)
   EXPECT_FALSE(option.IsRequired());
   EXPECT_FALSE(option.IsPositional());
   EXPECT_FALSE(option.IsParameter());
+  EXPECT_FALSE(option.HasDefaultValue());
+  EXPECT_EQ(option.GetDefaultValue(), std::string(""));
+}
+
+//! An empty string is a default value like any other, and is not the same as having none.
+TEST_F(CommandLineOptionTests, HasDefaultValue)
+{
+  {
+    CommandLineOption option({"-f"});
+    (void)option.SetDefaultValue("abc");
+    EXPECT_TRUE(option.HasDefaultValue());
+    EXPECT_EQ(option.GetDefaultValue(), std::string("abc"));
+  }
+
+  {
+    CommandLineOption option({"-f"});
+    (void)option.SetDefaultValue("");
+    EXPECT_TRUE(option.HasDefaultValue());
+    EXPECT_EQ(option.GetDefaultValue(), std::string(""));
+  }
 }
 
 TEST_F(CommandLineOptionTests, FluentInterface)

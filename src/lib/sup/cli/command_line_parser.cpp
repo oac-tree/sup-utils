@@ -186,7 +186,7 @@ void CommandLineParser::SetDescription(const std::string& header, const std::str
   p_impl->m_footer = footer;
 }
 
-std::string CommandLineParser::GetValueAsText(const std::string& option_name) const
+std::optional<std::string> CommandLineParser::FindValue(const std::string& option_name) const
 {
   const auto* option = GetOption(option_name);
   if (option == nullptr)
@@ -195,26 +195,36 @@ std::string CommandLineParser::GetValueAsText(const std::string& option_name) co
                                  + "' is not among the options added to the parser");
   }
 
-  std::string parse_result;
   for (const auto& alias_name : option->GetOptionNames())
   {
+    // The state of the stream is the presence test: an option that was not given yields a stream
+    // in a failed state, while one given an empty value yields a good, empty one. Extracting from
+    // it would serve neither purpose, since extraction fails on an empty value and stops at the
+    // first whitespace of a value containing spaces.
     auto value_stream = p_impl->m_parser(alias_name);
-    // The extraction serves only as a presence test: an option that was not given yields a
-    // stream in a failed state. The value itself is taken from the stream buffer, since the
-    // extraction stops at the first whitespace and would truncate a value containing spaces.
-    if ((value_stream >> parse_result))
+    if (value_stream)
     {
       return value_stream.str();
     }
   }
 
-  if (!option->GetDefaultValue().empty())
+  if (option->HasDefaultValue())
   {
     return option->GetDefaultValue();
   }
 
-  throw MissingValueException("Option '" + option_name
-                              + "' was not given in the command line and has no default value");
+  return {};
+}
+
+std::string CommandLineParser::GetValueAsText(const std::string& option_name) const
+{
+  const auto result = FindValue(option_name);
+  if (!result.has_value())
+  {
+    throw MissingValueException("Option '" + option_name
+                                + "' was not given in the command line and has no default value");
+  }
+  return *result;
 }
 
 std::string CommandLineParser::GetPositionalValueAsText(size_t index) const
@@ -249,8 +259,9 @@ CommandLineOption* CommandLineParser::CommandLineParserImpl::FindOption(
 
 bool CommandLineParser::CommandLineParserImpl::IsParameterSet(const std::string& option_name) const
 {
-  std::string result = m_parser(option_name).str();
-  return !result.empty();
+  // A value that was given counts as given even when it is empty, hence the state of the stream
+  // rather than the emptiness of its contents.
+  return static_cast<bool>(m_parser(option_name));
 }
 
 bool CommandLineParser::CommandLineParserImpl::IsFlagSet(const std::string& option_name) const
@@ -269,7 +280,7 @@ bool CommandLineParser::CommandLineParserImpl::IsFlagOptionSet(
 bool CommandLineParser::CommandLineParserImpl::IsParameterOptionSet(
     const CommandLineOption& option) const
 {
-  if (IsFlagOptionSet(option) && !option.GetDefaultValue().empty())
+  if (IsFlagOptionSet(option) && option.HasDefaultValue())
   {
     return true;
   }
@@ -308,7 +319,7 @@ bool CommandLineParser::CommandLineParserImpl::IsParameterArgumentsProvided(
   // Special case when the user provides parameter option without the value. We check that there
   // is no flag found with the same name, which would be a sign of forgotten arguments.
   // Presence of default argument makes it always passign.
-  return option.GetDefaultValue().empty() ? !IsFlagOptionSet(option) : true;
+  return option.HasDefaultValue() ? true : !IsFlagOptionSet(option);
 }
 
 bool CommandLineParser::CommandLineParserImpl::IsValidParsing() const
