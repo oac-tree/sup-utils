@@ -3,16 +3,10 @@ Changes for 1.11.0:
 - sup-cli: CommandLineParser::GetValue<T> now converts the whole text of a value, or throws.
   A text that only partly reads as a number ("64k" asked for as an int), a negative number
   asked for as an unsigned type, a value that doesn't fit the requested type, leading
-  whitespace and an empty value used to be accepted silently and are now reported. A command
-  line that was quietly misread before will now fail with a message naming the option and the
-  value.
-- sup-cli: added CommandLineParser::GetValueInRange<T> and the sup/cli/value_conversion.h
-  conversion functions.
-- sup-cli: added sup/cli/exceptions.h. The parser reports a failure as InvalidOptionException,
-  InvalidValueException or MissingValueException, all deriving from std::runtime_error as
-  before.
-- sup-cli: option and positional values keep the whitespace they were given, instead of being
-  truncated at the first space.
+  whitespace and an empty value used to be accepted silently and are now reported.
+- sup-cli: added CommandLineParser::GetValueInRange<T> and conversion functions.
+- sup-cli: added collection of own exceptions for cli.
+- sup-cli: option and positional values keep the whitespace they were given (bugfix).
 - sup-cli: CommandLineParser::IsSet and GetOption are const, and the parser is movable.
 - sup-cli: removed sup/cli/base_types.h; std::int32_t is used instead of sup::cli::int32.
 - Build coverage with -O0 by selecting Debug over RelWithDebInfo

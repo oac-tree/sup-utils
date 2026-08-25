@@ -24,7 +24,6 @@
 
 #include "exceptions.h"
 
-#include <cmath>
 #include <exception>
 #include <string_view>
 
@@ -57,11 +56,11 @@ void ThrowInvalidValue(const std::string& context, const std::string& text,
 
 std::int64_t ParseSignedInteger(const std::string& context, const std::string& text)
 {
-  static const std::string reason{"is not an integer"};
+  static const std::string kReason{"is not an integer"};
 
   if (HasUnusableForm(text))
   {
-    ThrowInvalidValue(context, text, reason);
+    ThrowInvalidValue(context, text, kReason);
   }
 
   std::int64_t result{0};
@@ -72,12 +71,12 @@ std::int64_t ParseSignedInteger(const std::string& context, const std::string& t
   }
   catch (const std::exception&)
   {
-    ThrowInvalidValue(context, text, reason);
+    ThrowInvalidValue(context, text, kReason);
   }
 
   if (consumed != text.size())
   {
-    ThrowInvalidValue(context, text, reason);
+    ThrowInvalidValue(context, text, kReason);
   }
 
   return result;
@@ -85,13 +84,13 @@ std::int64_t ParseSignedInteger(const std::string& context, const std::string& t
 
 std::uint64_t ParseUnsignedInteger(const std::string& context, const std::string& text)
 {
-  static const std::string reason{"is not a non-negative integer"};
+  static const std::string kReason{"is not a non-negative integer"};
 
   // Checked before the conversion: std::stoull reads a negative number and wraps it around to a
   // large positive one, without a word.
   if (HasUnusableForm(text) || (text.front() == '-'))
   {
-    ThrowInvalidValue(context, text, reason);
+    ThrowInvalidValue(context, text, kReason);
   }
 
   std::uint64_t result{0U};
@@ -102,12 +101,12 @@ std::uint64_t ParseUnsignedInteger(const std::string& context, const std::string
   }
   catch (const std::exception&)
   {
-    ThrowInvalidValue(context, text, reason);
+    ThrowInvalidValue(context, text, kReason);
   }
 
   if (consumed != text.size())
   {
-    ThrowInvalidValue(context, text, reason);
+    ThrowInvalidValue(context, text, kReason);
   }
 
   return result;
@@ -115,11 +114,11 @@ std::uint64_t ParseUnsignedInteger(const std::string& context, const std::string
 
 double ParseFloatingPoint(const std::string& context, const std::string& text)
 {
-  static const std::string reason{"is not a number"};
+  static const std::string kReason{"is not a number"};
 
   if (HasUnusableForm(text))
   {
-    ThrowInvalidValue(context, text, reason);
+    ThrowInvalidValue(context, text, kReason);
   }
 
   double result{0.0};
@@ -130,12 +129,12 @@ double ParseFloatingPoint(const std::string& context, const std::string& text)
   }
   catch (const std::exception&)
   {
-    ThrowInvalidValue(context, text, reason);
+    ThrowInvalidValue(context, text, kReason);
   }
 
   if (consumed != text.size())
   {
-    ThrowInvalidValue(context, text, reason);
+    ThrowInvalidValue(context, text, kReason);
   }
 
   return result;

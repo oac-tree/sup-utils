@@ -51,7 +51,7 @@ namespace cli
  * @brief Converts the whole text to a signed integer.
  *
  * The text must consist of nothing but the number. A trailing unit ("64k"), a base prefix
- * ("0x10"), leading whitespace or an empty text are errors, rather than a partial reading.
+ * ("0x10"), leading whitespace or an empty text are errors.
  *
  * @throws InvalidValueException if the text is not exactly an integer, or does not fit in 64 bits.
  */
@@ -60,7 +60,7 @@ std::int64_t ParseSignedInteger(const std::string& context, const std::string& t
 /**
  * @brief Converts the whole text to an unsigned integer.
  *
- * A negative number is an error, and not a value that wraps around to a large positive one.
+ * A negative number is an error.
  *
  * @throws InvalidValueException if the text is not exactly a non-negative integer, or does not fit
  * in 64 bits.
@@ -89,7 +89,7 @@ bool ParseBoolean(const std::string& context, const std::string& text);
  * @brief Converts the whole text of a value to the requested type.
  *
  * The conversion either consumes the whole text or throws: a value the requested type cannot hold
- * is reported, and not silently turned into a number nobody asked for.
+ * is reported via exception.
  *
  * @param context What the value belongs to, used in the message, e.g. "option '--size'".
  * @param text The text of the value, as it was given in the command line.

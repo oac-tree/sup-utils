@@ -150,8 +150,7 @@ public:
   /**
    * @brief Returns the value of an option, converted to the requested type.
    *
-   * The whole text of the value is converted, or the call throws: a text the requested type cannot
-   * hold is reported, and not silently turned into a number nobody asked for.
+   * The whole text of the value is converted. The call will throw if conversion is not possible.
    *
    * @throws InvalidOptionException if no option with this name was added to the parser.
    * @throws MissingValueException if the option was not given and has no default value.
@@ -167,8 +166,7 @@ public:
    * @param lowest Smallest admissible value, inclusive.
    * @param highest Largest admissible value, inclusive.
    *
-   * @throws InvalidValueException if the value falls outside the bounds, in which case the message
-   * states them. A not-a-number is outside any bounds.
+   * @throws InvalidValueException if the value falls outside the bounds (NaN will throw too).
    */
   template <typename T>
   T GetValueInRange(const std::string& option_name, T lowest, T highest) const;
