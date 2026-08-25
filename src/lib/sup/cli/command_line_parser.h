@@ -73,10 +73,7 @@ public:
   ~CommandLineParser();
 
   /**
-   * @brief Copy constructor and assignment.
-   *
-   * Deleted: the parser owns the options it was given, and there is no use case for duplicating a
-   * configured parser.
+   * @brief Copy constructor and assignment (deleted).
    */
   CommandLineParser(const CommandLineParser& other) = delete;
   CommandLineParser& operator=(const CommandLineParser& other) & = delete;
@@ -85,8 +82,8 @@ public:
    * @brief Move constructor and assignment.
    *
    * These allow a configured parser to be handed over, e.g. returned from a function that
-   * registers a set of options shared by several applications. As for any object holding its state
-   * behind a pointer, the parser that was moved from shall not be used afterwards.
+   * registers a set of options shared by several applications. The parser that was moved from shall
+   * not be used afterwards.
    */
   CommandLineParser(CommandLineParser&& other) noexcept;
   CommandLineParser& operator=(CommandLineParser&& other) & noexcept;
