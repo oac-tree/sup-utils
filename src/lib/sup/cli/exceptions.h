@@ -69,6 +69,23 @@ public:
 };
 
 /**
+ * @brief Exception thrown when the text of a value is not what the requested type needs.
+ *
+ * It reports a mistake in the command line: the text does not convert as a whole to the requested
+ * type, or the number it denotes falls outside the admissible range.
+ */
+class InvalidValueException : public CommandLineException
+{
+public:
+  explicit InvalidValueException(const std::string& message);
+  ~InvalidValueException() override = default;
+  InvalidValueException(const InvalidValueException& other) = default;
+  InvalidValueException& operator=(const InvalidValueException& other) & = default;
+  InvalidValueException(InvalidValueException&&) = default;
+  InvalidValueException& operator=(InvalidValueException&&) & = default;
+};
+
+/**
  * @brief Exception thrown when no value is available to return.
  *
  * Either the option was not given on the command line and carries no default value, or a

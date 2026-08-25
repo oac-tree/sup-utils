@@ -186,7 +186,7 @@ void CommandLineParser::SetDescription(const std::string& header, const std::str
   p_impl->m_footer = footer;
 }
 
-std::stringstream CommandLineParser::GetValueStream(const std::string& option_name) const
+std::string CommandLineParser::GetValueAsText(const std::string& option_name) const
 {
   const auto* option = GetOption(option_name);
   if (option == nullptr)
@@ -204,20 +204,20 @@ std::stringstream CommandLineParser::GetValueStream(const std::string& option_na
     // extraction stops at the first whitespace and would truncate a value containing spaces.
     if ((value_stream >> parse_result))
     {
-      return std::stringstream(value_stream.str());
+      return value_stream.str();
     }
   }
 
   if (!option->GetDefaultValue().empty())
   {
-    return std::stringstream(option->GetDefaultValue());
+    return option->GetDefaultValue();
   }
 
   throw MissingValueException("Option '" + option_name
                               + "' was not given in the command line and has no default value");
 }
 
-std::stringstream CommandLineParser::GetPositionalValueStream(size_t index) const
+std::string CommandLineParser::GetPositionalValueAsText(size_t index) const
 {
   const auto values = GetPositionalValues();
   if (index >= values.size())
@@ -226,7 +226,7 @@ std::stringstream CommandLineParser::GetPositionalValueStream(size_t index) cons
                                 + " doesn't exist, the number of positional values found is "
                                 + std::to_string(values.size()));
   }
-  return std::stringstream(values.at(index));
+  return values.at(index);
 }
 
 CommandLineParser::CommandLineParserImpl::CommandLineParserImpl()

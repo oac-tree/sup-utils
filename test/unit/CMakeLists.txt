@@ -21,6 +21,7 @@ target_sources(${unit-tests} PRIVATE
   tree_data_parse_tests.cpp
   tree_data_serialize_tests.cpp
   tree_data_validate_tests.cpp
+  value_conversion_tests.cpp
   unit_test_helper.cpp
   xml_exception_tests.cpp
 )

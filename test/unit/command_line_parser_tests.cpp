@@ -667,6 +667,70 @@ TEST_F(CommandLineParserTests, ExceptionsWhenValueIsNotAvailable)
   EXPECT_EQ(parser.GetValue<int>("--with-default"), 42);
 }
 
+//! A value the requested type cannot hold is reported, and not silently turned into a number
+//! nobody asked for.
+TEST_F(CommandLineParserTests, GetValueIsStrict)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"-s", "--size"}).SetParameter(true);
+  (void)parser.AddOption({"-c", "--count"}).SetParameter(true);
+  (void)parser.AddOption({"--rate"}).SetParameter(true);
+  parser.AddPositionalOption("<target>", "target");
+
+  const int argc = 8;
+  std::array<const char*, argc> argv{"progname", "--size", "64k", "--count",
+                                     "-1",       "--rate", "1e4", "abc"};
+  EXPECT_TRUE(parser.Parse(argc, argv.data()));
+
+  // the text of an option value is always available
+  EXPECT_EQ(parser.GetValue<std::string>("--size"), std::string("64k"));
+
+  // but it does not convert to a number
+  EXPECT_THAT([&] { (void)parser.GetValue<int>("--size"); },
+              ::testing::ThrowsMessage<InvalidValueException>(
+                  ::testing::AllOf(::testing::HasSubstr("64k"), ::testing::HasSubstr("--size"))));
+
+  // a negative number asked for as unsigned does not wrap around
+  EXPECT_EQ(parser.GetValue<int>("--count"), -1);
+  EXPECT_THROW(parser.GetValue<unsigned int>("--count"), InvalidValueException);
+
+  // what did convert before still converts
+  EXPECT_DOUBLE_EQ(parser.GetValue<double>("--rate"), 10000.0);
+
+  // and so does a positional value, whose message names the index
+  EXPECT_EQ(parser.GetPositionalValue<std::string>(0), std::string("abc"));
+  EXPECT_THAT([&] { (void)parser.GetPositionalValue<int>(0); },
+              ::testing::ThrowsMessage<InvalidValueException>(::testing::AllOf(
+                  ::testing::HasSubstr("abc"), ::testing::HasSubstr("positional value 0"))));
+}
+
+//! Checking a value against bounds, with the message stating them.
+TEST_F(CommandLineParserTests, GetValueInRange)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"--port"}).SetParameter(true);
+  (void)parser.AddOption({"--rate"}).SetParameter(true);
+
+  const int argc = 5;
+  std::array<const char*, argc> argv{"progname", "--port", "70000", "--rate", "nan"};
+  EXPECT_TRUE(parser.Parse(argc, argv.data()));
+
+  EXPECT_THAT([&] { (void)parser.GetValueInRange<int>("--port", 1024, 65535); },
+              ::testing::ThrowsMessage<InvalidValueException>(
+                  ::testing::AllOf(::testing::HasSubstr("70000"), ::testing::HasSubstr("1024"),
+                                   ::testing::HasSubstr("65535"))));
+
+  // a not-a-number fails both comparisons, and is reported rather than let through
+  EXPECT_THROW(parser.GetValueInRange<double>("--rate", 0.001, 1.0e9), InvalidValueException);
+
+  // a value within the bounds is returned
+  CommandLineParser good;
+  (void)good.AddOption({"--port"}).SetParameter(true);
+  std::array<const char*, 3> good_argv{"progname", "--port", "8080"};
+  EXPECT_TRUE(good.Parse(3, good_argv.data()));
+  EXPECT_EQ(good.GetValueInRange<int>("--port", 1024, 65535), 8080);
+}
+
 //! Validate multiline string representing `usage` help for the single option setup.
 TEST_F(CommandLineParserTests, GetUsageString)
 {

@@ -24,10 +24,12 @@
 #define SUP_CLI_COMMAND_LINE_PARSER_H_
 
 #include <sup/cli/command_line_option.h>
+#include <sup/cli/exceptions.h>
+#include <sup/cli/value_conversion.h>
 
 #include <cstdint>
 #include <memory>
-#include <sstream>
+#include <string>
 
 namespace sup
 {
@@ -146,10 +148,30 @@ public:
   bool IsSet(const std::string& option_name) const;
 
   /**
-   * @brief Returns the value of an option.
+   * @brief Returns the value of an option, converted to the requested type.
+   *
+   * The whole text of the value is converted, or the call throws: a text the requested type cannot
+   * hold is reported, and not silently turned into a number nobody asked for.
+   *
+   * @throws InvalidOptionException if no option with this name was added to the parser.
+   * @throws MissingValueException if the option was not given and has no default value.
+   * @throws InvalidValueException if the text of the value doesn't convert to the requested type.
    */
   template <typename T>
   T GetValue(const std::string& option_name) const;
+
+  /**
+   * @brief Returns the value of an option, checked against the given bounds.
+   *
+   * @param option_name Name of the option.
+   * @param lowest Smallest admissible value, inclusive.
+   * @param highest Largest admissible value, inclusive.
+   *
+   * @throws InvalidValueException if the value falls outside the bounds, in which case the message
+   * states them. A not-a-number is outside any bounds.
+   */
+  template <typename T>
+  T GetValueInRange(const std::string& option_name, T lowest, T highest) const;
 
   /**
    * @brief Returns a number of positional options found after the parsing.
@@ -186,9 +208,9 @@ public:
   void SetDescription(const std::string& header, const std::string& footer);
 
 private:
-  std::stringstream GetValueStream(const std::string& option_name) const;
+  std::string GetValueAsText(const std::string& option_name) const;
 
-  std::stringstream GetPositionalValueStream(size_t index) const;
+  std::string GetPositionalValueAsText(size_t index) const;
 
   struct CommandLineParserImpl;
   std::unique_ptr<CommandLineParserImpl> p_impl;
@@ -197,39 +219,33 @@ private:
 template <typename T>
 T CommandLineParser::GetValue(const std::string& option_name) const
 {
-  T result;
-  GetValueStream(option_name) >> result;
-  return result;
+  return ConvertValue<T>("option '" + option_name + "'", GetValueAsText(option_name));
 }
 
-/**
- * @brief Returns the value as it was given on the command line.
- *
- * String specialization. Correctly handles a string with spaces "abc def"
- */
-template <>
-inline std::string CommandLineParser::GetValue<std::string>(const std::string& option_name) const
+template <typename T>
+T CommandLineParser::GetValueInRange(const std::string& option_name, T lowest, T highest) const
 {
-  return GetValueStream(option_name).str();
+  const auto context = "option '" + option_name + "'";
+  const auto text = GetValueAsText(option_name);
+  const auto result = ConvertValue<T>(context, text);
+
+  // Written as a negated conjunction on purpose: a not-a-number fails both comparisons, and is
+  // reported instead of being let through.
+  if (!((result >= lowest) && (result <= highest)))
+  {
+    ThrowInvalidValue(context, text,
+                      "is outside the allowed range of " + std::to_string(lowest) + " to "
+                          + std::to_string(highest));
+  }
+
+  return result;
 }
 
 template <typename T>
 T CommandLineParser::GetPositionalValue(size_t index) const
 {
-  T result;
-  GetPositionalValueStream(index) >> result;
-  return result;
-}
-
-/**
- * @brief Returns the positional value as it was given on the command line.
- *
- * String specialization. Correctly handles a string with spaces "abc def"
- */
-template <>
-inline std::string CommandLineParser::GetPositionalValue<std::string>(size_t index) const
-{
-  return GetPositionalValueStream(index).str();
+  return ConvertValue<T>("positional value " + std::to_string(index),
+                         GetPositionalValueAsText(index));
 }
 
 }  // namespace cli

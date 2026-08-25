@@ -36,6 +36,11 @@ InvalidOptionException::InvalidOptionException(const std::string& message)
 {
 }
 
+InvalidValueException::InvalidValueException(const std::string& message)
+    : CommandLineException{message}
+{
+}
+
 MissingValueException::MissingValueException(const std::string& message)
     : CommandLineException{message}
 {

@@ -24,6 +24,8 @@ target_sources(${library_name} PRIVATE
   command_line_utils.h
   exceptions.cpp
   exceptions.h
+  value_conversion.cpp
+  value_conversion.h
 )
 
 # -- Installation --
@@ -34,5 +36,6 @@ install(FILES
   command_line_option.h
   command_line_parser.h
   exceptions.h
+  value_conversion.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/cli
 )
