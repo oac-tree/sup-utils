@@ -187,9 +187,11 @@ T CommandLineParser::GetValue(const std::string& option_name) const
   return result;
 }
 
-//! Returns the value as it was given on the command line. Stream extraction is not used here: it
-//! stops at the first whitespace, and would silently truncate a value containing spaces, such as a
-//! file path.
+/**
+ * @brief Returns the value as it was given on the command line.
+ *
+ * String specialization. Correctly handles a string with spaces "abc def"
+ */
 template <>
 inline std::string CommandLineParser::GetValue<std::string>(const std::string& option_name) const
 {
@@ -204,8 +206,11 @@ T CommandLineParser::GetPositionalValue(size_t index) const
   return result;
 }
 
-//! Returns the positional value as it was given on the command line. See the note on the
-//! GetValue<std::string> specialization above.
+/**
+ * @brief Returns the positional value as it was given on the command line.
+ *
+ * String specialization. Correctly handles a string with spaces "abc def"
+ */
 template <>
 inline std::string CommandLineParser::GetPositionalValue<std::string>(size_t index) const
 {
