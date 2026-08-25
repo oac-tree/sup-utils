@@ -31,12 +31,12 @@ using namespace sup::codec;
 
 // RFC 4648 test vectors:
 std::vector<std::pair<std::string, std::string>> kTestVectors{{
-  { "f", "Zg==" },
-  { "fo", "Zm8=" },
-  { "foo", "Zm9v" },
-  { "foob", "Zm9vYg==" },
-  { "fooba", "Zm9vYmE=" },
-  { "foobar", "Zm9vYmFy" },
+    {"f", "Zg=="},
+    {"fo", "Zm8="},
+    {"foo", "Zm9v"},
+    {"foob", "Zm9vYg=="},
+    {"fooba", "Zm9vYmE="},
+    {"foobar", "Zm9vYmFy"},
 }};
 
 class Base64Test : public ::testing::Test
@@ -132,10 +132,7 @@ TEST_F(Base64Test, RandomLong)
   }
 }
 
-Base64Test::Base64Test()
-  : empty_bytes{}
-  , empty_str{}
-{}
+Base64Test::Base64Test() : empty_bytes{}, empty_str{} {}
 
 Base64Test::~Base64Test() = default;
 

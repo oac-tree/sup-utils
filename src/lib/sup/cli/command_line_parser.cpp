@@ -32,7 +32,7 @@
 namespace
 {
 template <typename A, typename B>
-bool Contains(const A &container, const B &element)
+bool Contains(const A& container, const B& element)
 {
   return std::find(container.begin(), container.end(), element) != container.end();
 }
@@ -54,31 +54,31 @@ struct CommandLineParser::CommandLineParserImpl
 
   //! Returns option with given name, or nullptr if no such option was added. The constness of the
   //! result is decided by the caller: the lookup itself doesn't modify the option.
-  CommandLineOption *FindOption(const std::string &option_name) const;
+  CommandLineOption* FindOption(const std::string& option_name) const;
 
   //! Returns true if parameter options with given name was set in command line and parameter can be
   //! parsed.
-  bool IsParameterSet(const std::string &option_name) const;
+  bool IsParameterSet(const std::string& option_name) const;
 
   //! Returns true if flag with given name was set in comand line.
-  bool IsFlagSet(const std::string &option_name) const;
+  bool IsFlagSet(const std::string& option_name) const;
 
   //! Returns true if option is properly set.
-  bool IsFlagOptionSet(const CommandLineOption &option) const;
+  bool IsFlagOptionSet(const CommandLineOption& option) const;
 
   //! Returns true if option is properly set.
-  bool IsParameterOptionSet(const CommandLineOption &option) const;
+  bool IsParameterOptionSet(const CommandLineOption& option) const;
 
   //! Returns true if option is properly set.
-  bool IsSet(const CommandLineOption &option) const;
+  bool IsSet(const CommandLineOption& option) const;
 
-  std::vector<const CommandLineOption *> GetOptions();
+  std::vector<const CommandLineOption*> GetOptions();
 
   //! Returns true if option is required and valid.
-  bool IsValidRequiredOption(const CommandLineOption &option) const;
+  bool IsValidRequiredOption(const CommandLineOption& option) const;
 
   //! Returns true if necessary parameter arguments have been provided.
-  bool IsParameterArgumentsProvided(const CommandLineOption &option) const;
+  bool IsParameterArgumentsProvided(const CommandLineOption& option) const;
 
   bool IsValidParsing() const;
 };
@@ -87,39 +87,39 @@ CommandLineParser::CommandLineParser() : p_impl(std::make_unique<CommandLinePars
 
 CommandLineParser::~CommandLineParser() = default;
 
-CommandLineOption &CommandLineParser::AddOption(const std::vector<std::string> &option_names,
-                                                const std::string &description)
+CommandLineOption& CommandLineParser::AddOption(const std::vector<std::string>& option_names,
+                                                const std::string& description)
 {
   (void)p_impl->m_options.emplace_back(std::make_unique<CommandLineOption>(option_names));
-  auto &result = *p_impl->m_options.back();
+  auto& result = *p_impl->m_options.back();
   (void)result.SetDescription(description);
   return result;
 }
 
-CommandLineOption &CommandLineParser::AddHelpOption()
+CommandLineOption& CommandLineParser::AddHelpOption()
 {
   return AddOption({"-h", "--help"}).SetDescription("Displays help on command line options");
 }
 
-void CommandLineParser::AddPositionalOption(const std::string &option_name,
-                                            const std::string &description)
+void CommandLineParser::AddPositionalOption(const std::string& option_name,
+                                            const std::string& description)
 {
   (void)AddOption({option_name}).SetDescription(description).SetPositional(true);
 }
 
-CommandLineOption *CommandLineParser::GetOption(const std::string &option_name)
+CommandLineOption* CommandLineParser::GetOption(const std::string& option_name)
 {
   return p_impl->FindOption(option_name);
 }
 
-const CommandLineOption *CommandLineParser::GetOption(const std::string &option_name) const
+const CommandLineOption* CommandLineParser::GetOption(const std::string& option_name) const
 {
   return p_impl->FindOption(option_name);
 }
 
 bool CommandLineParser::Parse(int32 argc, const char* const* argv)
 {
-  for (auto &option : p_impl->m_options)
+  for (auto& option : p_impl->m_options)
   {
     // Underlying parser from the Argh library requires parameters (i.e. options with values) to
     // be registered before parsing.
@@ -138,7 +138,7 @@ bool CommandLineParser::Parse(int32 argc, const char* const* argv)
   return !IsSet("--help") && p_impl->IsValidParsing();
 }
 
-bool CommandLineParser::IsSet(const std::string &option_name) const
+bool CommandLineParser::IsSet(const std::string& option_name) const
 {
   auto option = GetOption(option_name);
   return option ? p_impl->IsSet(*option) : false;
@@ -172,13 +172,13 @@ std::string CommandLineParser::GetUsageString() const
                                     p_impl->m_footer);
 }
 
-void CommandLineParser::SetDescription(const std::string &header, const std::string &footer)
+void CommandLineParser::SetDescription(const std::string& header, const std::string& footer)
 {
   p_impl->m_header = header;
   p_impl->m_footer = footer;
 }
 
-std::stringstream CommandLineParser::GetValueStream(const std::string &option_name) const
+std::stringstream CommandLineParser::GetValueStream(const std::string& option_name) const
 {
   std::string parse_result;
 
@@ -214,16 +214,14 @@ std::stringstream CommandLineParser::GetPositionalValueStream(size_t index) cons
 }
 
 CommandLineParser::CommandLineParserImpl::CommandLineParserImpl()
-  : m_options()
-  , m_parser()
-  , m_header()
-  , m_footer()
-{}
-
-CommandLineOption *CommandLineParser::CommandLineParserImpl::FindOption(
-  const std::string &option_name) const
+    : m_options(), m_parser(), m_header(), m_footer()
 {
-  for (const auto &option : m_options)
+}
+
+CommandLineOption* CommandLineParser::CommandLineParserImpl::FindOption(
+    const std::string& option_name) const
+{
+  for (const auto& option : m_options)
   {
     if (Contains(option->GetOptionNames(), option_name))
     {
@@ -233,59 +231,58 @@ CommandLineOption *CommandLineParser::CommandLineParserImpl::FindOption(
   return nullptr;
 }
 
-bool CommandLineParser::CommandLineParserImpl::IsParameterSet(const std::string &option_name) const
+bool CommandLineParser::CommandLineParserImpl::IsParameterSet(const std::string& option_name) const
 {
   std::string result = m_parser(option_name).str();
   return !result.empty();
 }
 
-bool CommandLineParser::CommandLineParserImpl::IsFlagSet(const std::string &option_name) const
+bool CommandLineParser::CommandLineParserImpl::IsFlagSet(const std::string& option_name) const
 {
   return m_parser[option_name];
 }
 
 bool CommandLineParser::CommandLineParserImpl::IsFlagOptionSet(
-  const CommandLineOption &option) const
+    const CommandLineOption& option) const
 {
   auto names = option.GetOptionNames();
-  auto predicate = [this](const std::string &str) { return IsFlagSet(str); };
+  auto predicate = [this](const std::string& str) { return IsFlagSet(str); };
   return std::find_if(names.begin(), names.end(), predicate) != names.end();
 }
 
 bool CommandLineParser::CommandLineParserImpl::IsParameterOptionSet(
-  const CommandLineOption &option) const
+    const CommandLineOption& option) const
 {
   if (IsFlagOptionSet(option) && !option.GetDefaultValue().empty())
   {
     return true;
   }
   auto names = option.GetOptionNames();
-  auto predicate = [this](const std::string &str) { return IsParameterSet(str); };
+  auto predicate = [this](const std::string& str) { return IsParameterSet(str); };
   return std::find_if(names.begin(), names.end(), predicate) != names.end();
 }
 
-bool CommandLineParser::CommandLineParserImpl::IsSet(const CommandLineOption &option) const
+bool CommandLineParser::CommandLineParserImpl::IsSet(const CommandLineOption& option) const
 {
   return option.IsParameter() ? IsParameterOptionSet(option) : IsFlagOptionSet(option);
 }
 
-std::vector<const CommandLineOption *> CommandLineParser::CommandLineParserImpl::GetOptions()
+std::vector<const CommandLineOption*> CommandLineParser::CommandLineParserImpl::GetOptions()
 {
-  std::vector<const CommandLineOption *> result;
+  std::vector<const CommandLineOption*> result;
   (void)std::transform(m_options.begin(), m_options.end(), std::back_inserter(result),
-                       [](std::unique_ptr<::sup::cli::CommandLineOption> &it)
-                       { return it.get(); });
+                       [](std::unique_ptr<::sup::cli::CommandLineOption>& it) { return it.get(); });
   return result;
 }
 
 bool CommandLineParser::CommandLineParserImpl::IsValidRequiredOption(
-  const CommandLineOption &option) const
+    const CommandLineOption& option) const
 {
   return option.IsRequired() ? IsSet(option) : true;
 }
 
 bool CommandLineParser::CommandLineParserImpl::IsParameterArgumentsProvided(
-  const CommandLineOption &option) const
+    const CommandLineOption& option) const
 {
   if (!option.IsParameter())
   {

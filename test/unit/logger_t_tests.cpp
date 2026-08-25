@@ -22,10 +22,10 @@
 
 #include <sup/log/logger_t.h>
 
+#include <gtest/gtest.h>
+
 #include <tuple>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 using namespace sup::log;
 
@@ -199,28 +199,21 @@ TEST_F(LoggerTTest, FilterNone)
   EXPECT_EQ(m_log_entries.back(), LogEntry(SUP_LOG_TRACE, LOG_SOURCE, MESSAGE_9));
 }
 
-LoggerTTest::LoggerTTest()
-  : m_log_entries{}
-{}
+LoggerTTest::LoggerTTest() : m_log_entries{} {}
 
 LoggerTTest::~LoggerTTest() = default;
 
-LoggerTTest::WarningFilterLogger
-LoggerTTest::CreateFilteredLogger(const std::string& source, int max_severity)
+LoggerTTest::WarningFilterLogger LoggerTTest::CreateFilteredLogger(const std::string& source,
+                                                                   int max_severity)
 {
   auto log_func = [this](int severity, const std::string& source, const std::string& message)
-                  {
-                    m_log_entries.emplace_back(severity, source, message);
-                  };
+  { m_log_entries.emplace_back(severity, source, message); };
   return WarningFilterLogger(log_func, source, max_severity);
 }
 
-LoggerTTest::FilterNoneLogger
-LoggerTTest::CreateNoFilterLogger(const std::string& source)
+LoggerTTest::FilterNoneLogger LoggerTTest::CreateNoFilterLogger(const std::string& source)
 {
   auto log_func = [this](int severity, const std::string& source, const std::string& message)
-                  {
-                    m_log_entries.emplace_back(severity, source, message);
-                  };
+  { m_log_entries.emplace_back(severity, source, message); };
   return FilterNoneLogger(log_func, source, SUP_LOG_TRACE);
 }

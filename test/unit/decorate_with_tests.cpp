@@ -19,9 +19,10 @@
  * refer to the file LICENSE located in the top level directory
  * of the distribution package.
  ******************************************************************************/
+#include <sup/templates/decorate_with.h>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <sup/templates/decorate_with.h>
 
 namespace unit
 {
@@ -36,7 +37,7 @@ const uint32_t DefaultReturnValue = 5;
 class TestInterface
 {
 public:
-  virtual ~TestInterface(){};
+  virtual ~TestInterface() {};
   virtual uint32_t GetMultiplication(const std::string& name, uint32_t value) const = 0;
   virtual uint32_t GetDivision(const std::string& name, uint32_t value) const = 0;
 };
@@ -61,7 +62,7 @@ protected:
 
 public:
   TestDecorator(TestInterface& config, uint32_t multiplier, uint32_t divisor)
-    : m_configuration(config), m_multiplier{multiplier}, m_divisor{divisor} {};
+      : m_configuration(config), m_multiplier{multiplier}, m_divisor{divisor} {};
   ~TestDecorator() { Die(); }
   MOCK_METHOD0(Die, void());
   uint32_t GetMultiplication(const std::string& name, uint32_t value) const
@@ -102,7 +103,7 @@ TEST_F(DecorateWithTest, Pass_Test_Decorator_Method1_Is_Called)
   // Test Decorator destructor should be called
   EXPECT_CALL(*dynamic_cast<TestDecorator*>(test_decorator.get()), Die());
 
-  EXPECT_EQ(test_decorator->GetMultiplication(name, value), 5*DefaultReturnValue);
+  EXPECT_EQ(test_decorator->GetMultiplication(name, value), 5 * DefaultReturnValue);
 }
 
 TEST_F(DecorateWithTest, Pass_Test_Decorator_Method2_Is_Called)
@@ -120,7 +121,7 @@ TEST_F(DecorateWithTest, Pass_Test_Decorator_Method2_Is_Called)
   // Test_Decorator destructor should be called
   EXPECT_CALL(*dynamic_cast<TestDecorator*>(test_decorator.get()), Die());
 
-  EXPECT_EQ(test_decorator->GetDivision(name, value), DefaultReturnValue/5);
+  EXPECT_EQ(test_decorator->GetDivision(name, value), DefaultReturnValue / 5);
 }
 
 TEST_F(DecorateWithTest, Pass_Mock_And_Test_Decorator_Destructors_Are_Called)

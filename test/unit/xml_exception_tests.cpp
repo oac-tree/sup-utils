@@ -62,8 +62,7 @@ TEST_F(XMLExceptionTest, NullptrCheck)
   auto checked_ptr = AssertNoNullptr(pa, InvalidOperationException("doesnt_matter"));
   EXPECT_EQ(checked_ptr, pa);
   pa = nullptr;
-  EXPECT_THROW(AssertNoNullptr(pa, InvalidOperationException("test")),
-               InvalidOperationException);
+  EXPECT_THROW(AssertNoNullptr(pa, InvalidOperationException("test")), InvalidOperationException);
 }
 
 XMLExceptionTest::XMLExceptionTest() = default;

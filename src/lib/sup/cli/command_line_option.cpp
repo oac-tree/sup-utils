@@ -27,7 +27,7 @@ namespace sup
 namespace cli
 {
 
-CommandLineOption::CommandLineOption(const std::vector<std::string> &option_names)
+CommandLineOption::CommandLineOption(const std::vector<std::string>& option_names)
     : m_option_names(option_names)
     , m_default_value()
     , m_description()
@@ -48,7 +48,7 @@ std::string CommandLineOption::GetDefaultValue() const
   return m_default_value;
 }
 
-CommandLineOption &CommandLineOption::SetDefaultValue(const std::string &default_value) &
+CommandLineOption& CommandLineOption::SetDefaultValue(const std::string& default_value) &
 {
   m_default_value = default_value;
   return *this;
@@ -59,7 +59,7 @@ std::string CommandLineOption::GetDescription() const
   return m_description;
 }
 
-CommandLineOption &CommandLineOption::SetDescription(const std::string &description) &
+CommandLineOption& CommandLineOption::SetDescription(const std::string& description) &
 {
   m_description = description;
   return *this;
@@ -70,7 +70,7 @@ bool CommandLineOption::IsRequired() const
   return m_is_required;
 }
 
-CommandLineOption &CommandLineOption::SetRequired(bool value) &
+CommandLineOption& CommandLineOption::SetRequired(bool value) &
 {
   m_is_required = value;
   return *this;
@@ -81,7 +81,7 @@ std::string CommandLineOption::GetValueName() const
   return m_value_name;
 }
 
-CommandLineOption &CommandLineOption::SetValueName(const std::string &value_name) &
+CommandLineOption& CommandLineOption::SetValueName(const std::string& value_name) &
 {
   m_value_name = value_name;
   return *this;
@@ -92,7 +92,7 @@ bool CommandLineOption::IsPositional() const
   return m_is_positional;
 }
 
-CommandLineOption &CommandLineOption::SetPositional(bool value) &
+CommandLineOption& CommandLineOption::SetPositional(bool value) &
 {
   m_is_positional = value;
   return *this;
@@ -103,7 +103,7 @@ bool CommandLineOption::IsParameter() const
   return m_is_parameter;
 }
 
-CommandLineOption &CommandLineOption::SetParameter(bool value) &
+CommandLineOption& CommandLineOption::SetParameter(bool value) &
 {
   m_is_parameter = value;
   return *this;

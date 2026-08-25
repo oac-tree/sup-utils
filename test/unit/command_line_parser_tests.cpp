@@ -42,7 +42,7 @@ TEST_F(CommandLineParserTests, ArghParser)
     argh::parser parser;
 
     const int argc = 1;
-    std::array<const char *, argc> argv{"progname"};
+    std::array<const char*, argc> argv{"progname"};
     parser.parse(argc, &argv[0]);
 
     // it reports program name as positional argument
@@ -57,7 +57,7 @@ TEST_F(CommandLineParserTests, ArghParser)
     parser.add_param("--font");
 
     const int argc = 3;
-    std::array<const char *, argc> argv{"progname", "--font", "24"};
+    std::array<const char*, argc> argv{"progname", "--font", "24"};
     parser.parse(argc, &argv[0]);
 
     // make sure it's not treated as a flag ([] operator)
@@ -72,7 +72,7 @@ TEST_F(CommandLineParserTests, ArghParser)
     parser.add_param("--font");
 
     const int argc = 2;
-    std::array<const char *, argc> argv{"progname", "--font"};
+    std::array<const char*, argc> argv{"progname", "--font"};
     parser.parse(argc, &argv[0]);
 
     // strangely, it appeared as a flag
@@ -86,7 +86,7 @@ TEST_F(CommandLineParserTests, ArghParser)
     argh::parser parser;
 
     const int argc = 2;
-    std::array<const char *, argc> argv{"progname", "--font"};
+    std::array<const char*, argc> argv{"progname", "--font"};
     parser.parse(argc, &argv[0]);
 
     // make sure it's treated as a flag ([] operator)
@@ -100,7 +100,7 @@ TEST_F(CommandLineParserTests, ArghParser)
     argh::parser parser;
 
     const int argc = 3;
-    std::array<const char *, argc> argv{"progname", "--font", "24"};
+    std::array<const char*, argc> argv{"progname", "--font", "24"};
     parser.parse(argc, &argv[0]);
 
     // it is still a flag, despite of a parameter nearby
@@ -119,7 +119,7 @@ TEST_F(CommandLineParserTests, AddHelpOption)
 {
   CommandLineParser parser;
 
-  auto &option = parser.AddHelpOption();
+  auto& option = parser.AddHelpOption();
 
   EXPECT_EQ(option.GetOptionNames(), std::vector<std::string>({"-h", "--help"}));
   EXPECT_FALSE(option.IsParameter());
@@ -131,10 +131,10 @@ TEST_F(CommandLineParserTests, AddHelpOption)
 TEST_F(CommandLineParserTests, AddOption)
 {
   CommandLineParser parser;
-  const auto &option1 = parser.AddOption({"-f", "--file"});
+  const auto& option1 = parser.AddOption({"-f", "--file"});
   EXPECT_EQ(option1.GetOptionNames(), std::vector<std::string>({"-f", "--file"}));
 
-  const auto &option2 = parser.AddOption({"--help"}, "description");
+  const auto& option2 = parser.AddOption({"--help"}, "description");
   EXPECT_EQ(option2.GetOptionNames(), std::vector<std::string>({"--help"}));
   EXPECT_EQ(option2.GetDescription(), std::string("description"));
 
@@ -156,12 +156,12 @@ TEST_F(CommandLineParserTests, AddOption)
 TEST_F(CommandLineParserTests, GetOptionFromConstParser)
 {
   CommandLineParser parser;
-  const auto &option = parser.AddOption({"-f", "--file"}, "description");
+  const auto& option = parser.AddOption({"-f", "--file"}, "description");
 
-  const auto &const_parser = parser;
+  const auto& const_parser = parser;
 
-  const auto *found = const_parser.GetOption("--file");
-  static_assert(std::is_same<decltype(found), const CommandLineOption *>::value,
+  const auto* found = const_parser.GetOption("--file");
+  static_assert(std::is_same<decltype(found), const CommandLineOption*>::value,
                 "const parser must hand out a const option");
 
   EXPECT_EQ(found, &option);
@@ -171,8 +171,8 @@ TEST_F(CommandLineParserTests, GetOptionFromConstParser)
   EXPECT_EQ(const_parser.GetOption("-nonexisting"), nullptr);
 
   // the same lookup on a mutable parser gives an option that can be configured further
-  auto *mutable_found = parser.GetOption("--file");
-  static_assert(std::is_same<decltype(mutable_found), CommandLineOption *>::value,
+  auto* mutable_found = parser.GetOption("--file");
+  static_assert(std::is_same<decltype(mutable_found), CommandLineOption*>::value,
                 "mutable parser must hand out a mutable option");
   EXPECT_EQ(mutable_found, &option);
 }
@@ -180,7 +180,7 @@ TEST_F(CommandLineParserTests, GetOptionFromConstParser)
 TEST_F(CommandLineParserTests, FluentInterface)
 {
   CommandLineParser parser;
-  auto &option =
+  auto& option =
       parser.AddOption({"-f", "--file"}).SetDescription("description").SetDefaultValue("value");
 
   EXPECT_EQ(option.GetOptionNames(), std::vector<std::string>({"-f", "--file"}));
@@ -197,10 +197,10 @@ TEST_F(CommandLineParserTests, QueryConstParser)
   (void)parser.AddOption({"-f", "--file"}).SetParameter(true);
 
   const int argc = 4;
-  std::array<const char *, argc> argv{"progname", "-v", "--file", "a.xml"};
+  std::array<const char*, argc> argv{"progname", "-v", "--file", "a.xml"};
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
-  const auto &const_parser = parser;
+  const auto& const_parser = parser;
 
   EXPECT_TRUE(const_parser.IsSet("-v"));
   EXPECT_TRUE(const_parser.IsSet("--verbose"));
@@ -213,13 +213,13 @@ TEST_F(CommandLineParserTests, QueryConstParser)
 TEST_F(CommandLineParserTests, ParseFlag)
 {
   CommandLineParser parser;
-  auto &option = parser.AddOption({"--verbose"});
+  auto& option = parser.AddOption({"--verbose"});
 
   EXPECT_FALSE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
 
   const int argc = 2;
-  std::array<const char *, argc> argv{"progname", "--verbose"};
+  std::array<const char*, argc> argv{"progname", "--verbose"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -237,7 +237,7 @@ TEST_F(CommandLineParserTests, ParseTwoFlags)
 
   const int argc = 3;
   // command line contains short version of flags
-  std::array<const char *, argc> argv{"progname", "-v", "-f"};
+  std::array<const char*, argc> argv{"progname", "-v", "-f"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -253,14 +253,14 @@ TEST_F(CommandLineParserTests, ParseTwoFlags)
 TEST_F(CommandLineParserTests, ParseParameter)
 {
   CommandLineParser parser;
-  auto &option = parser.AddOption({"--font"}).SetParameter(true);
+  auto& option = parser.AddOption({"--font"}).SetParameter(true);
 
   EXPECT_TRUE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
 
   const int argc = 2;
   // command line contains short version of flags
-  std::array<const char *, argc> argv{"progname", "--font=10"};
+  std::array<const char*, argc> argv{"progname", "--font=10"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -276,7 +276,7 @@ TEST_F(CommandLineParserTests, ParseParameter)
 TEST_F(CommandLineParserTests, ParseParameterSpaceDelimeter)
 {
   CommandLineParser parser;
-  auto &option = parser.AddOption({"--font"}).SetParameter(true);
+  auto& option = parser.AddOption({"--font"}).SetParameter(true);
   // to make sure that default value doesn't influence the parsing of user input.
   option.SetDefaultValue("42");
 
@@ -285,7 +285,7 @@ TEST_F(CommandLineParserTests, ParseParameterSpaceDelimeter)
 
   const int argc = 3;
   // command line contains short version of flags
-  std::array<const char *, argc> argv{"progname", "--font", "10"};
+  std::array<const char*, argc> argv{"progname", "--font", "10"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -299,14 +299,14 @@ TEST_F(CommandLineParserTests, ParseParameterSpaceDelimeter)
 TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
 {
   CommandLineParser parser;
-  auto &option = parser.AddOption({"--font"}).SetParameter(true);
+  auto& option = parser.AddOption({"--font"}).SetParameter(true);
 
   EXPECT_TRUE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
 
   const int argc = 2;
   // command line doesn't contain a parameter
-  std::array<const char *, argc> argv{"progname", "--font"};
+  std::array<const char*, argc> argv{"progname", "--font"};
 
   EXPECT_FALSE(parser.Parse(argc, &argv[0]));
 
@@ -321,14 +321,14 @@ TEST_F(CommandLineParserTests, AttemptToParseParameterOptionWithoutParameter)
 TEST_F(CommandLineParserTests, ParseParameterWithDefaultValue)
 {
   CommandLineParser parser;
-  auto &option = parser.AddOption({"--font"}).SetParameter(true).SetDefaultValue("42");
+  auto& option = parser.AddOption({"--font"}).SetParameter(true).SetDefaultValue("42");
 
   EXPECT_TRUE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
 
   const int argc = 2;
   // command line contains short version of flags
-  std::array<const char *, argc> argv{"progname", "--font"};
+  std::array<const char*, argc> argv{"progname", "--font"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -343,14 +343,14 @@ TEST_F(CommandLineParserTests, ParseParameterWithDefaultValue)
 TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArguments)
 {
   CommandLineParser parser;
-  auto &option = parser.AddOption({"--font", "-f"}).SetParameter(true).SetRequired(true);
+  auto& option = parser.AddOption({"--font", "-f"}).SetParameter(true).SetRequired(true);
 
   EXPECT_TRUE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
 
   const int argc = 2;
   // command line doesn't contain a parameter
-  std::array<const char *, argc> argv{"progname", "--version"};
+  std::array<const char*, argc> argv{"progname", "--version"};
 
   EXPECT_FALSE(parser.Parse(argc, &argv[0]));
 
@@ -367,14 +367,14 @@ TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArgumentsWhenHelpIsPres
 {
   CommandLineParser parser;
   parser.AddHelpOption();
-  auto &option = parser.AddOption({"-f", "--file"}).SetParameter(true).SetRequired(true);
+  auto& option = parser.AddOption({"-f", "--file"}).SetParameter(true).SetRequired(true);
 
   EXPECT_TRUE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
 
   const int argc = 2;
   // command line doesn't contain a parameter
-  std::array<const char *, argc> argv{"progname", "--version"};
+  std::array<const char*, argc> argv{"progname", "--version"};
 
   EXPECT_FALSE(parser.Parse(argc, &argv[0]));
 
@@ -392,7 +392,7 @@ TEST_F(CommandLineParserTests, ParseHelpOption)
   parser.AddHelpOption();
 
   const int argc = 2;
-  std::array<const char *, argc> argv{"progname", "--help"};
+  std::array<const char*, argc> argv{"progname", "--help"};
 
   EXPECT_FALSE(parser.Parse(argc, &argv[0]));
 
@@ -405,13 +405,13 @@ TEST_F(CommandLineParserTests, ParseFileOption)
 {
   CommandLineParser parser;
   parser.AddHelpOption();
-  auto &option = parser.AddOption({"-f", "--file"}).SetParameter(true).SetRequired(true);
+  auto& option = parser.AddOption({"-f", "--file"}).SetParameter(true).SetRequired(true);
 
   EXPECT_TRUE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
 
   const int argc = 3;
-  std::array<const char *, argc> argv{"progname", "--f", "filename"};
+  std::array<const char*, argc> argv{"progname", "--f", "filename"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -430,7 +430,7 @@ TEST_F(CommandLineParserTests, ParseTimeoutOption)
 {
   CommandLineParser parser;
   parser.AddHelpOption();
-  auto &option = parser.AddOption({"-t", "--timeout"})
+  auto& option = parser.AddOption({"-t", "--timeout"})
                      .SetParameter(true)
                      .SetValueName("sec")
                      .SetDefaultValue("5.0");
@@ -440,7 +440,7 @@ TEST_F(CommandLineParserTests, ParseTimeoutOption)
 
   {  // set -t option
     const int argc = 3;
-    std::array<const char *, argc> argv{"progname", "-t", "42"};
+    std::array<const char*, argc> argv{"progname", "-t", "42"};
 
     EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -455,7 +455,7 @@ TEST_F(CommandLineParserTests, ParseTimeoutOption)
 
   {  // set --timeout option
     const int argc = 3;
-    std::array<const char *, argc> argv{"progname", "--timeout", "42"};
+    std::array<const char*, argc> argv{"progname", "--timeout", "42"};
 
     EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -474,14 +474,14 @@ TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
 {
   CommandLineParser parser;
   parser.AddHelpOption();
-  auto &option = parser.AddOption({"-t", "--timeout"}).SetParameter(true).SetValueName("sec");
+  auto& option = parser.AddOption({"-t", "--timeout"}).SetParameter(true).SetValueName("sec");
 
   EXPECT_TRUE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
 
   {  // set -t option with value
     const int argc = 3;
-    std::array<const char *, argc> argv{"progname", "-t", "42"};
+    std::array<const char*, argc> argv{"progname", "-t", "42"};
 
     EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -496,7 +496,7 @@ TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
 
   {  // set -t option without value
     const int argc = 2;
-    std::array<const char *, argc> argv{"progname", "-t"};
+    std::array<const char*, argc> argv{"progname", "-t"};
 
     EXPECT_FALSE(parser.Parse(argc, &argv[0]));
 
@@ -511,7 +511,7 @@ TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
 
   {  // set --timeout option with value
     const int argc = 3;
-    std::array<const char *, argc> argv{"progname", "--timeout", "42"};
+    std::array<const char*, argc> argv{"progname", "--timeout", "42"};
 
     EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -526,7 +526,7 @@ TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
 
   {  // set --timeout option without value
     const int argc = 2;
-    std::array<const char *, argc> argv{"progname", "--timeout"};
+    std::array<const char*, argc> argv{"progname", "--timeout"};
 
     EXPECT_FALSE(parser.Parse(argc, &argv[0]));
 
@@ -552,8 +552,8 @@ TEST_F(CommandLineParserTests, ParseValueWithSpaces)
   (void)parser.AddOption({"--def"}).SetParameter(true).SetDefaultValue("a default with spaces");
 
   const int argc = 5;
-  std::array<const char *, argc> argv{"progname", "--file", path_with_spaces.c_str(), "--msg",
-                                      "hello world"};
+  std::array<const char*, argc> argv{"progname", "--file", path_with_spaces.c_str(), "--msg",
+                                     "hello world"};
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
   EXPECT_EQ(parser.GetValue<std::string>("--file"), path_with_spaces);
@@ -573,7 +573,7 @@ TEST_F(CommandLineParserTests, PositionalValueWithSpaces)
   parser.AddPositionalOption("<file>", "input file");
 
   const int argc = 2;
-  std::array<const char *, argc> argv{"progname", path_with_spaces.c_str()};
+  std::array<const char*, argc> argv{"progname", path_with_spaces.c_str()};
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
   EXPECT_EQ(parser.GetPositionalOptionCount(), 1);
@@ -585,12 +585,12 @@ TEST_F(CommandLineParserTests, PositionalValueWithSpaces)
 TEST_F(CommandLineParserTests, GetUsageString)
 {
   CommandLineParser parser;
-  auto &option = parser.AddOption({"-v", "--verbose"});
+  auto& option = parser.AddOption({"-v", "--verbose"});
   option.SetDescription("description");
 
   const int argc = 2;
   // command line contains short version of flags
-  std::array<const char *, argc> argv{"progname", "--verbose"};
+  std::array<const char*, argc> argv{"progname", "--verbose"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -611,7 +611,7 @@ TEST_F(CommandLineParserTests, GetUsageStringForPositionalOptions)
 
   const int argc = 2;
   // command line contains short version of flags
-  std::array<const char *, argc> argv{"progname", "var0"};
+  std::array<const char*, argc> argv{"progname", "var0"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -631,12 +631,12 @@ TEST_F(CommandLineParserTests, GetUsageStringWithHeaderAndFooter)
 {
   CommandLineParser parser;
   parser.SetDescription("header", "footer");
-  auto &option = parser.AddOption({"-v", "--verbose"});
+  auto& option = parser.AddOption({"-v", "--verbose"});
   option.SetDescription("description");
 
   const int argc = 2;
   // command line contains short version of flags
-  std::array<const char *, argc> argv{"progname", "--verbose"};
+  std::array<const char*, argc> argv{"progname", "--verbose"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -657,7 +657,7 @@ TEST_F(CommandLineParserTests, PositionalArgument)
   CommandLineParser parser;
 
   const int argc = 2;
-  std::array<const char *, argc> argv{"progname", "abc"};
+  std::array<const char*, argc> argv{"progname", "abc"};
 
   // before parsing
   EXPECT_EQ(parser.GetPositionalOptionCount(), -1);
@@ -678,7 +678,7 @@ TEST_F(CommandLineParserTests, TwoPositionalArguments)
   CommandLineParser parser;
 
   const int argc = 3;
-  std::array<const char *, argc> argv{"progname", "abc", "42"};
+  std::array<const char*, argc> argv{"progname", "abc", "42"};
 
   // before parsing
   EXPECT_EQ(parser.GetPositionalOptionCount(), -1);
@@ -698,14 +698,14 @@ TEST_F(CommandLineParserTests, TwoPositionalArguments)
 TEST_F(CommandLineParserTests, FlagAndPositionalArgument)
 {
   CommandLineParser parser;
-  auto &option = parser.AddOption({"--verbose"});
+  auto& option = parser.AddOption({"--verbose"});
   EXPECT_FALSE(option.IsParameter());
   EXPECT_FALSE(option.IsPositional());
 
   parser.AddPositionalOption("<varName>");
 
   const int argc = 4;
-  std::array<const char *, argc> argv{"progname", "var0", "--verbose", "var1"};
+  std::array<const char*, argc> argv{"progname", "var0", "--verbose", "var1"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 
@@ -724,7 +724,7 @@ TEST_F(CommandLineParserTests, FlagWithParameterAndPositionalArgument)
   parser.AddPositionalOption("<varName>");
 
   const int argc = 4;
-  std::array<const char *, argc> argv{"progname", "--font", "42", "128"};
+  std::array<const char*, argc> argv{"progname", "--font", "42", "128"};
 
   EXPECT_TRUE(parser.Parse(argc, &argv[0]));
 

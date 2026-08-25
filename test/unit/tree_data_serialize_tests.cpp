@@ -95,13 +95,10 @@ TEST_F(TreeDataSerializeTest, SerializeExceptions)
   // Pass nullptr as writer pointer
   TreeData some_node_name{"node_name"};
   EXPECT_THROW(AddTreeData(nullptr, some_node_name), SerializeException);
-
 }
 
 TreeDataSerializeTest::TreeDataSerializeTest()
-  : m_tree{MEMBERLIST_NODE}
-  , m_buffer{}
-  , m_writer{xmlNewTextWriterMemory(m_buffer.Buffer(), 0)}
+    : m_tree{MEMBERLIST_NODE}, m_buffer{}, m_writer{xmlNewTextWriterMemory(m_buffer.Buffer(), 0)}
 {
   TreeData martha{MEMBER_NODE};
   martha.AddAttribute(KEY_ATTRIBUTE, "433");

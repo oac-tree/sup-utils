@@ -22,20 +22,21 @@
 
 #include "command_line_utils.h"
 
-#include <sup/cli/command_line_option.h>
 #include "base_types.h"
+
+#include <sup/cli/command_line_option.h>
 
 #include <algorithm>
 #include <numeric>
 
 namespace
 {
-  const sup::cli::int32 kDesiredOptionStringLength = 30;
+const sup::cli::int32 kDesiredOptionStringLength = 30;
 
 /**
  * Returns value name.
  */
-std::string GetValueName(const sup::cli::CommandLineOption &option)
+std::string GetValueName(const sup::cli::CommandLineOption& option)
 {
   return option.GetValueName().empty() ? std::string("value") : option.GetValueName();
 }
@@ -47,13 +48,14 @@ namespace sup
 namespace cli
 {
 
-const std::vector<const CommandLineOption *> GetFilteredOptions(
-    const std::vector<const CommandLineOption *> &options, bool positional_flag)
+const std::vector<const CommandLineOption*> GetFilteredOptions(
+    const std::vector<const CommandLineOption*>& options, bool positional_flag)
 {
-  std::vector<const CommandLineOption *> result;
-  auto on_options = [positional_flag](const sup::cli::CommandLineOption *option)
+  std::vector<const CommandLineOption*> result;
+  auto on_options = [positional_flag](const sup::cli::CommandLineOption* option)
   { return option->IsPositional() == positional_flag; };
-  (void)std::copy_if(std::begin(options), std::end(options), std::back_inserter(result), on_options);
+  (void)std::copy_if(std::begin(options), std::end(options), std::back_inserter(result),
+                     on_options);
   return result;
 }
 
@@ -66,7 +68,7 @@ std::string MergeWithNewLine(std::initializer_list<std::string> strings)
   return std::accumulate(strings.begin(), strings.end(), str, pack);
 }
 
-std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLineOption *> &options)
+std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLineOption*>& options)
 {
   std::string result = "[options]";
   for (const auto* option : options)
@@ -83,7 +85,7 @@ std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLine
   return result;
 }
 
-std::string GetOptionNameString(const CommandLineOption &option)
+std::string GetOptionNameString(const CommandLineOption& option)
 {
   const auto names = option.GetOptionNames();
   if (names.empty())
@@ -91,9 +93,7 @@ std::string GetOptionNameString(const CommandLineOption &option)
     return {};
   }
   auto fold = [](const std::string& result, const std::string& name)
-              {
-                return result + ", " + name;
-              };
+  { return result + ", " + name; };
   std::string result = std::accumulate(std::next(names.begin()), names.end(), names[0], fold);
 
   if (option.IsParameter())
@@ -104,16 +104,16 @@ std::string GetOptionNameString(const CommandLineOption &option)
   return result;
 }
 
-std::string GetOptionUsageString(const CommandLineOption &option)
+std::string GetOptionUsageString(const CommandLineOption& option)
 {
   auto result = GetOptionNameString(option);
   result.resize(kDesiredOptionStringLength, ' ');
   return result + option.GetDescription();
 }
 
-std::string GetUsageString(const std::string &app_name, const std::string &header,
-                           const std::vector<const CommandLineOption *> &options,
-                           const std::string &footer)
+std::string GetUsageString(const std::string& app_name, const std::string& header,
+                           const std::vector<const CommandLineOption*>& options,
+                           const std::string& footer)
 {
   std::string usage_short =
       "Usage: " + app_name + " " + GetAvailableOptionsSummaryString(options) + "\n";
@@ -121,7 +121,7 @@ std::string GetUsageString(const std::string &app_name, const std::string &heade
   return MergeWithNewLine({usage_short, header, GetOptionBlockString(options), footer});
 }
 
-std::string GetOptionBlockString(const std::vector<const CommandLineOption *> &options)
+std::string GetOptionBlockString(const std::vector<const CommandLineOption*>& options)
 {
   if (options.empty())
   {

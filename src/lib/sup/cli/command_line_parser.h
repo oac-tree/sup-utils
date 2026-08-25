@@ -23,8 +23,9 @@
 #ifndef SUP_CLI_COMMAND_LINE_PARSER_H_
 #define SUP_CLI_COMMAND_LINE_PARSER_H_
 
-#include <sup/cli/command_line_option.h>
 #include "base_types.h"
+
+#include <sup/cli/command_line_option.h>
 
 #include <memory>
 #include <sstream>

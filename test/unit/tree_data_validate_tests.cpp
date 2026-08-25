@@ -48,7 +48,7 @@ TEST_F(TreeDataValidateTest, SingleChildWithTag)
 
 TEST_F(TreeDataValidateTest, AllowedChildTags)
 {
-  std::vector<std::string> allowed_tags = { CHILD_ELEMENT_NAME };
+  std::vector<std::string> allowed_tags = {CHILD_ELEMENT_NAME};
   TreeData tree{ROOT_ELEMENT_NAME};
   EXPECT_NO_THROW(ValidateAllowedChildTags(tree, allowed_tags));
   TreeData child{CHILD_ELEMENT_NAME};

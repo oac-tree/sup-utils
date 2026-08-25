@@ -23,10 +23,10 @@
 #include <sup/log/basic_logger.h>
 #include <sup/log/log_severity.h>
 
+#include <gtest/gtest.h>
+
 #include <tuple>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 using namespace sup::log;
 
@@ -165,17 +165,13 @@ TEST_F(BasicLoggerTest, SetMaxSeverity)
   EXPECT_EQ(m_log_entries.size(), 4);
 }
 
-BasicLoggerTest::BasicLoggerTest()
-  : m_log_entries{}
-{}
+BasicLoggerTest::BasicLoggerTest() : m_log_entries{} {}
 
 BasicLoggerTest::~BasicLoggerTest() = default;
 
 BasicLogger BasicLoggerTest::CreateBasicLogger(const std::string& source, int max_severity)
 {
   auto log_func = [this](int severity, const std::string& source, const std::string& message)
-                  {
-                    m_log_entries.emplace_back(severity, source, message);
-                  };
+  { m_log_entries.emplace_back(severity, source, message); };
   return BasicLogger(log_func, source, max_severity);
 }
