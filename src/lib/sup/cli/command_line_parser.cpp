@@ -186,9 +186,13 @@ std::stringstream CommandLineParser::GetValueStream(const std::string &option_na
   {
     for (const auto& alias_name : option->GetOptionNames())
     {
-      if ((p_impl->m_parser(alias_name) >> parse_result))
+      auto value_stream = p_impl->m_parser(alias_name);
+      // The extraction serves only as a presence test: an option that was not given yields a
+      // stream in a failed state. The value itself is taken from the stream buffer, since the
+      // extraction stops at the first whitespace and would truncate a value containing spaces.
+      if ((value_stream >> parse_result))
       {
-        return std::stringstream(parse_result);
+        return std::stringstream(value_stream.str());
       }
     }
     if (!option->GetDefaultValue().empty())

@@ -540,6 +540,47 @@ TEST_F(CommandLineParserTests, ParseTimeoutOptionNoDefaultValue)
   }
 }
 
+//! A parameter value containing spaces is returned as it was given, not truncated at the first
+//! whitespace.
+TEST_F(CommandLineParserTests, ParseValueWithSpaces)
+{
+  const std::string path_with_spaces{"/path/with space/a.xml"};
+
+  CommandLineParser parser;
+  (void)parser.AddOption({"-f", "--file"}).SetParameter(true);
+  (void)parser.AddOption({"--msg"}).SetParameter(true);
+  (void)parser.AddOption({"--def"}).SetParameter(true).SetDefaultValue("a default with spaces");
+
+  const int argc = 5;
+  std::array<const char *, argc> argv{"progname", "--file", path_with_spaces.c_str(), "--msg",
+                                      "hello world"};
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  EXPECT_EQ(parser.GetValue<std::string>("--file"), path_with_spaces);
+  EXPECT_EQ(parser.GetValue<std::string>("-f"), path_with_spaces);
+  EXPECT_EQ(parser.GetValue<std::string>("--msg"), std::string("hello world"));
+
+  // an option falling back to its default value gets the whole default
+  EXPECT_EQ(parser.GetValue<std::string>("--def"), std::string("a default with spaces"));
+}
+
+//! A positional value containing spaces is returned as it was given.
+TEST_F(CommandLineParserTests, PositionalValueWithSpaces)
+{
+  const std::string path_with_spaces{"/path/with space/a.xml"};
+
+  CommandLineParser parser;
+  parser.AddPositionalOption("<file>", "input file");
+
+  const int argc = 2;
+  std::array<const char *, argc> argv{"progname", path_with_spaces.c_str()};
+  EXPECT_TRUE(parser.Parse(argc, &argv[0]));
+
+  EXPECT_EQ(parser.GetPositionalOptionCount(), 1);
+  EXPECT_EQ(parser.GetPositionalValue<std::string>(0), path_with_spaces);
+  EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({path_with_spaces}));
+}
+
 //! Validate multiline string representing `usage` help for the single option setup.
 TEST_F(CommandLineParserTests, GetUsageString)
 {

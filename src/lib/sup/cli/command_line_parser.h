@@ -186,12 +186,29 @@ T CommandLineParser::GetValue(const std::string& option_name) const
   return result;
 }
 
+//! Returns the value as it was given on the command line. Stream extraction is not used here: it
+//! stops at the first whitespace, and would silently truncate a value containing spaces, such as a
+//! file path.
+template <>
+inline std::string CommandLineParser::GetValue<std::string>(const std::string& option_name) const
+{
+  return GetValueStream(option_name).str();
+}
+
 template <typename T>
 T CommandLineParser::GetPositionalValue(size_t index) const
 {
   T result;
   GetPositionalValueStream(index) >> result;
   return result;
+}
+
+//! Returns the positional value as it was given on the command line. See the note on the
+//! GetValue<std::string> specialization above.
+template <>
+inline std::string CommandLineParser::GetPositionalValue<std::string>(size_t index) const
+{
+  return GetPositionalValueStream(index).str();
 }
 
 }  // namespace cli
