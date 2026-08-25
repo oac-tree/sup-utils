@@ -15,6 +15,10 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
 
+// Vendored third-party code, kept as close to upstream as possible: it is not held to the coding
+// rules of this project, and clang-tidy findings in it are not actionable.
+// NOLINTBEGIN
+
 namespace argh
 {
 // Terminology:
@@ -494,5 +498,7 @@ inline multimap_iteration_wrapper parser::params(std::string const& name) const
                                     params_.upper_bound(trimmed_name));
 }
 }  // namespace argh
+
+// NOLINTEND
 
 #pragma GCC diagnostic pop
