@@ -257,7 +257,7 @@ TEST_F(CommandLineParserTests, QueryConstParser)
   EXPECT_TRUE(const_parser.IsSet("-v"));
   EXPECT_TRUE(const_parser.IsSet("--verbose"));
   EXPECT_TRUE(const_parser.IsSet("--file"));
-  EXPECT_FALSE(const_parser.IsSet("--non-existing"));
+  EXPECT_THROW(const_parser.IsSet("--non-existing"), InvalidOptionException);
   EXPECT_EQ(const_parser.GetValue<std::string>("--file"), std::string("a.xml"));
 }
 
@@ -276,7 +276,8 @@ TEST_F(CommandLineParserTests, ParseFlag)
   EXPECT_TRUE(parser.Parse(argc, argv.data()));
 
   EXPECT_TRUE(parser.IsSet("--verbose"));
-  EXPECT_FALSE(parser.IsSet("-f"));
+  // asking about an option that was never added is a mistake, not a "no"
+  EXPECT_THROW(parser.IsSet("-f"), InvalidOptionException);
   EXPECT_EQ(parser.GetPositionalOptionCount(), 0);
 }
 
@@ -430,7 +431,7 @@ TEST_F(CommandLineParserTests, CommandLineWithoutRequiredArgumentsWhenHelpIsPres
 
   EXPECT_FALSE(parser.Parse(argc, argv.data()));
 
-  EXPECT_FALSE(parser.IsSet("--font"));
+  EXPECT_THROW(parser.IsSet("--font"), InvalidOptionException);
 
   EXPECT_THROW(parser.GetValue<int>("--font"), std::runtime_error);
 
@@ -818,6 +819,82 @@ TEST_F(CommandLineParserTests, FindValueAndFallback)
   EXPECT_THROW(parser.GetValue<int>("--typo", 1), InvalidOptionException);
 }
 
+//! A name that was never added to the parser is a mistake in the application, and is reported as
+//! such rather than answered with "not set".
+TEST_F(CommandLineParserTests, IsSetReportsUnknownOptionName)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"-v", "--verbose"});
+
+  const int argc = 2;
+  std::array<const char*, argc> argv{"progname", "-v"};
+  EXPECT_TRUE(parser.Parse(argc, argv.data()));
+
+  EXPECT_TRUE(parser.IsSet("-v"));
+  EXPECT_TRUE(parser.IsSet("--verbose"));
+
+  // a misspelled name no longer looks like an option the user didn't pass
+  EXPECT_THAT(
+      [&] { (void)parser.IsSet("--verbsoe"); },
+      ::testing::ThrowsMessage<InvalidOptionException>(::testing::AllOf(
+          ::testing::HasSubstr("--verbsoe"), ::testing::HasSubstr("not among the options"))));
+
+  // GetOption keeps answering with a null pointer, so it can still be used as a probe
+  EXPECT_EQ(parser.GetOption("--verbsoe"), nullptr);
+}
+
+//! Claiming a name that is already taken is reported, instead of registering an option that could
+//! never be found.
+TEST_F(CommandLineParserTests, AddOptionRejectsDuplicateName)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"-f", "--file"}, "first");
+
+  // the same name again, alone or among others
+  EXPECT_THAT([&] { (void)parser.AddOption({"--file"}, "second"); },
+              ::testing::ThrowsMessage<InvalidOptionException>(::testing::AllOf(
+                  ::testing::HasSubstr("--file"), ::testing::HasSubstr("already been added"))));
+  EXPECT_THROW(parser.AddOption({"-x", "-f"}), InvalidOptionException);
+
+  // a name repeated within one option
+  EXPECT_THROW(parser.AddOption({"-y", "-y"}), InvalidOptionException);
+
+  // a help option cannot be added twice either
+  (void)parser.AddHelpOption();
+  EXPECT_THROW(parser.AddHelpOption(), InvalidOptionException);
+
+  // and a positional option goes through the same check
+  parser.AddPositionalOption("<target>", "target");
+  EXPECT_THROW(parser.AddPositionalOption("<target>", "again"), InvalidOptionException);
+
+  // the first registration is the one that stands, and is still usable
+  EXPECT_EQ(parser.GetOption("--file")->GetDescription(), std::string("first"));
+
+  // free names are still accepted
+  EXPECT_NO_THROW((void)parser.AddOption({"-z", "--zap"}));
+}
+
+//! Parsing works for an application that offers no help option: Parse must not ask about a name
+//! that was never added.
+TEST_F(CommandLineParserTests, ParseWithoutHelpOption)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"-v", "--verbose"});
+
+  const int argc = 2;
+  std::array<const char*, argc> argv{"progname", "-v"};
+  EXPECT_NO_THROW((void)parser.Parse(argc, argv.data()));
+  EXPECT_TRUE(parser.Parse(argc, argv.data()));
+  EXPECT_TRUE(parser.IsSet("-v"));
+
+  // while an application that does offer one still reports help as a failed parsing
+  CommandLineParser with_help;
+  (void)with_help.AddHelpOption();
+  std::array<const char*, 2> help_argv{"progname", "--help"};
+  EXPECT_FALSE(with_help.Parse(2, help_argv.data()));
+  EXPECT_TRUE(with_help.IsSet("--help"));
+}
+
 //! Validate multiline string representing `usage` help for the single option setup.
 TEST_F(CommandLineParserTests, GetUsageString)
 {
@@ -972,7 +1049,7 @@ TEST_F(CommandLineParserTests, FlagAndPositionalArgument)
   EXPECT_TRUE(parser.Parse(argc, argv.data()));
 
   EXPECT_TRUE(parser.IsSet("--verbose"));
-  EXPECT_FALSE(parser.IsSet("-f"));
+  EXPECT_THROW(parser.IsSet("-f"), InvalidOptionException);
   EXPECT_EQ(parser.GetPositionalOptionCount(), 2);
   EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"var0", "var1"}));
 }

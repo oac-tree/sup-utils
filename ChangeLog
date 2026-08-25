@@ -6,6 +6,10 @@ Changes for 1.11.0:
   whitespace and an empty value used to be accepted silently and are now reported.
 - sup-cli: added CommandLineParser::GetValueInRange<T> and conversion functions.
 - sup-cli: added CommandLineParser::FindValue and a GetValue<T> overload with a fallback.
+- sup-cli: IsSet now reports an option name that was never added to the parser, instead of
+  answering that the option is not set. GetOption still returns nullptr for such a name.
+- sup-cli: AddOption reports a name that is already taken, instead of registering an option
+  that could never be found.
 - sup-cli: an empty command line argument no longer aborts the application (bugfix).
 - sup-cli: an empty string is a default value like any other, see CommandLineOption::HasDefaultValue.
 - sup-cli: added collection of own exceptions for cli.

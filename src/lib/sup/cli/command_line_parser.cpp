@@ -38,6 +38,15 @@ bool Contains(const A& container, const B& element)
 {
   return std::find(container.begin(), container.end(), element) != container.end();
 }
+
+//! Reports an option name that doesn't denote any of the registered options. Asking about an
+//! option that was never added is a mistake in the application, and not a command line in which
+//! the option happens to be absent.
+[[noreturn]] void ThrowUnknownOption(const std::string& option_name)
+{
+  throw sup::cli::InvalidOptionException("Option '" + option_name
+                                         + "' is not among the options added to the parser");
+}
 }  // namespace
 
 namespace sup
@@ -98,6 +107,21 @@ CommandLineParser& CommandLineParser::operator=(CommandLineParser&& other) & noe
 CommandLineOption& CommandLineParser::AddOption(const std::vector<std::string>& option_names,
                                                 const std::string& description)
 {
+  for (auto it = option_names.begin(); it != option_names.end(); ++it)
+  {
+    // Without this, the second option to claim a name would be registered and then never found,
+    // since the lookup returns the first match.
+    if (GetOption(*it) != nullptr)
+    {
+      throw InvalidOptionException("Option '" + *it + "' has already been added to the parser");
+    }
+    if (Contains(std::vector<std::string>(std::next(it), option_names.end()), *it))
+    {
+      throw InvalidOptionException("Option name '" + *it
+                                   + "' is given more than once for the same option");
+    }
+  }
+
   (void)p_impl->m_options.emplace_back(std::make_unique<CommandLineOption>(option_names));
   auto& result = *p_impl->m_options.back();
   (void)result.SetDescription(description);
@@ -143,13 +167,22 @@ bool CommandLineParser::Parse(std::int32_t argc, const char* const* argv)
 
   p_impl->m_parser.parse(argc, argv);
 
-  return !IsSet("--help") && p_impl->IsValidParsing();
+  // An application need not offer a help option, so the option is looked up rather than asked
+  // about: IsSet reports a name that was never added, which is not the question here.
+  const auto* help_option = GetOption("--help");
+  const auto help_requested = (help_option != nullptr) && p_impl->IsSet(*help_option);
+
+  return !help_requested && p_impl->IsValidParsing();
 }
 
 bool CommandLineParser::IsSet(const std::string& option_name) const
 {
-  auto option = GetOption(option_name);
-  return option ? p_impl->IsSet(*option) : false;
+  const auto* option = GetOption(option_name);
+  if (option == nullptr)
+  {
+    ThrowUnknownOption(option_name);
+  }
+  return p_impl->IsSet(*option);
 }
 
 std::int32_t CommandLineParser::GetPositionalOptionCount() const
@@ -191,8 +224,7 @@ std::optional<std::string> CommandLineParser::FindValue(const std::string& optio
   const auto* option = GetOption(option_name);
   if (option == nullptr)
   {
-    throw InvalidOptionException("Option '" + option_name
-                                 + "' is not among the options added to the parser");
+    ThrowUnknownOption(option_name);
   }
 
   for (const auto& alias_name : option->GetOptionNames())
