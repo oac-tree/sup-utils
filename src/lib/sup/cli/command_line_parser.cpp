@@ -52,6 +52,10 @@ struct CommandLineParser::CommandLineParserImpl
 
   CommandLineParserImpl();
 
+  //! Returns option with given name, or nullptr if no such option was added. The constness of the
+  //! result is decided by the caller: the lookup itself doesn't modify the option.
+  CommandLineOption *FindOption(const std::string &option_name) const;
+
   //! Returns true if parameter options with given name was set in command line and parameter can be
   //! parsed.
   bool IsParameterSet(const std::string &option_name) const;
@@ -103,16 +107,14 @@ void CommandLineParser::AddPositionalOption(const std::string &option_name,
   (void)AddOption({option_name}).SetDescription(description).SetPositional(true);
 }
 
-CommandLineOption *CommandLineParser::GetOption(const std::string &option_name) const
+CommandLineOption *CommandLineParser::GetOption(const std::string &option_name)
 {
-  for (auto& option : p_impl->m_options)
-  {
-    if (Contains(option->GetOptionNames(), option_name))
-    {
-      return option.get();
-    }
-  }
-  return nullptr;
+  return p_impl->FindOption(option_name);
+}
+
+const CommandLineOption *CommandLineParser::GetOption(const std::string &option_name) const
+{
+  return p_impl->FindOption(option_name);
 }
 
 bool CommandLineParser::Parse(int32 argc, const char* const* argv)
@@ -213,6 +215,19 @@ CommandLineParser::CommandLineParserImpl::CommandLineParserImpl()
   , m_header()
   , m_footer()
 {}
+
+CommandLineOption *CommandLineParser::CommandLineParserImpl::FindOption(
+  const std::string &option_name) const
+{
+  for (const auto &option : m_options)
+  {
+    if (Contains(option->GetOptionNames(), option_name))
+    {
+      return option.get();
+    }
+  }
+  return nullptr;
+}
 
 bool CommandLineParser::CommandLineParserImpl::IsParameterSet(const std::string &option_name) const
 {

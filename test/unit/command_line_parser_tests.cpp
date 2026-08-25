@@ -27,6 +27,7 @@
 
 #include <array>
 #include <stdexcept>
+#include <type_traits>
 
 using namespace sup::cli;
 
@@ -151,6 +152,31 @@ TEST_F(CommandLineParserTests, AddOption)
 }
 
 //! Testing fluent interface of CommandLineOption.
+//! Accessing options through a const parser: the option is handed out for reading only.
+TEST_F(CommandLineParserTests, GetOptionFromConstParser)
+{
+  CommandLineParser parser;
+  const auto &option = parser.AddOption({"-f", "--file"}, "description");
+
+  const auto &const_parser = parser;
+
+  const auto *found = const_parser.GetOption("--file");
+  static_assert(std::is_same<decltype(found), const CommandLineOption *>::value,
+                "const parser must hand out a const option");
+
+  EXPECT_EQ(found, &option);
+  EXPECT_EQ(const_parser.GetOption("-f"), &option);
+  EXPECT_EQ(found->GetDescription(), std::string("description"));
+
+  EXPECT_EQ(const_parser.GetOption("-nonexisting"), nullptr);
+
+  // the same lookup on a mutable parser gives an option that can be configured further
+  auto *mutable_found = parser.GetOption("--file");
+  static_assert(std::is_same<decltype(mutable_found), CommandLineOption *>::value,
+                "mutable parser must hand out a mutable option");
+  EXPECT_EQ(mutable_found, &option);
+}
+
 TEST_F(CommandLineParserTests, FluentInterface)
 {
   CommandLineParser parser;

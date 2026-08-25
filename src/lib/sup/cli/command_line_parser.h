@@ -106,9 +106,14 @@ public:
   void AddPositionalOption(const std::string& option_name, const std::string& description = {});
 
   /**
-   * @brief Returns option with given name.
+   * @brief Returns option with given name, or nullptr if no such option was added.
    */
-  CommandLineOption* GetOption(const std::string& option_name) const;
+  CommandLineOption* GetOption(const std::string& option_name);
+
+  /**
+   * @brief Returns option with given name, or nullptr if no such option was added.
+   */
+  const CommandLineOption* GetOption(const std::string& option_name) const;
 
   /**
    * @brief Parses command line arguments.
