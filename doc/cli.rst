@@ -67,3 +67,23 @@ The ``sup/cli`` package provides tools for parsing and handling command-line arg
   - ``GetPositionalOptionCount`` and ``GetPositionalValue<T>``: the free standing values found.
 
 A complete application is in ``test/cli-example`` of this package.
+
+**Limitations**:
+
+The parsing is built on the vendored ``argh`` library, and inherits three properties of its
+grammar. All three concern values that look like something else.
+
+  1. A value beginning with a dash cannot be passed in the space-separated form.
+     In ``--file "-weird name"`` the parser takes ``--file`` for a flag, the
+     parsing fails with *"was given without a value"*, and the value is dropped.
+     Use the equals form instead: ``--file=-weird name``.
+  2. ``--`` is not an end-of-options terminator, as formalized by POSIX. There
+     it is used to distinguish normal options from positional one. Here it is
+     discarded and the argument after keeps its meaning.
+  3. A parameter option always takes the free standing value that follows it,
+     even when that value was meant to be positional. This leads to the error
+     when the option is meant to be left at its default value: ``--verbose
+     target.xml`` gives ``--verbose`` the value ``target.xml`` and leaves no
+     positional value. The parser cannot tell the two intentions apart. Thus, do
+     not forget default values and use one of the form: ``--verbose INFO target.xml``,
+     ``--verbose=INFO target.xml``, or move ``verbose`` option to another place of the command line.
