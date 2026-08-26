@@ -285,7 +285,7 @@ std::string CommandLineParser::GetValueAsText(const std::string& option_name) co
   return *result;
 }
 
-std::string CommandLineParser::GetPositionalValueAsText(size_t index) const
+std::string CommandLineParser::GetPositionalValueAsText(std::size_t index) const
 {
   const auto values = GetPositionalValues();
   if (index >= values.size())

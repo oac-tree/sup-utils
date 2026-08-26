@@ -36,7 +36,7 @@ class CommandLineOption;
 /**
  * @brief Returns list of options filtered according positional flag.
  */
-const std::vector<const CommandLineOption*> GetFilteredOptions(
+std::vector<const CommandLineOption*> GetFilteredOptions(
     const std::vector<const CommandLineOption*>& options, bool positional_flag);
 
 /**

@@ -252,7 +252,7 @@ public:
    * Will throw, if index exceeds a number of positional values found.
    */
   template <typename T>
-  T GetPositionalValue(size_t index) const;
+  T GetPositionalValue(std::size_t index) const;
 
   /**
    * @brief Returns multi-line string describing all options.
@@ -269,7 +269,7 @@ public:
 private:
   std::string GetValueAsText(const std::string& option_name) const;
 
-  std::string GetPositionalValueAsText(size_t index) const;
+  std::string GetPositionalValueAsText(std::size_t index) const;
 
   struct CommandLineParserImpl;
   std::unique_ptr<CommandLineParserImpl> p_impl;
@@ -308,7 +308,7 @@ T CommandLineParser::GetValueInRange(const std::string& option_name, T lowest, T
 }
 
 template <typename T>
-T CommandLineParser::GetPositionalValue(size_t index) const
+T CommandLineParser::GetPositionalValue(std::size_t index) const
 {
   return ConvertValue<T>("positional value " + std::to_string(index),
                          GetPositionalValueAsText(index));
