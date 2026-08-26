@@ -39,7 +39,7 @@ namespace cli
  * Command line option is defined by its option names, as it appears in the command line. For
  * example, a help option can be defined as {"-h", "--help"}.
  *
- * Options are divided into three types: flags, flags parameters, and positional options.
+ * Options are divided into three types: flags, parameter, and positional options.
  *
  * There are three types of options:
  *  1) Flags
@@ -118,7 +118,7 @@ public:
   std::string GetValueName() const;
 
   /**
-   * @brief Sets the name to a given value.
+   * @brief Sets the name of the value (appears in help string).
    */
   CommandLineOption& SetValueName(const std::string& value_name) &;
 

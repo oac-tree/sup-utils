@@ -1,32 +1,13 @@
 Changes for 1.11.0:
 
-- sup-cli: CommandLineParser::GetValue<T> now converts the whole text of a value, or throws.
-  A text that only partly reads as a number ("64k" asked for as an int), a negative number
-  asked for as an unsigned type, a value that doesn't fit the requested type, leading
-  whitespace and an empty value used to be accepted silently and are now reported.
-- sup-cli: added CommandLineParser::GetValueInRange<T> and conversion functions.
-- sup-cli: added CommandLineParser::FindValue and a GetValue<T> overload with a fallback.
-- sup-cli: IsSet now reports an option name that was never added to the parser, instead of
-  answering that the option is not set. GetOption still returns nullptr for such a name.
-- sup-cli: AddOption reports a name that is already taken, instead of registering an option
-  that could never be found.
-- sup-cli: added CommandLineParser::IsHelpRequested and GetParseError, telling the three outcomes
-  of Parse apart: success, help requested, and a command line that doesn't add up. The error
-  message names the option at fault.
-- sup-cli: only the option created by AddHelpOption counts as the help option, instead of Parse
-  looking for the name "--help".
-- sup-cli: a positional option can be marked required, which used to make Parse fail even when
-  the value was given (bugfix). Positional options are matched to the values in the order they
-  were added, and AddPositionalOption returns the created option.
-- sup-cli: GetPositionalOptionCount returns std::size_t and 0 before the parsing, instead of
-  std::int32_t and -1. Use the new CommandLineParser::HasParsed to tell an empty command line
-  from one that was never parsed.
-- sup-cli: an empty command line argument no longer aborts the application (bugfix).
-- sup-cli: an empty string is a default value like any other, see CommandLineOption::HasDefaultValue.
+- sup-cli: CommandLineParser::GetValue<T> accurately converts scalars; overload with fallback.
+- sup-cli: IsSet is applicable only for defined options and throws on unknown flags.
+- sup-cli: added CommandLineParser::IsHelpRequested and GetParseError for main.cpp convenience.
+- sup-cli: correcly handling the order of positional options; minor API refactoring.
+- sup-cli: possibility to treat an empty string as default value.
 - sup-cli: added collection of own exceptions for cli.
-- sup-cli: option and positional values keep the whitespace they were given (bugfix).
-- sup-cli: CommandLineParser::IsSet and GetOption are const, and the parser is movable.
-- sup-cli: removed sup/cli/base_types.h; std::int32_t is used instead of sup::cli::int32.
+- sup-cli: option and positional values keep the whitespace (bugfix).
+- sup-cli: CommandLineParser is movable, better method constantness.
 - Build coverage with -O0 by selecting Debug over RelWithDebInfo
 - Instrument test code for coverage by setting flags before add_subdirectory
 

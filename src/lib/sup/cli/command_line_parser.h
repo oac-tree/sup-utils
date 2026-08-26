@@ -85,9 +85,7 @@ public:
   /**
    * @brief Move constructor and assignment.
    *
-   * These allow a configured parser to be handed over, e.g. returned from a function that
-   * registers a set of options shared by several applications. The parser that was moved from shall
-   * not be used afterwards.
+   * The parser that was moved from shall not be used afterwards.
    */
   CommandLineParser(CommandLineParser&& other) noexcept;
   CommandLineParser& operator=(CommandLineParser&& other) & noexcept;
@@ -184,10 +182,6 @@ public:
   /**
    * @brief Returns the text of the value of an option, if there is one.
    *
-   * Tells "the option was not given" apart from "the option was given this value" without an
-   * exception, which the value accessors cannot. A value that was given counts as given even when
-   * it is empty.
-   *
    * @param option_name Name of the option.
    * @return The value as it was given in the command line, or the default value, or an empty
    * optional if the option was not given and has no default value.
@@ -225,9 +219,6 @@ public:
 
   /**
    * @brief Checks whether the command line was parsed.
-   *
-   * Tells an empty command line apart from one that was never given, which the number of
-   * positional values found cannot.
    */
   bool HasParsed() const;
 
@@ -235,8 +226,7 @@ public:
    * @brief Returns the number of positional values found after the parsing.
    *
    * The name of a program (which always appears as a first element of *argv array) is not
-   * considered as a positional value. The method returns 0 if the parsing didn't take place yet,
-   * which HasParsed tells apart from a command line that carried no positional value.
+   * considered as a positional value. The method returns 0 if the parsing didn't take place yet.
    */
   std::size_t GetPositionalOptionCount() const;
 
@@ -254,7 +244,7 @@ public:
   T GetPositionalValue(size_t index) const;
 
   /**
-   * @brief Returns multi-line string.
+   * @brief Returns multi-line string describing all options.
    */
   std::string GetUsageString() const;
 

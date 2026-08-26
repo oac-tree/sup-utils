@@ -39,9 +39,7 @@ bool Contains(const A& container, const B& element)
   return std::find(container.begin(), container.end(), element) != container.end();
 }
 
-//! Reports an option name that doesn't denote any of the registered options. Asking about an
-//! option that was never added is a mistake in the application, and not a command line in which
-//! the option happens to be absent.
+//! Reports an option name that doesn't denote any of the registered options.
 [[noreturn]] void ThrowUnknownOption(const std::string& option_name)
 {
   throw sup::cli::InvalidOptionException("Option '" + option_name
@@ -60,9 +58,9 @@ struct CommandLineParser::CommandLineParserImpl
   argh::parser m_parser;
   std::string m_header;
   std::string m_footer;
-  const CommandLineOption* m_help_option;
+  const CommandLineOption* m_help_option{nullptr};
   std::string m_parse_error;
-  bool m_parsed;
+  bool m_parsed{false};
 
   CommandLineParserImpl();
   ~CommandLineParserImpl() = default;
@@ -75,28 +73,28 @@ struct CommandLineParser::CommandLineParserImpl
   //! result is decided by the caller: the lookup itself doesn't modify the option.
   CommandLineOption* FindOption(const std::string& option_name) const;
 
-  //! Returns true if parameter options with given name was set in command line and parameter can be
+  //! Checks if parameter options with given name was set in command line and parameter can be
   //! parsed.
   bool IsParameterSet(const std::string& option_name) const;
 
-  //! Returns true if flag with given name was set in comand line.
+  //! Checks if flag with given name was set in comand line.
   bool IsFlagSet(const std::string& option_name) const;
 
-  //! Returns true if option is properly set.
+  //! Checks if option is properly set.
   bool IsFlagOptionSet(const CommandLineOption& option) const;
 
-  //! Returns true if option is properly set.
+  //! Checks if option is properly set.
   bool IsParameterOptionSet(const CommandLineOption& option) const;
 
-  //! Returns true if option is properly set.
+  //! Checks if option is properly set.
   bool IsSet(const CommandLineOption& option) const;
 
   std::vector<const CommandLineOption*> GetOptions();
 
-  //! Returns true if option is required and valid.
+  //! Checks if option is required and valid.
   bool IsValidRequiredOption(const CommandLineOption& option) const;
 
-  //! Returns true if necessary parameter arguments have been provided.
+  //! Checks if necessary parameter arguments have been provided.
   bool IsParameterArgumentsProvided(const CommandLineOption& option) const;
 
   //! Returns the number of positional values found, excluding the program name.
@@ -110,8 +108,6 @@ CommandLineParser::CommandLineParser() : p_impl(std::make_unique<CommandLinePars
 
 CommandLineParser::~CommandLineParser() = default;
 
-// Defined here rather than in the header: defaulting these requires CommandLineParserImpl to be a
-// complete type.
 CommandLineParser::CommandLineParser(CommandLineParser&& other) noexcept = default;
 
 CommandLineParser& CommandLineParser::operator=(CommandLineParser&& other) & noexcept = default;
@@ -121,8 +117,6 @@ CommandLineOption& CommandLineParser::AddOption(const std::vector<std::string>& 
 {
   for (auto it = option_names.begin(); it != option_names.end(); ++it)
   {
-    // Without this, the second option to claim a name would be registered and then never found,
-    // since the lookup returns the first match.
     if (GetOption(*it) != nullptr)
     {
       throw InvalidOptionException("Option '" + *it + "' has already been added to the parser");
@@ -263,13 +257,11 @@ std::optional<std::string> CommandLineParser::FindValue(const std::string& optio
 
   for (const auto& alias_name : option->GetOptionNames())
   {
-    // The state of the stream is the presence test: an option that was not given yields a stream
-    // in a failed state, while one given an empty value yields a good, empty one. Extracting from
-    // it would serve neither purpose, since extraction fails on an empty value and stops at the
-    // first whitespace of a value containing spaces.
+    // The state of the stream is the presence test: an option was given and shall be parsed
     auto value_stream = p_impl->m_parser(alias_name);
     if (value_stream)
     {
+      // extracting the whole stream content (also what comes after whitespaces)
       return value_stream.str();
     }
   }
@@ -339,8 +331,6 @@ CommandLineOption* CommandLineParser::CommandLineParserImpl::FindOption(
 
 bool CommandLineParser::CommandLineParserImpl::IsParameterSet(const std::string& option_name) const
 {
-  // A value that was given counts as given even when it is empty, hence the state of the stream
-  // rather than the emptiness of its contents.
   return static_cast<bool>(m_parser(option_name));
 }
 
@@ -422,8 +412,8 @@ std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
     }
   }
 
-  // A positional option takes the value found at the same place in the command line, so a required
-  // one is missing when there are not enough values to reach it.
+  // Checking that the number of remaining values in command line matche the number of required
+  // positional options.
   const auto value_count = GetPositionalValueCount();
   std::size_t index = 0U;
   for (const auto& option : m_options)

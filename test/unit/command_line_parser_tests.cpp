@@ -637,8 +637,7 @@ TEST_F(CommandLineParserTests, PositionalValueWithSpaces)
   EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({path_with_spaces}));
 }
 
-//! The three ways of failing to get a value are reported as distinct exceptions, each naming what
-//! it choked on.
+//! The three ways of failing to get a value are reported as distinct exceptions.
 TEST_F(CommandLineParserTests, ExceptionsWhenValueIsNotAvailable)
 {
   CommandLineParser parser;
@@ -650,8 +649,7 @@ TEST_F(CommandLineParserTests, ExceptionsWhenValueIsNotAvailable)
   std::array<const char*, argc> argv{"progname", "target.xml"};
   EXPECT_TRUE(parser.Parse(argc, argv.data()));
 
-  // an option name that was never added to the parser: a mistake in the application, and the
-  // message names the option that was asked about
+  // an option name that was never added to the parser
   EXPECT_THAT([&] { (void)parser.GetValue<std::string>("--typo"); },
               ::testing::ThrowsMessage<InvalidOptionException>(::testing::HasSubstr("--typo")));
 
@@ -660,8 +658,7 @@ TEST_F(CommandLineParserTests, ExceptionsWhenValueIsNotAvailable)
               ::testing::ThrowsMessage<MissingValueException>(::testing::AllOf(
                   ::testing::HasSubstr("--timeout"), ::testing::HasSubstr("no default value"))));
 
-  // a positional value beyond the ones found: the message reports both the index asked for and
-  // how many values there are
+  // a positional value beyond the ones found
   EXPECT_EQ(parser.GetPositionalValue<std::string>(0), std::string("target.xml"));
   EXPECT_THAT([&] { (void)parser.GetPositionalValue<std::string>(1); },
               ::testing::ThrowsMessage<MissingValueException>(::testing::AllOf(
@@ -671,8 +668,7 @@ TEST_F(CommandLineParserTests, ExceptionsWhenValueIsNotAvailable)
   EXPECT_EQ(parser.GetValue<int>("--with-default"), 42);
 }
 
-//! A value the requested type cannot hold is reported, and not silently turned into a number
-//! nobody asked for.
+//! A value the requested type cannot hold is reported.
 TEST_F(CommandLineParserTests, GetValueIsStrict)
 {
   CommandLineParser parser;
@@ -759,8 +755,7 @@ TEST_F(CommandLineParserTests, EmptyDefaultValue)
   EXPECT_THROW(parser.GetValue<std::string>("--nodefault"), MissingValueException);
 }
 
-//! A value that was given counts as given even when it is empty. An empty command line argument
-//! also has to survive the parsing at all, which it did not before.
+//! Passing empty string "" to the option is valid.
 TEST_F(CommandLineParserTests, EmptyValueGivenInCommandLine)
 {
   CommandLineParser parser;
@@ -822,8 +817,7 @@ TEST_F(CommandLineParserTests, FindValueAndFallback)
   EXPECT_THROW(parser.GetValue<int>("--typo", 1), InvalidOptionException);
 }
 
-//! A name that was never added to the parser is a mistake in the application, and is reported as
-//! such rather than answered with "not set".
+//! A name that was never added to the parser is a mistake.
 TEST_F(CommandLineParserTests, IsSetReportsUnknownOptionName)
 {
   CommandLineParser parser;
@@ -846,8 +840,7 @@ TEST_F(CommandLineParserTests, IsSetReportsUnknownOptionName)
   EXPECT_EQ(parser.GetOption("--verbsoe"), nullptr);
 }
 
-//! Claiming a name that is already taken is reported, instead of registering an option that could
-//! never be found.
+//! Claiming a name that is already taken is reported.
 TEST_F(CommandLineParserTests, AddOptionRejectsDuplicateName)
 {
   CommandLineParser parser;
@@ -877,8 +870,8 @@ TEST_F(CommandLineParserTests, AddOptionRejectsDuplicateName)
   EXPECT_NO_THROW((void)parser.AddOption({"-z", "--zap"}));
 }
 
-//! Parsing works for an application that offers no help option: Parse must not ask about a name
-//! that was never added.
+//! Parsing works for an application that offers no help option, but "fails" if help option was
+//! added.
 TEST_F(CommandLineParserTests, ParseWithoutHelpOption)
 {
   CommandLineParser parser;
