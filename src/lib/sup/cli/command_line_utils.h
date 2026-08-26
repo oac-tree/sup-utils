@@ -46,8 +46,11 @@ const std::vector<const CommandLineOption*> GetFilteredOptions(
 std::string MergeWithNewLine(std::initializer_list<std::string> strings);
 
 /**
- * Returns summary string representing all options.
- * Example: "[-h, --help] [--font=<value>] [--verbose] <positional_option>"
+ * @brief Returns a summary string representing all options.
+ *
+ * Non-positional options are summarised as a single "[options]", followed by the name of every
+ * positional option in the order they were added.
+ * Example: "[options] <origin> <target>"
  */
 std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLineOption*>& options);
 
@@ -83,4 +86,4 @@ std::string GetUsageString(const std::string& app_name, const std::string& heade
 
 }  // namespace sup
 
-#endif  // SUP_CLI_COMMAND_LINE_OPTION_H_
+#endif  // SUP_CLI_COMMAND_LINE_UTILS_H_

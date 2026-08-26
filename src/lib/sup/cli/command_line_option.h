@@ -87,16 +87,18 @@ public:
 
   /**
    * @brief Sets the default value.
+   *
+   * An empty string is a default value like any other.
    */
   CommandLineOption& SetDefaultValue(const std::string& default_value) &;
 
   /**
-   * @brief Sets option description.
+   * @brief Returns option description.
    */
   std::string GetDescription() const;
 
   /**
-   * @brief Returns option description.
+   * @brief Sets option description.
    */
   CommandLineOption& SetDescription(const std::string& description) &;
 
@@ -113,7 +115,8 @@ public:
   /**
    * @brief Returns the name of the value.
    *
-   * It is a text which will be used to form help line. By default, the name "[value]" is used.
+   * It is a text which will be used to form help line, where it appears in angle brackets. When no
+   * name was set, the help line falls back to "<value>".
    */
   std::string GetValueName() const;
 

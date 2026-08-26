@@ -57,17 +57,28 @@ namespace cli
  * @code
  * CommandLineParser parser;
  *
- * // adds verbose flag
- * parser.AddOption({"-v", "--verbose})->SetDescription("Verbose level");
+ * parser.AddHelpOption();
+ * parser.AddOption({"-v", "--verbose"}, "Log to standard output");
+ * parser.AddOption({"-f", "--file"}, "File to process").SetParameter(true).SetRequired(true);
+ * parser.AddOption({"--font"}, "Application font size").SetParameter(true).SetDefaultValue("12");
+ * parser.AddPositionalOption("<target>", "Where to write the result").SetRequired(true);
  *
- * //
- * parser.AddOption("--file")->SetParameter(true)->SetRequired(true);
+ * if (!parser.Parse(argc, argv))
+ * {
+ *   // Parse says no for three different reasons, which these two tell apart.
+ *   if (parser.IsHelpRequested())
+ *   {
+ *     std::cout << parser.GetUsageString();
+ *     return 0;
+ *   }
+ *   std::cerr << parser.GetParseError() << "\n" << parser.GetUsageString();
+ *   return 1;
+ * }
  *
- * assert(parser.parse(argc, argv));
- *
- * std::cout << "Verbosity:" << parser.IsSet("-v");
- * std::cout << "Filename:" << parser.GetValue<std::string>("--file");
-
+ * std::cout << "Verbosity : " << parser.IsSet("--verbose") << "\n";
+ * std::cout << "Filename  : " << parser.GetValue<std::string>("--file") << "\n";
+ * std::cout << "Font size : " << parser.GetValue<int>("--font") << "\n";
+ * std::cout << "Target    : " << parser.GetPositionalValue<std::string>(0) << "\n";
  * @endcode
  */
 class CommandLineParser
@@ -126,7 +137,7 @@ public:
    * they were added, so marking one required means that a value has to reach it.
    */
   CommandLineOption& AddPositionalOption(const std::string& option_name,
-                                        const std::string& description = {});
+                                         const std::string& description = {});
 
   /**
    * @brief Returns option with given name, or nullptr if no such option was added.
@@ -307,4 +318,4 @@ T CommandLineParser::GetPositionalValue(size_t index) const
 
 }  // namespace sup
 
-#endif  // SUP_CLI_COMMAND_LINE_OPTION_H_
+#endif  // SUP_CLI_COMMAND_LINE_PARSER_H_

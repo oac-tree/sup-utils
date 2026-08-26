@@ -80,7 +80,6 @@ std::string GetAvailableOptionsSummaryString(const std::vector<const CommandLine
       }
     }
   }
-  // currently returns simplified representation of all options
   return result;
 }
 
