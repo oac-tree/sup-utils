@@ -28,7 +28,9 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <cstdlib>
 #include <memory>
+#include <sstream>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -1232,4 +1234,67 @@ TEST_F(CommandLineParserTests, FlagWithParameterAndPositionalArgument)
   EXPECT_DOUBLE_EQ(parser.GetValue<int>("--font"), 42);
   EXPECT_EQ(parser.GetPositionalOptionCount(), 1U);
   EXPECT_EQ(parser.GetPositionalValue<int>(0), 128);
+}
+
+//! ParseOrReport tells main to carry on when the command line is good.
+TEST_F(CommandLineParserTests, ParseOrReportOnSuccess)
+{
+  CommandLineParser parser;
+  (void)parser.AddHelpOption();
+  (void)parser.AddOption({"-f", "--file"}).SetParameter(true).SetRequired(true);
+
+  const int argc = 3;
+  std::array<const char*, argc> argv{"progname", "--file", "a.xml"};
+
+  std::ostringstream out;
+  std::ostringstream err;
+  const auto exit_code = ParseOrReport(parser, argc, argv.data(), out, err);
+
+  EXPECT_FALSE(exit_code.has_value());
+  EXPECT_TRUE(out.str().empty());
+  EXPECT_TRUE(err.str().empty());
+  EXPECT_EQ(parser.GetValue<std::string>("--file"), std::string("a.xml"));
+}
+
+//! ParseOrReport prints the usage string and tells main to stop with a success code, when the help
+//! was requested.
+TEST_F(CommandLineParserTests, ParseOrReportOnHelpRequest)
+{
+  CommandLineParser parser;
+  (void)parser.AddHelpOption();
+  (void)parser.AddOption({"-f", "--file"}).SetParameter(true).SetRequired(true);
+
+  const int argc = 2;
+  std::array<const char*, argc> argv{"progname", "--help"};
+
+  std::ostringstream out;
+  std::ostringstream err;
+  const auto exit_code = ParseOrReport(parser, argc, argv.data(), out, err);
+
+  ASSERT_TRUE(exit_code.has_value());
+  EXPECT_EQ(*exit_code, EXIT_SUCCESS);
+  EXPECT_EQ(out.str(), parser.GetUsageString());
+  EXPECT_TRUE(err.str().empty());
+}
+
+//! ParseOrReport reports the reason and tells main to stop with a failure code, when the command
+//! line doesn't add up.
+TEST_F(CommandLineParserTests, ParseOrReportOnFailure)
+{
+  CommandLineParser parser;
+  (void)parser.AddHelpOption();
+  (void)parser.AddOption({"-f", "--file"}).SetParameter(true).SetRequired(true);
+
+  const int argc = 1;
+  std::array<const char*, argc> argv{"progname"};
+
+  std::ostringstream out;
+  std::ostringstream err;
+  const auto exit_code = ParseOrReport(parser, argc, argv.data(), out, err);
+
+  ASSERT_TRUE(exit_code.has_value());
+  EXPECT_EQ(*exit_code, EXIT_FAILURE);
+  EXPECT_TRUE(out.str().empty());
+  EXPECT_THAT(err.str(), ::testing::HasSubstr(parser.GetParseError()));
+  EXPECT_THAT(err.str(), ::testing::HasSubstr(parser.GetUsageString()));
 }

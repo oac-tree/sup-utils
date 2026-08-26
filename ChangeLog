@@ -1,5 +1,6 @@
 Changes for 1.11.0:
 
+- sup-cli: added ParseOrReport, which reports the outcome of the parsing on behalf of main.
 - sup-cli: CommandLineParser::GetValue<T> accurately converts scalars; overload with fallback.
 - sup-cli: IsSet is applicable only for defined options and throws on unknown flags.
 - sup-cli: added CommandLineParser::IsHelpRequested and GetParseError for main.cpp convenience.

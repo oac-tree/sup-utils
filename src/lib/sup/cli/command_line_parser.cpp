@@ -28,6 +28,8 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstdlib>
+#include <iostream>
 #include <memory>
 #include <string>
 
@@ -430,6 +432,31 @@ std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
   }
 
   return {};
+}
+
+std::optional<int> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
+                                 const char* const* argv, std::ostream& out, std::ostream& err)
+{
+  if (parser.Parse(argc, argv))
+  {
+    return {};
+  }
+
+  if (parser.IsHelpRequested())
+  {
+    // Help was asked for and given, which is not a failure of the application.
+    out << parser.GetUsageString();
+    return EXIT_SUCCESS;
+  }
+
+  err << "Error: " << parser.GetParseError() << "\n\n" << parser.GetUsageString();
+  return EXIT_FAILURE;
+}
+
+std::optional<int> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
+                                 const char* const* argv)
+{
+  return ParseOrReport(parser, argc, argv, std::cout, std::cerr);
 }
 
 }  // namespace cli

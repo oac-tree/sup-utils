@@ -29,6 +29,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <iosfwd>
 #include <memory>
 #include <optional>
 #include <string>
@@ -54,32 +55,7 @@ namespace cli
  *  3) Positional
  *     Free standing values, e.g: config.json
  *
- * @code
- * CommandLineParser parser;
- *
- * parser.AddHelpOption();
- * parser.AddOption({"-v", "--verbose"}, "Log to standard output");
- * parser.AddOption({"-f", "--file"}, "File to process").SetParameter(true).SetRequired(true);
- * parser.AddOption({"--font"}, "Application font size").SetParameter(true).SetDefaultValue("12");
- * parser.AddPositionalOption("<target>", "Where to write the result").SetRequired(true);
- *
- * if (!parser.Parse(argc, argv))
- * {
- *   // Parse says no for three different reasons, which these two tell apart.
- *   if (parser.IsHelpRequested())
- *   {
- *     std::cout << parser.GetUsageString();
- *     return 0;
- *   }
- *   std::cerr << parser.GetParseError() << "\n" << parser.GetUsageString();
- *   return 1;
- * }
- *
- * std::cout << "Verbosity : " << parser.IsSet("--verbose") << "\n";
- * std::cout << "Filename  : " << parser.GetValue<std::string>("--file") << "\n";
- * std::cout << "Font size : " << parser.GetValue<int>("--font") << "\n";
- * std::cout << "Target    : " << parser.GetPositionalValue<std::string>(0) << "\n";
- * @endcode
+ * See usage examples in test/cli-example folder.
  */
 class CommandLineParser
 {
@@ -313,6 +289,30 @@ T CommandLineParser::GetPositionalValue(std::size_t index) const
   return ConvertValue<T>("positional value " + std::to_string(index),
                          GetPositionalValueAsText(index));
 }
+
+/**
+ * @brief Parses the command line and reports the outcome, on behalf of main.
+ *
+ * Will print help/error messages if necessary. The main() should exit, if the output contains the
+ * value.
+ *
+ * @param parser The parser with all options of the application already added.
+ * @param argc Number of command line arguments, as given to main.
+ * @param argv Command line arguments, as given to main.
+ * @param out Stream for help output.
+ * @param err Stream for the error message.
+ * @return The value main should return, or an empty optional if the application should carry on.
+ */
+std::optional<int> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
+                                 const char* const* argv, std::ostream& out, std::ostream& err);
+
+/**
+ * @brief Parses the command line and reports the outcome to the standard streams.
+ *
+ * Same as above with std::cout and std::cerr.
+ */
+std::optional<int> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
+                                 const char* const* argv);
 
 }  // namespace cli
 

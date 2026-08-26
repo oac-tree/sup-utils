@@ -139,16 +139,10 @@ int main(int argc, char* argv[])
 {
   auto parser = CreateParser();
 
-  if (!parser.Parse(argc, argv))
+  const auto exit_code = sup::cli::ParseOrReport(parser, argc, argv);
+  if (exit_code.has_value())
   {
-    // Parse says no for three different reasons, and these two tell them apart.
-    if (parser.IsHelpRequested())
-    {
-      std::cout << parser.GetUsageString();
-      return 0;
-    }
-    std::cerr << "Error: " << parser.GetParseError() << "\n\n" << parser.GetUsageString();
-    return 1;
+    return *exit_code;
   }
 
   try
