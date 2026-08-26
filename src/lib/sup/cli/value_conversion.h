@@ -85,6 +85,58 @@ double ParseFloatingPoint(const std::string& context, const std::string& text);
  */
 bool ParseBoolean(const std::string& context, const std::string& text);
 
+namespace internal
+{
+
+//! Reason reported for a number the requested type cannot hold.
+constexpr auto kOutOfRangeReason = "is outside the range of the requested type";
+
+//! Converts the whole text to a floating point type, reporting a number that type cannot hold.
+template <typename T>
+T ConvertToFloatingPoint(const std::string& context, const std::string& text)
+{
+  const auto result = ParseFloatingPoint(context, text);
+
+  constexpr auto limit = static_cast<double>(std::numeric_limits<T>::max());
+  if ((result > limit) || (result < -limit))
+  {
+    ThrowInvalidValue(context, text, kOutOfRangeReason);
+  }
+
+  return static_cast<T>(result);
+}
+
+//! Converts the whole text to a signed integer type, reporting a number that type cannot hold.
+template <typename T>
+T ConvertToSigned(const std::string& context, const std::string& text)
+{
+  const auto result = ParseSignedInteger(context, text);
+
+  if ((result < static_cast<std::int64_t>(std::numeric_limits<T>::min()))
+      || (result > static_cast<std::int64_t>(std::numeric_limits<T>::max())))
+  {
+    ThrowInvalidValue(context, text, kOutOfRangeReason);
+  }
+
+  return static_cast<T>(result);
+}
+
+//! Converts the whole text to an unsigned integer type, reporting a number that type cannot hold.
+template <typename T>
+T ConvertToUnsigned(const std::string& context, const std::string& text)
+{
+  const auto result = ParseUnsignedInteger(context, text);
+
+  if (result > static_cast<std::uint64_t>(std::numeric_limits<T>::max()))
+  {
+    ThrowInvalidValue(context, text, kOutOfRangeReason);
+  }
+
+  return static_cast<T>(result);
+}
+
+}  // namespace internal
+
 /**
  * @brief Converts the whole text of a value to the requested type.
  *
@@ -114,35 +166,15 @@ T ConvertValue(const std::string& context, const std::string& text)
   }
   else if constexpr (std::is_floating_point_v<T>)
   {
-    const auto result = ParseFloatingPoint(context, text);
-    if constexpr (!std::is_same_v<T, double>)
-    {
-      constexpr auto limit = static_cast<double>(std::numeric_limits<T>::max());
-      if ((result > limit) || (result < -limit))
-      {
-        ThrowInvalidValue(context, text, "is outside the range of the requested type");
-      }
-    }
-    return static_cast<T>(result);
+    return internal::ConvertToFloatingPoint<T>(context, text);
   }
   else if constexpr (std::is_signed_v<T>)
   {
-    const auto result = ParseSignedInteger(context, text);
-    if ((result < static_cast<std::int64_t>(std::numeric_limits<T>::min()))
-        || (result > static_cast<std::int64_t>(std::numeric_limits<T>::max())))
-    {
-      ThrowInvalidValue(context, text, "is outside the range of the requested type");
-    }
-    return static_cast<T>(result);
+    return internal::ConvertToSigned<T>(context, text);
   }
   else
   {
-    const auto result = ParseUnsignedInteger(context, text);
-    if (result > static_cast<std::uint64_t>(std::numeric_limits<T>::max()))
-    {
-      ThrowInvalidValue(context, text, "is outside the range of the requested type");
-    }
-    return static_cast<T>(result);
+    return internal::ConvertToUnsigned<T>(context, text);
   }
 }
 

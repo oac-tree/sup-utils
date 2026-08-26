@@ -26,6 +26,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <cmath>
 #include <cstdint>
 #include <limits>
 #include <string>
@@ -98,6 +99,14 @@ TEST_F(ValueConversionTests, ConvertToFloatingPoint)
 
   // a double beyond what a float can hold
   EXPECT_THROW(ConvertValue<float>("context", "1e40"), InvalidValueException);
+
+  // an infinity is a value no type can hold, and is reported for double as it is for float
+  EXPECT_THROW(ConvertValue<double>("context", "inf"), InvalidValueException);
+  EXPECT_THROW(ConvertValue<float>("context", "inf"), InvalidValueException);
+
+  // a not-a-number passes the conversion: it is a value the type does hold. GetValueInRange is
+  // what rejects it, since it fails both bound comparisons.
+  EXPECT_TRUE(std::isnan(ConvertValue<double>("context", "nan")));
 }
 
 TEST_F(ValueConversionTests, ConvertToBoolean)
