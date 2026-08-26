@@ -47,8 +47,8 @@ public:
 protected:
   CommandLineException(const CommandLineException& other) = default;
   CommandLineException& operator=(const CommandLineException& other) & = default;
-  CommandLineException(CommandLineException&&) = default;
-  CommandLineException& operator=(CommandLineException&&) & = default;
+  CommandLineException(CommandLineException&&) noexcept = default;
+  CommandLineException& operator=(CommandLineException&&) & noexcept = default;
 };
 
 /**
@@ -64,8 +64,8 @@ public:
   ~InvalidOptionException() override = default;
   InvalidOptionException(const InvalidOptionException& other) = default;
   InvalidOptionException& operator=(const InvalidOptionException& other) & = default;
-  InvalidOptionException(InvalidOptionException&&) = default;
-  InvalidOptionException& operator=(InvalidOptionException&&) & = default;
+  InvalidOptionException(InvalidOptionException&&) noexcept = default;
+  InvalidOptionException& operator=(InvalidOptionException&&) & noexcept = default;
 };
 
 /**
@@ -81,8 +81,8 @@ public:
   ~InvalidValueException() override = default;
   InvalidValueException(const InvalidValueException& other) = default;
   InvalidValueException& operator=(const InvalidValueException& other) & = default;
-  InvalidValueException(InvalidValueException&&) = default;
-  InvalidValueException& operator=(InvalidValueException&&) & = default;
+  InvalidValueException(InvalidValueException&&) noexcept = default;
+  InvalidValueException& operator=(InvalidValueException&&) & noexcept = default;
 };
 
 /**
@@ -98,8 +98,8 @@ public:
   ~MissingValueException() override = default;
   MissingValueException(const MissingValueException& other) = default;
   MissingValueException& operator=(const MissingValueException& other) & = default;
-  MissingValueException(MissingValueException&&) = default;
-  MissingValueException& operator=(MissingValueException&&) & = default;
+  MissingValueException(MissingValueException&&) noexcept = default;
+  MissingValueException& operator=(MissingValueException&&) & noexcept = default;
 };
 
 }  // namespace cli

@@ -60,8 +60,8 @@ public:
 protected:
   MessageException(const MessageException& other) = default;
   MessageException& operator=(const MessageException& other) & = default;
-  MessageException(MessageException&&) = default;
-  MessageException& operator=(MessageException&&) = default;
+  MessageException(MessageException&&) noexcept = default;
+  MessageException& operator=(MessageException&&) & noexcept = default;
 private:
   std::string m_message;
 };
@@ -76,8 +76,8 @@ public:
   ~InvalidOperationException() override = default;
   InvalidOperationException(const InvalidOperationException& other) = default;
   InvalidOperationException& operator=(const InvalidOperationException& other) & = default;
-  InvalidOperationException(InvalidOperationException&&) = default;
-  InvalidOperationException& operator=(InvalidOperationException&&) = default;
+  InvalidOperationException(InvalidOperationException&&) noexcept = default;
+  InvalidOperationException& operator=(InvalidOperationException&&) & noexcept = default;
 };
 
 /**
@@ -90,8 +90,8 @@ public:
   ~ValidationException() override = default;
   ValidationException(const ValidationException& other) = default;
   ValidationException& operator=(const ValidationException& other) & = default;
-  ValidationException(ValidationException&&) = default;
-  ValidationException& operator=(ValidationException&&) = default;
+  ValidationException(ValidationException&&) noexcept = default;
+  ValidationException& operator=(ValidationException&&) & noexcept = default;
 };
 
 /**
@@ -104,8 +104,8 @@ public:
   ~ParseException() override = default;
   ParseException(const ParseException& other) = default;
   ParseException& operator=(const ParseException& other) & = default;
-  ParseException(ParseException&&) = default;
-  ParseException& operator=(ParseException&&) = default;
+  ParseException(ParseException&&) noexcept = default;
+  ParseException& operator=(ParseException&&) & noexcept = default;
 };
 
 /**
@@ -118,8 +118,8 @@ public:
   ~SerializeException() override = default;
   SerializeException(const SerializeException& other) = default;
   SerializeException& operator=(const SerializeException& other) & = default;
-  SerializeException(SerializeException&&) = default;
-  SerializeException& operator=(SerializeException&&) = default;
+  SerializeException(SerializeException&&) noexcept = default;
+  SerializeException& operator=(SerializeException&&) & noexcept = default;
 };
 
 }  // namespace xml
