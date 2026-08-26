@@ -70,8 +70,7 @@ A complete application is in ``test/cli-example`` of this package.
 
 **Limitations**:
 
-The parsing is built on the vendored ``argh`` library, and inherits three properties of its
-grammar. All three concern values that look like something else.
+Limitations come from the underlying ``argh`` library:
 
   1. A value beginning with a dash cannot be passed in the space-separated form.
      In ``--file "-weird name"`` the parser takes ``--file`` for a flag, the
