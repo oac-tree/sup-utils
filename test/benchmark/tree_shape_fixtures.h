@@ -40,8 +40,8 @@ namespace test
 /**
  * @brief Tree shapes measured by the benchmarks.
  *
- * @details Breadth and depth are varied independently: building a TreeData copies each finished
- * node once per level it sits below the root, so the two axes are expected to scale differently.
+ * @details The shapes vary in two directions, how many children a node has and how deep the
+ * nesting goes, because parsing cost does not follow node count alone.
  */
 enum class Shape
 {

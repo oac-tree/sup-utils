@@ -23,7 +23,6 @@
 #ifndef SUP_XML_TREEDATA_PARSER_UTILS_H_
 #define SUP_XML_TREEDATA_PARSER_UTILS_H_
 
-#include <sup/xml/base_types.h>
 #include <sup/xml/tree_data.h>
 
 #include <libxml/tree.h>
@@ -44,7 +43,7 @@ std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, const xmlNodePtr node);
 
 TreeData CreateTreeData(xmlDocPtr doc, xmlNodePtr node);
 
-xmlNodePtr NextChild(xmlNodePtr parent, uint32& next_child_idx);
+xmlNodePtr NextChild(xmlNodePtr& cursor);
 
 void AddXMLAttributes(TreeData& tree, const xmlNodePtr node);
 

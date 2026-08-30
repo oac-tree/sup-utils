@@ -25,6 +25,7 @@
 #include <sup/xml/exceptions.h>
 
 #include <algorithm>
+#include <utility>
 
 namespace
 {
@@ -112,6 +113,11 @@ size_t TreeData::GetNumberOfChildren() const
 void TreeData::AddChild(const TreeData& child)
 {
   m_children.push_back(child);
+}
+
+void TreeData::AddChild(TreeData&& child)
+{
+  m_children.push_back(std::move(child));
 }
 
 const std::vector<TreeData>& TreeData::Children() const &

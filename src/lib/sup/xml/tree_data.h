@@ -128,6 +128,15 @@ public:
   void AddChild(const TreeData& child);
 
   /**
+   * @brief Add child element data by moving it.
+   *
+   * @param child Data representation of child element.
+   *
+   * @details Avoids the deep copy of the whole child subtree that the copy overload performs.
+   */
+  void AddChild(TreeData&& child);
+
+  /**
    * @brief Retrieve all child data elements.
    *
    * @return List of child data elements.

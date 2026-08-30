@@ -1,16 +1,14 @@
 # Performance benchmarks
 
 Google Benchmark measurements of `TreeData` build-up, copy, move and comparison, and of XML
-serialization and parsing, over six tree shapes.
-
-Google Benchmark is an optional dependency. Without it this target is skipped and the rest of the
-test tree builds as usual. The target is not registered with CTest, so `ctest` is unaffected.
+serialization and parsing. Google Benchmark is optional: without it the target is skipped. It is
+never registered with CTest, so `ctest` does not run it.
 
 ## Shapes
 
-Breadth and depth are varied independently. Building a `TreeData` copies every finished node once
-per level it sits below the root, so a deep shape and a wide shape of the same node count do not
-cost the same. Every node carries four attributes, and the leaves carry a content string.
+The shapes vary in two directions: how many children a node has, and how deep the nesting goes.
+Parsing cost does not follow node count alone, so the two are varied separately. Every node carries
+four attributes, and leaves also carry content.
 
 | Shape | Definition | Nodes |
 |---|---|---|
@@ -19,19 +17,15 @@ cost the same. Every node carries four attributes, and the leaves carry a conten
 | `FlatWide` | root with 10 000 leaves | 10 001 |
 | `Balanced` | branching factor 6, depth 6 | 55 987 |
 | `LargeConfig` | branching factor 8, depth 6 | 299 593 |
-| `MixedContent` | `FlatWide` scaled down, with content on the root | 1 001 |
+| `MixedContent` | root with content *and* 1 000 leaves | 1 001 |
 
-`DeepChain` is capped at 250 because libxml2 refuses to parse a document nested deeper than 256
-levels unless `XML_PARSE_HUGE` is passed, which `sup::xml` does not do. Anything deeper builds and
-serializes but cannot be read back.
+`DeepChain` cannot grow past 256. libxml2 refuses to parse a document nested deeper than that
+without `XML_PARSE_HUGE`, which `sup::xml` does not pass, so deeper trees build and serialize but
+cannot be read back.
 
-## Mixed content
-
-`MixedContent` is the only shape whose root holds a content string *and* child elements. Parsing it
-is super-quadratic in the number of children, roughly 8x the time for 2x the children, and the root
-content does not survive the round trip: `AddXMLContent` reads the indentation whitespace libxml2
-keeps between the children and overwrites the real content with it. The shape is therefore small,
-and registered on the parsing benchmarks only. Do not scale it up expecting `FlatWide` behaviour.
+`MixedContent` does not scale like `FlatWide`. An element holding both content and child elements
+parses in super-quadratic time, and its content does not survive the round trip. It is small on
+purpose and registered on the parsing benchmarks only.
 
 ## Running
 
@@ -43,13 +37,9 @@ taskset -c 2 ./test_bin/benchmark-tests \
       2>&1 | tee benchmark.log
 ```
 
-Pin the run and compare medians: CPU scaling is on and an unpinned run drifts between cores. Do not
-measure a `COA_COVERAGE=ON` build, it is `-O0`. `--benchmark_filter='.*LargeConfig'` selects the
-largest shape only; each shape is built on first use, so a filtered run pays for only what it needs.
-The parsing benchmarks write their XML into the working directory and remove it at exit.
+Pin the run and compare medians, CPU scaling is on. Never measure a `COA_COVERAGE=ON` build, it is
+`-O0`. Shapes are built on first use, so `--benchmark_filter` pays only for what it selects. The
+parsing benchmarks write their XML into the working directory and remove it at exit.
 
-`BM_MoveTree` reports no throughput counters on purpose, a move is independent of the shape and a
-bytes/s figure for it would only invite comparison with the copy.
-
-`benchmark.log` holds the committed run. The JSON is not committed; keep two of them locally and
-`tools/compare.py benchmarks old.json new.json` from the Google Benchmark sources diffs them.
+`benchmark.log` is the committed run. The JSON is not committed; `tools/compare.py` from the Google
+Benchmark sources diffs two of them.

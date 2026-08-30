@@ -21,7 +21,6 @@
  ******************************************************************************/
 
 #include "tree_data_parser_utils.h"
-#include "base_types.h"
 
 #include <sup/xml/exceptions.h>
 #include <sup/xml/xml_utils.h>
@@ -38,8 +37,7 @@ using namespace sup::xml;
 struct StackNode
 {
   TreeData tree;
-  xmlNodePtr xml_node;
-  uint32 next_child_index;
+  xmlNodePtr next_child;  // cursor into the sibling list, advanced by NextChild
 };
 
 }  // unnamed namespace
@@ -72,29 +70,26 @@ std::unique_ptr<TreeData> ParseXMLDoc(xmlDocPtr doc)
 std::unique_ptr<TreeData> ParseDataTree(xmlDocPtr doc, xmlNodePtr node)
 {
   std::stack<StackNode> stack;
-  stack.push({CreateTreeData(doc, node), node, 0});
+  stack.push({CreateTreeData(doc, node), node->children});
 
   while (!stack.empty())  // process each node
   {
     auto& top_node = stack.top();
-    auto next_child = NextChild(top_node.xml_node, top_node.next_child_index);
+    auto next_child = NextChild(top_node.next_child);
     if (next_child != nullptr)
     {
-      stack.push({CreateTreeData(doc, next_child), next_child, 0});
+      stack.push({CreateTreeData(doc, next_child), next_child->children});
     }
     else
     {
-      auto current_tree = top_node.tree;  // Creates a copy
+      // Moved out before the pop, so a finished subtree is never deep copied.
+      auto current_tree = std::move(top_node.tree);
       stack.pop();
-      if (!stack.empty())
+      if (stack.empty())
       {
-        auto& parent = stack.top();
-        parent.tree.AddChild(current_tree);
+        return std::make_unique<TreeData>(std::move(current_tree));
       }
-      else
-      {
-        return std::make_unique<TreeData>(current_tree);
-      }
+      stack.top().tree.AddChild(std::move(current_tree));
     }
   }
   return nullptr;
@@ -108,19 +103,17 @@ TreeData CreateTreeData(xmlDocPtr doc, xmlNodePtr node)
   return result;
 }
 
-xmlNodePtr NextChild(xmlNodePtr parent, uint32& next_child_idx)
+// Advances the cursor past the returned node, so walking all children costs a single pass.
+xmlNodePtr NextChild(xmlNodePtr& cursor)
 {
-  auto child = parent->children;
-  uint32 child_idx = 0;
-  while (child != nullptr)
+  while (cursor != nullptr)
   {
-    if ((child_idx >= next_child_idx) && (child->type == XML_ELEMENT_NODE))
+    auto child = cursor;
+    cursor = cursor->next;
+    if (child->type == XML_ELEMENT_NODE)
     {
-      next_child_idx = ++child_idx;
       return child;
     }
-    child = child->next;
-    ++child_idx;
   }
   return nullptr;
 }

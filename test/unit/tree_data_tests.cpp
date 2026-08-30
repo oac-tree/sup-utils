@@ -27,6 +27,8 @@
 
 #include <gtest/gtest.h>
 
+#include <utility>
+
 using namespace sup::xml;
 
 const std::string MAIN_NODE_NAME = "MainNode";
@@ -274,6 +276,25 @@ TEST_F(TreeDataTest, Children)
   ASSERT_EQ(children.size(), 2);
   EXPECT_EQ(children[0], child_1);
   EXPECT_EQ(children[1], child_2);
+}
+
+// Adding a child by moving it stores the same subtree as adding it by copy.
+TEST_F(TreeDataTest, MoveChildren)
+{
+  TreeData child{CHILD_NODE_NAME};
+  child.AddAttribute(NAME_ATTRIBUTE, NAME_ATTRIBUTE_VALUE);
+  child.SetContent("child content");
+  child.AddChild(TreeData{NODE_NAME_2});
+
+  TreeData copied{NODE_NAME_1};
+  copied.AddChild(child);
+
+  TreeData moved{NODE_NAME_1};
+  moved.AddChild(std::move(child));
+
+  ASSERT_EQ(moved.GetNumberOfChildren(), 1);
+  EXPECT_EQ(moved.Children()[0].GetNumberOfChildren(), 1);
+  EXPECT_EQ(moved, copied);
 }
 
 TreeDataTest::TreeDataTest() = default;
