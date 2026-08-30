@@ -11,6 +11,7 @@ Changes for 1.11.0:
 - sup-cli: CommandLineParser is movable, better method constantness.
 - Build coverage with -O0 by selecting Debug over RelWithDebInfo
 - Instrument test code for coverage by setting flags before add_subdirectory
+- sup-xml: added Google Benchmark based performance tests for TreeData
 
 Changes for 1.10.0:
 

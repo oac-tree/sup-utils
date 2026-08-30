@@ -8,6 +8,7 @@ include(GoogleTest)
 add_subdirectory(unit)
 add_subdirectory(parasoft)
 add_subdirectory(cli-example)
+add_subdirectory(benchmark)
 
 file(WRITE ${TEST_OUTPUT_DIRECTORY}/test.sh
 "#!/bin/bash
