@@ -12,7 +12,7 @@ Changes for 1.11.0:
 - Build coverage with -O0 by selecting Debug over RelWithDebInfo
 - Instrument test code for coverage by setting flags before add_subdirectory
 - sup-xml: added Google Benchmark based performance tests for TreeData
-- sup-xml: added TreeData::AddChild overload taking an rvalue reference
+- sup-xml: TreeData::AddChild takes its argument by value, so callers can move a subtree in
 - sup-xml: parsing moves subtrees instead of copying them and no longer rescans siblings
 
 Changes for 1.10.0:

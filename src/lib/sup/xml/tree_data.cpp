@@ -110,12 +110,7 @@ size_t TreeData::GetNumberOfChildren() const
   return m_children.size();
 }
 
-void TreeData::AddChild(const TreeData& child)
-{
-  m_children.push_back(child);
-}
-
-void TreeData::AddChild(TreeData&& child)
+void TreeData::AddChild(TreeData child)
 {
   m_children.push_back(std::move(child));
 }

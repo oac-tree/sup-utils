@@ -6,7 +6,7 @@ release: 7.0.0-30-generic
 version: #30-Ubuntu SMP PREEMPT_DYNAMIC Fri Jul 31 18:22:54 UTC 2026
 machine: x86_64
 --------------------------------------------------------------------------------
-2026-08-30T15:06:09+00:00
+2026-08-31T10:31:26+00:00
 Running ./test_bin/benchmark-tests
 Run on (20 X 4600 MHz CPU s)
 CPU Caches:
@@ -14,41 +14,41 @@ CPU Caches:
   L1 Instruction 32 KiB (x10)
   L2 Unified 1280 KiB (x10)
   L3 Unified 24576 KiB (x1)
-Load Average: 0.54, 0.68, 0.65
+Load Average: 1.03, 0.36, 0.39
 ***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
 ----------------------------------------------------------------------------------------------------------------
 Benchmark                                          Time             CPU   Iterations bytes_per_second      nodes
 ----------------------------------------------------------------------------------------------------------------
-BM_BuildTree/Small_mean                        0.005 ms        0.005 ms            5       206.909M/s 2.65082M/s
-BM_BuildTree/Small_median                      0.005 ms        0.005 ms            5       206.858M/s 2.65017M/s
-BM_BuildTree/Small_stddev                      0.000 ms        0.000 ms            5       295.038k/s 3.69131k/s
-BM_BuildTree/DeepChain_mean                     5.02 ms         5.02 ms            5       27.1941M/s 49.8254k/s
-BM_BuildTree/DeepChain_median                   5.02 ms         5.02 ms            5       27.2034M/s 49.8424k/s
-BM_BuildTree/DeepChain_stddev                  0.010 ms        0.010 ms            5        53.207k/s  95.2017/s
-BM_BuildTree/FlatWide_mean                      4.34 ms         4.34 ms            5       192.838M/s 2.30646M/s
-BM_BuildTree/FlatWide_median                    4.34 ms         4.34 ms            5       192.837M/s 2.30645M/s
-BM_BuildTree/FlatWide_stddev                   0.013 ms        0.013 ms            5       591.084k/s 6.90401k/s
-BM_BuildTree/Balanced_mean                      28.9 ms         28.9 ms            5       184.974M/s 1.94013M/s
-BM_BuildTree/Balanced_median                    28.9 ms         28.9 ms            5       184.891M/s 1.93926M/s
-BM_BuildTree/Balanced_stddev                   0.144 ms        0.144 ms            5       945.889k/s 9.68861k/s
-BM_BuildTree/LargeConfig_mean                    151 ms          151 ms            5       193.635M/s 1.98113M/s
-BM_BuildTree/LargeConfig_median                  151 ms          151 ms            5       193.606M/s 1.98084M/s
-BM_BuildTree/LargeConfig_stddev                0.261 ms        0.258 ms            5       338.041k/s 3.37753k/s
-BM_CopyTree/Small_mean                         0.001 ms        0.001 ms            5       1066.38M/s  13.662M/s
-BM_CopyTree/Small_median                       0.001 ms        0.001 ms            5       1060.71M/s 13.5894M/s
-BM_CopyTree/Small_stddev                       0.000 ms        0.000 ms            5       12.6853M/s 162.518k/s
-BM_CopyTree/DeepChain_mean                     0.024 ms        0.024 ms            5       5.45234G/s 10.2296M/s
-BM_CopyTree/DeepChain_median                   0.024 ms        0.024 ms            5       5.45081G/s 10.2267M/s
-BM_CopyTree/DeepChain_stddev                   0.000 ms        0.000 ms            5       32.5163M/s 59.5769k/s
-BM_CopyTree/FlatWide_mean                      0.797 ms        0.797 ms            5        1050.5M/s 12.5646M/s
-BM_CopyTree/FlatWide_median                    0.789 ms        0.788 ms            5       1060.61M/s 12.6856M/s
-BM_CopyTree/FlatWide_stddev                    0.026 ms        0.026 ms            5       33.0661M/s 395.491k/s
-BM_CopyTree/Balanced_mean                       6.08 ms         6.08 ms            5       878.675M/s 9.21614M/s
-BM_CopyTree/Balanced_median                     6.02 ms         6.02 ms            5       886.785M/s  9.3012M/s
-BM_CopyTree/Balanced_stddev                    0.100 ms        0.101 ms            5       14.4718M/s  151.79k/s
-BM_CopyTree/LargeConfig_mean                    60.4 ms         60.4 ms            5       484.749M/s 4.95959M/s
-BM_CopyTree/LargeConfig_median                  60.4 ms         60.4 ms            5       485.114M/s 4.96333M/s
-BM_CopyTree/LargeConfig_stddev                 0.246 ms        0.247 ms            5       1.97673M/s 20.2244k/s
+BM_BuildTree/Small_mean                        0.005 ms        0.005 ms            5        209.56M/s 2.68479M/s
+BM_BuildTree/Small_median                      0.005 ms        0.005 ms            5       210.159M/s 2.69247M/s
+BM_BuildTree/Small_stddev                      0.000 ms        0.000 ms            5       2.03748M/s 26.1032k/s
+BM_BuildTree/DeepChain_mean                     5.09 ms         5.09 ms            5       26.8233M/s 49.1461k/s
+BM_BuildTree/DeepChain_median                   5.07 ms         5.07 ms            5       26.8907M/s 49.2694k/s
+BM_BuildTree/DeepChain_stddev                  0.046 ms        0.046 ms            5       248.666k/s  444.931/s
+BM_BuildTree/FlatWide_mean                      4.25 ms         4.25 ms            5       196.579M/s 2.35121M/s
+BM_BuildTree/FlatWide_median                    4.25 ms         4.25 ms            5       196.819M/s 2.35407M/s
+BM_BuildTree/FlatWide_stddev                   0.013 ms        0.013 ms            5       611.111k/s 7.13794k/s
+BM_BuildTree/Balanced_mean                      28.2 ms         28.2 ms            5       189.086M/s 1.98326M/s
+BM_BuildTree/Balanced_median                    28.2 ms         28.2 ms            5       189.505M/s 1.98766M/s
+BM_BuildTree/Balanced_stddev                   0.145 ms        0.145 ms            5       989.572k/s  10.136k/s
+BM_BuildTree/LargeConfig_mean                    149 ms          149 ms            5       196.651M/s 2.01199M/s
+BM_BuildTree/LargeConfig_median                  149 ms          149 ms            5       196.659M/s 2.01206M/s
+BM_BuildTree/LargeConfig_stddev                0.240 ms        0.224 ms            5       303.045k/s 3.02787k/s
+BM_CopyTree/Small_mean                         0.001 ms        0.001 ms            5       1117.18M/s 14.3128M/s
+BM_CopyTree/Small_median                       0.001 ms        0.001 ms            5        1114.5M/s 14.2785M/s
+BM_CopyTree/Small_stddev                       0.000 ms        0.000 ms            5       8.57594M/s 109.871k/s
+BM_CopyTree/DeepChain_mean                     0.024 ms        0.024 ms            5       5.62853G/s 10.5602M/s
+BM_CopyTree/DeepChain_median                   0.024 ms        0.024 ms            5       5.62838G/s 10.5599M/s
+BM_CopyTree/DeepChain_stddev                   0.000 ms        0.000 ms            5       4.42987M/s 8.11648k/s
+BM_CopyTree/FlatWide_mean                      0.764 ms        0.764 ms            5       1094.59M/s 13.0919M/s
+BM_CopyTree/FlatWide_median                    0.758 ms        0.758 ms            5       1102.65M/s 13.1884M/s
+BM_CopyTree/FlatWide_stddev                    0.015 ms        0.015 ms            5       21.9679M/s 262.749k/s
+BM_CopyTree/Balanced_mean                       5.92 ms         5.92 ms            5       902.248M/s 9.46339M/s
+BM_CopyTree/Balanced_median                     5.91 ms         5.91 ms            5       902.722M/s 9.46836M/s
+BM_CopyTree/Balanced_stddev                    0.016 ms        0.016 ms            5        2.4213M/s 25.3962k/s
+BM_CopyTree/LargeConfig_mean                    58.7 ms         58.7 ms            5       498.809M/s 5.10344M/s
+BM_CopyTree/LargeConfig_median                  58.5 ms         58.5 ms            5       500.361M/s 5.11932M/s
+BM_CopyTree/LargeConfig_stddev                 0.453 ms        0.455 ms            5       3.85111M/s 39.4017k/s
 ------------------------------------------------------------------------------------
 Benchmark                                          Time             CPU   Iterations
 ------------------------------------------------------------------------------------
@@ -70,84 +70,84 @@ BM_MoveTree/LargeConfig_stddev                 0.000 ms        0.000 ms         
 ----------------------------------------------------------------------------------------------------------------
 Benchmark                                          Time             CPU   Iterations bytes_per_second      nodes
 ----------------------------------------------------------------------------------------------------------------
-BM_CompareTrees/Small_mean                     0.001 ms        0.001 ms            5       1.26935G/s 16.6527M/s
-BM_CompareTrees/Small_median                   0.001 ms        0.001 ms            5       1.27033G/s 16.6654M/s
-BM_CompareTrees/Small_stddev                   0.000 ms        0.000 ms            5       2.79148M/s 35.7632k/s
-BM_CompareTrees/DeepChain_mean                 0.015 ms        0.015 ms            5       8.85648G/s 16.6164M/s
-BM_CompareTrees/DeepChain_median               0.015 ms        0.015 ms            5       8.85374G/s 16.6113M/s
-BM_CompareTrees/DeepChain_stddev               0.000 ms        0.000 ms            5       8.71932M/s 15.9757k/s
-BM_CompareTrees/FlatWide_mean                  0.618 ms        0.618 ms            5       1.32207G/s 16.1923M/s
-BM_CompareTrees/FlatWide_median                0.619 ms        0.618 ms            5        1.3205G/s  16.173M/s
-BM_CompareTrees/FlatWide_stddev                0.002 ms        0.002 ms            5       3.90525M/s 46.7091k/s
-BM_CompareTrees/Balanced_mean                   3.87 ms         3.86 ms            5       1.34892G/s 14.4879M/s
-BM_CompareTrees/Balanced_median                 3.86 ms         3.86 ms            5       1.34912G/s 14.4901M/s
-BM_CompareTrees/Balanced_stddev                0.009 ms        0.009 ms            5       3.21238M/s 33.6937k/s
-BM_CompareTrees/LargeConfig_mean                20.6 ms         20.6 ms            5       1.38716G/s  14.533M/s
-BM_CompareTrees/LargeConfig_median              20.6 ms         20.6 ms            5       1.38739G/s 14.5355M/s
-BM_CompareTrees/LargeConfig_stddev             0.038 ms        0.037 ms            5       2.51264M/s 25.7075k/s
-BM_TreeDataFromString/Small_mean               0.019 ms        0.019 ms            5       54.3551M/s 696.373k/s
-BM_TreeDataFromString/Small_median             0.019 ms        0.019 ms            5       54.3474M/s 696.275k/s
-BM_TreeDataFromString/Small_stddev             0.000 ms        0.000 ms            5       113.009k/s 1.41389k/s
-BM_TreeDataFromString/DeepChain_mean           0.377 ms        0.377 ms            5       362.393M/s 663.981k/s
-BM_TreeDataFromString/DeepChain_median         0.377 ms        0.377 ms            5        361.97M/s 663.207k/s
-BM_TreeDataFromString/DeepChain_stddev         0.001 ms        0.001 ms            5       844.164k/s 1.51044k/s
-BM_TreeDataFromString/FlatWide_mean             13.0 ms         13.0 ms            5       64.1553M/s 767.336k/s
-BM_TreeDataFromString/FlatWide_median           13.0 ms         13.0 ms            5       64.2236M/s 768.153k/s
-BM_TreeDataFromString/FlatWide_stddev          0.055 ms        0.055 ms            5       274.508k/s 3.20633k/s
-BM_TreeDataFromString/Balanced_mean              115 ms          115 ms            5       46.3436M/s 486.083k/s
-BM_TreeDataFromString/Balanced_median            115 ms          115 ms            5       46.3944M/s 486.616k/s
-BM_TreeDataFromString/Balanced_stddev          0.404 ms        0.390 ms            5       160.614k/s 1.64515k/s
-BM_TreeDataFromString/LargeConfig_mean           537 ms          537 ms            5       54.9152M/s 561.851k/s
-BM_TreeDataFromString/LargeConfig_median         513 ms          513 ms            5       57.1165M/s 584.374k/s
-BM_TreeDataFromString/LargeConfig_stddev        53.1 ms         53.2 ms            5       4.83007M/s 49.4177k/s
-BM_TreeDataFromString/MixedContent_mean          119 ms          119 ms            5       696.945k/s 8.42574k/s
-BM_TreeDataFromString/MixedContent_median        119 ms          119 ms            5       698.724k/s 8.44725k/s
-BM_TreeDataFromString/MixedContent_stddev      0.765 ms        0.743 ms            5       4.32563k/s  52.2949/s
-BM_TreeDataFromFile/Small_mean                 0.027 ms        0.027 ms            5       37.4889M/s 480.291k/s
-BM_TreeDataFromFile/Small_median               0.027 ms        0.027 ms            5       37.2262M/s 476.926k/s
-BM_TreeDataFromFile/Small_stddev               0.001 ms        0.001 ms            5       985.905k/s 12.3349k/s
-BM_TreeDataFromFile/DeepChain_mean             0.382 ms        0.381 ms            5       357.849M/s 655.656k/s
-BM_TreeDataFromFile/DeepChain_median           0.383 ms        0.382 ms            5       356.797M/s 653.729k/s
-BM_TreeDataFromFile/DeepChain_stddev           0.008 ms        0.008 ms            5       7.42015M/s 13.5953k/s
-BM_TreeDataFromFile/FlatWide_mean               13.1 ms         13.1 ms            5       63.7658M/s 762.677k/s
-BM_TreeDataFromFile/FlatWide_median             13.0 ms         13.0 ms            5       64.2324M/s 768.258k/s
-BM_TreeDataFromFile/FlatWide_stddev            0.332 ms        0.331 ms            5        1.5961M/s 19.0903k/s
-BM_TreeDataFromFile/Balanced_mean               89.4 ms         89.4 ms            5       59.7274M/s 626.461k/s
-BM_TreeDataFromFile/Balanced_median             89.4 ms         89.4 ms            5       59.7073M/s 626.251k/s
-BM_TreeDataFromFile/Balanced_stddev             1.02 ms         1.03 ms            5       701.909k/s 7.18955k/s
-BM_TreeDataFromFile/LargeConfig_mean             553 ms          553 ms            5       53.3278M/s  545.61k/s
-BM_TreeDataFromFile/LargeConfig_median           529 ms          529 ms            5       55.4029M/s 566.841k/s
-BM_TreeDataFromFile/LargeConfig_stddev          53.6 ms         53.6 ms            5        4.9933M/s 51.0877k/s
-BM_TreeDataFromFile/MixedContent_mean            124 ms          124 ms            5       670.459k/s 8.10555k/s
-BM_TreeDataFromFile/MixedContent_median          124 ms          124 ms            5       669.162k/s 8.08986k/s
-BM_TreeDataFromFile/MixedContent_stddev         3.17 ms         3.17 ms            5       17.2081k/s  208.038/s
-BM_TreeDataToString/Small_mean                 0.007 ms        0.007 ms            5       140.983M/s 1.80622M/s
-BM_TreeDataToString/Small_median               0.007 ms        0.007 ms            5       140.977M/s 1.80613M/s
-BM_TreeDataToString/Small_stddev               0.000 ms        0.000 ms            5       352.288k/s 4.40758k/s
-BM_TreeDataToString/DeepChain_mean             0.804 ms        0.804 ms            5       169.784M/s 311.081k/s
-BM_TreeDataToString/DeepChain_median           0.801 ms        0.801 ms            5       170.302M/s 312.029k/s
-BM_TreeDataToString/DeepChain_stddev           0.004 ms        0.004 ms            5       833.267k/s 1.49094k/s
-BM_TreeDataToString/FlatWide_mean               4.99 ms         4.99 ms            5       167.619M/s 2.00482M/s
-BM_TreeDataToString/FlatWide_median             4.99 ms         4.99 ms            5       167.576M/s 2.00431M/s
-BM_TreeDataToString/FlatWide_stddev            0.025 ms        0.024 ms            5       840.041k/s  9.8119k/s
-BM_TreeDataToString/Balanced_mean               31.7 ms         31.7 ms            5       168.277M/s 1.76501M/s
-BM_TreeDataToString/Balanced_median             31.7 ms         31.7 ms            5       168.517M/s 1.76752M/s
-BM_TreeDataToString/Balanced_stddev            0.072 ms        0.068 ms            5       370.652k/s 3.79653k/s
-BM_TreeDataToString/LargeConfig_mean             176 ms          176 ms            5       166.789M/s 1.70646M/s
-BM_TreeDataToString/LargeConfig_median           176 ms          176 ms            5       166.572M/s 1.70424M/s
-BM_TreeDataToString/LargeConfig_stddev         0.560 ms        0.558 ms            5       543.248k/s 5.42784k/s
-BM_TreeDataToFile/Small_mean                   0.030 ms        0.022 ms            5       46.2746M/s  592.85k/s
-BM_TreeDataToFile/Small_median                 0.029 ms        0.022 ms            5       47.1664M/s 604.275k/s
-BM_TreeDataToFile/Small_stddev                 0.002 ms        0.002 ms            5       3.94815M/s 50.5819k/s
-BM_TreeDataToFile/DeepChain_mean               0.986 ms        0.920 ms            5       148.287M/s 271.693k/s
-BM_TreeDataToFile/DeepChain_median             0.990 ms        0.916 ms            5       148.888M/s 272.795k/s
-BM_TreeDataToFile/DeepChain_stddev             0.017 ms        0.014 ms            5       2.28331M/s 4.18352k/s
-BM_TreeDataToFile/FlatWide_mean                 5.92 ms         5.66 ms            5       147.787M/s 1.76762M/s
-BM_TreeDataToFile/FlatWide_median               5.92 ms         5.66 ms            5       147.817M/s 1.76798M/s
-BM_TreeDataToFile/FlatWide_stddev              0.035 ms        0.038 ms            5       1008.88k/s  11.784k/s
-BM_TreeDataToFile/Balanced_mean                 36.6 ms         35.6 ms            5       149.808M/s 1.57128M/s
-BM_TreeDataToFile/Balanced_median               36.7 ms         35.7 ms            5       149.714M/s  1.5703M/s
-BM_TreeDataToFile/Balanced_stddev              0.096 ms        0.140 ms            5       603.611k/s  6.1827k/s
-BM_TreeDataToFile/LargeConfig_mean               201 ms          194 ms            5       151.327M/s 1.54827M/s
-BM_TreeDataToFile/LargeConfig_median             201 ms          193 ms            5       151.799M/s 1.55309M/s
-BM_TreeDataToFile/LargeConfig_stddev            2.72 ms         1.36 ms            5        1083.4k/s 10.8248k/s
+BM_CompareTrees/Small_mean                     0.001 ms        0.001 ms            5       1.23424G/s  16.192M/s
+BM_CompareTrees/Small_median                   0.001 ms        0.001 ms            5       1.23358G/s 16.1834M/s
+BM_CompareTrees/Small_stddev                   0.000 ms        0.000 ms            5        3.0777M/s 39.4302k/s
+BM_CompareTrees/DeepChain_mean                 0.014 ms        0.014 ms            5       9.68403G/s 18.1691M/s
+BM_CompareTrees/DeepChain_median               0.014 ms        0.014 ms            5       9.68787G/s 18.1763M/s
+BM_CompareTrees/DeepChain_stddev               0.000 ms        0.000 ms            5       20.8036M/s 38.1166k/s
+BM_CompareTrees/FlatWide_mean                  0.620 ms        0.620 ms            5       1.31782G/s 16.1402M/s
+BM_CompareTrees/FlatWide_median                0.620 ms        0.620 ms            5       1.31749G/s 16.1362M/s
+BM_CompareTrees/FlatWide_stddev                0.001 ms        0.001 ms            5       2.68419M/s 32.1045k/s
+BM_CompareTrees/Balanced_mean                   3.91 ms         3.91 ms            5       1.33444G/s 14.3324M/s
+BM_CompareTrees/Balanced_median                 3.91 ms         3.91 ms            5       1.33449G/s  14.333M/s
+BM_CompareTrees/Balanced_stddev                0.006 ms        0.005 ms            5       1.82364M/s 19.1276k/s
+BM_CompareTrees/LargeConfig_mean                20.8 ms         20.8 ms            5       1.37524G/s 14.4081M/s
+BM_CompareTrees/LargeConfig_median              20.8 ms         20.8 ms            5       1.37592G/s 14.4152M/s
+BM_CompareTrees/LargeConfig_stddev             0.034 ms        0.032 ms            5       2.13695M/s 21.8637k/s
+BM_TreeDataFromString/Small_mean               0.019 ms        0.019 ms            5       54.1945M/s 694.315k/s
+BM_TreeDataFromString/Small_median             0.019 ms        0.019 ms            5       54.2381M/s 694.874k/s
+BM_TreeDataFromString/Small_stddev             0.000 ms        0.000 ms            5       134.654k/s 1.68469k/s
+BM_TreeDataFromString/DeepChain_mean           0.371 ms        0.371 ms            5        368.07M/s 674.383k/s
+BM_TreeDataFromString/DeepChain_median         0.371 ms        0.371 ms            5       367.795M/s 673.879k/s
+BM_TreeDataFromString/DeepChain_stddev         0.001 ms        0.002 ms            5        1.5323M/s 2.80751k/s
+BM_TreeDataFromString/FlatWide_mean             12.9 ms         12.9 ms            5       64.8983M/s 776.223k/s
+BM_TreeDataFromString/FlatWide_median           12.9 ms         12.9 ms            5        64.874M/s 775.931k/s
+BM_TreeDataFromString/FlatWide_stddev          0.018 ms        0.016 ms            5       84.8278k/s  990.812/s
+BM_TreeDataFromString/Balanced_mean              111 ms          111 ms            5       47.9496M/s 502.928k/s
+BM_TreeDataFromString/Balanced_median            112 ms          112 ms            5       47.7528M/s 500.864k/s
+BM_TreeDataFromString/Balanced_stddev          0.991 ms        0.979 ms            5        433.64k/s 4.44171k/s
+BM_TreeDataFromString/LargeConfig_mean           535 ms          535 ms            5       55.0771M/s 563.508k/s
+BM_TreeDataFromString/LargeConfig_median         514 ms          514 ms            5       56.9509M/s 582.679k/s
+BM_TreeDataFromString/LargeConfig_stddev        48.6 ms         48.6 ms            5       4.47627M/s 45.7979k/s
+BM_TreeDataFromString/MixedContent_mean          118 ms          118 ms            5       699.325k/s 8.45452k/s
+BM_TreeDataFromString/MixedContent_median        118 ms          118 ms            5       701.292k/s  8.4783k/s
+BM_TreeDataFromString/MixedContent_stddev      0.631 ms        0.650 ms            5       3.82894k/s  46.2901/s
+BM_TreeDataFromFile/Small_mean                 0.026 ms        0.026 ms            5       39.1029M/s 500.969k/s
+BM_TreeDataFromFile/Small_median               0.026 ms        0.026 ms            5        39.494M/s 505.979k/s
+BM_TreeDataFromFile/Small_stddev               0.000 ms        0.000 ms            5       723.643k/s 9.05369k/s
+BM_TreeDataFromFile/DeepChain_mean             0.373 ms        0.373 ms            5       366.254M/s 671.056k/s
+BM_TreeDataFromFile/DeepChain_median           0.373 ms        0.373 ms            5       365.522M/s 669.714k/s
+BM_TreeDataFromFile/DeepChain_stddev           0.005 ms        0.005 ms            5       4.64886M/s  8.5177k/s
+BM_TreeDataFromFile/FlatWide_mean               13.5 ms         13.5 ms            5       62.0718M/s 742.415k/s
+BM_TreeDataFromFile/FlatWide_median             13.2 ms         13.2 ms            5       63.4842M/s 759.308k/s
+BM_TreeDataFromFile/FlatWide_stddev            0.764 ms        0.764 ms            5       3.33793M/s 39.9236k/s
+BM_TreeDataFromFile/Balanced_mean               91.6 ms         91.6 ms            5       58.3135M/s 611.632k/s
+BM_TreeDataFromFile/Balanced_median             91.8 ms         91.8 ms            5       58.1726M/s 610.153k/s
+BM_TreeDataFromFile/Balanced_stddev             2.84 ms         2.84 ms            5       1.78227M/s 18.6937k/s
+BM_TreeDataFromFile/LargeConfig_mean             552 ms          552 ms            5        53.374M/s 546.083k/s
+BM_TreeDataFromFile/LargeConfig_median           528 ms          528 ms            5       55.4955M/s 567.789k/s
+BM_TreeDataFromFile/LargeConfig_stddev          48.5 ms         48.4 ms            5       4.52051M/s 46.2505k/s
+BM_TreeDataFromFile/MixedContent_mean            123 ms          123 ms            5       672.275k/s  8.1275k/s
+BM_TreeDataFromFile/MixedContent_median          125 ms          125 ms            5       665.007k/s 8.03963k/s
+BM_TreeDataFromFile/MixedContent_stddev         4.89 ms         4.89 ms            5       26.8544k/s  324.658/s
+BM_TreeDataToString/Small_mean                 0.007 ms        0.007 ms            5       140.256M/s  1.7969M/s
+BM_TreeDataToString/Small_median               0.007 ms        0.007 ms            5       140.357M/s 1.79819M/s
+BM_TreeDataToString/Small_stddev               0.000 ms        0.000 ms            5       666.447k/s  8.3381k/s
+BM_TreeDataToString/DeepChain_mean             0.793 ms        0.793 ms            5       172.055M/s 315.242k/s
+BM_TreeDataToString/DeepChain_median           0.792 ms        0.791 ms            5       172.408M/s 315.889k/s
+BM_TreeDataToString/DeepChain_stddev           0.004 ms        0.004 ms            5       884.751k/s 1.58306k/s
+BM_TreeDataToString/FlatWide_mean               4.97 ms         4.97 ms            5       168.216M/s 2.01196M/s
+BM_TreeDataToString/FlatWide_median             4.95 ms         4.95 ms            5       168.977M/s 2.02107M/s
+BM_TreeDataToString/FlatWide_stddev            0.044 ms        0.044 ms            5       1.48579M/s  17.771k/s
+BM_TreeDataToString/Balanced_mean               31.8 ms         31.8 ms            5       167.816M/s 1.76017M/s
+BM_TreeDataToString/Balanced_median             31.8 ms         31.8 ms            5       167.927M/s 1.76134M/s
+BM_TreeDataToString/Balanced_stddev            0.125 ms        0.127 ms            5       685.565k/s 7.02214k/s
+BM_TreeDataToString/LargeConfig_mean             174 ms          174 ms            5       167.872M/s 1.71754M/s
+BM_TreeDataToString/LargeConfig_median           175 ms          175 ms            5       167.507M/s  1.7138M/s
+BM_TreeDataToString/LargeConfig_stddev         0.840 ms        0.843 ms            5        831.79k/s  8.3108k/s
+BM_TreeDataToFile/Small_mean                   0.030 ms        0.021 ms            5        48.177M/s 617.222k/s
+BM_TreeDataToFile/Small_median                 0.030 ms        0.021 ms            5        48.179M/s 617.248k/s
+BM_TreeDataToFile/Small_stddev                 0.000 ms        0.000 ms            5       556.534k/s 6.96296k/s
+BM_TreeDataToFile/DeepChain_mean                1.00 ms        0.919 ms            5       148.614M/s 272.292k/s
+BM_TreeDataToFile/DeepChain_median             0.993 ms        0.906 ms            5       150.614M/s 275.958k/s
+BM_TreeDataToFile/DeepChain_stddev             0.031 ms        0.030 ms            5       4.66225M/s 8.54224k/s
+BM_TreeDataToFile/FlatWide_mean                 5.86 ms         5.58 ms            5         149.9M/s  1.7929M/s
+BM_TreeDataToFile/FlatWide_median               5.81 ms         5.55 ms            5       150.604M/s 1.80132M/s
+BM_TreeDataToFile/FlatWide_stddev              0.109 ms        0.099 ms            5       2.59748M/s 31.0674k/s
+BM_TreeDataToFile/Balanced_mean                 36.2 ms         35.0 ms            5       152.453M/s 1.59903M/s
+BM_TreeDataToFile/Balanced_median               36.2 ms         35.1 ms            5        152.06M/s 1.59491M/s
+BM_TreeDataToFile/Balanced_stddev              0.268 ms        0.390 ms            5       1.70179M/s 17.8496k/s
+BM_TreeDataToFile/LargeConfig_mean               201 ms          192 ms            5       152.745M/s 1.56278M/s
+BM_TreeDataToFile/LargeConfig_median             202 ms          192 ms            5        152.59M/s 1.56119M/s
+BM_TreeDataToFile/LargeConfig_stddev            2.58 ms         1.03 ms            5       842.327k/s 8.41608k/s

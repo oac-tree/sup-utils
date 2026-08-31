@@ -124,17 +124,10 @@ public:
    * @brief Add child element data.
    *
    * @param child Data representation of child element.
-   */
-  void AddChild(const TreeData& child);
-
-  /**
-   * @brief Add child element data by moving it.
    *
-   * @param child Data representation of child element.
-   *
-   * @details Avoids the deep copy of the whole child subtree that the copy overload performs.
+   * @details Pass an rvalue, or std::move, to avoid a deep copy of the child subtree.
    */
-  void AddChild(TreeData&& child);
+  void AddChild(TreeData child);
 
   /**
    * @brief Retrieve all child data elements.
