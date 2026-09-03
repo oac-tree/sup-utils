@@ -30,9 +30,6 @@ namespace
 // Substring Valgrind places in LD_PRELOAD of every process it instruments.
 const std::string kValgrindPreloadMarker = "vgpreload";
 
-// Factor by which test deadlines are multiplied when running under Valgrind.
-const double kValgrindTimeoutFactor = 4.0;
-
 }  // unnamed namespace
 
 namespace sup
@@ -52,9 +49,9 @@ bool IsOnValgrind()
          && (std::string(preloaded).find(kValgrindPreloadMarker) != std::string::npos);
 }
 
-double ScaleTimeout(double timeout_sec)
+double ScaleTimeout(double timeout_sec, double scale_factor)
 {
-  return IsOnValgrind() ? (timeout_sec * kValgrindTimeoutFactor) : timeout_sec;
+  return IsOnValgrind() ? (timeout_sec * scale_factor) : timeout_sec;
 }
 
 }  // namespace platform
