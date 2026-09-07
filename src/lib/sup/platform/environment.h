@@ -42,18 +42,6 @@ bool IsOnCodac();
  */
 bool IsOnValgrind();
 
-//! Factor by which test deadlines are multiplied when running under Valgrind.
-constexpr double kValgrindTimeoutFactor = 4.0;
-
-/**
- * @brief Scales a test deadline for the environment this process runs in.
- *
- * @param timeout_sec deadline in seconds, as chosen for a native run.
- * @param scale_factor multiplier applied when this process is instrumented.
- * @return the deadline to use, unchanged unless this process is instrumented.
- */
-double ScaleTimeout(double timeout_sec, double scale_factor = kValgrindTimeoutFactor);
-
 }  // namespace platform
 
 }  // namespace sup

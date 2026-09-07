@@ -28,7 +28,7 @@
 namespace
 {
 // Substring Valgrind places in LD_PRELOAD of every process it instruments.
-const std::string kValgrindPreloadMarker = "vgpreload";
+constexpr auto kValgrindPreloadMarker = "vgpreload";
 
 }  // unnamed namespace
 
@@ -47,11 +47,6 @@ bool IsOnValgrind()
   const char* preloaded = std::getenv("LD_PRELOAD");
   return (preloaded != nullptr)
          && (std::string(preloaded).find(kValgrindPreloadMarker) != std::string::npos);
-}
-
-double ScaleTimeout(double timeout_sec, double scale_factor)
-{
-  return IsOnValgrind() ? (timeout_sec * scale_factor) : timeout_sec;
 }
 
 }  // namespace platform
