@@ -315,7 +315,7 @@ std::size_t CommandLineParser::CommandLineParserImpl::GetPositionalValueCount() 
   const auto size = m_parser.size();
   // Argh always counts the program name as a positional argument, and reports 1 even when no
   // positional value is present.
-  return size > 0U ? size - 1U : 0U;
+  return (size > 0U) ? (size - 1U) : 0U;
 }
 
 CommandLineOption* CommandLineParser::CommandLineParserImpl::FindOption(
