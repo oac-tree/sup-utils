@@ -44,7 +44,7 @@ std::string StripPrefix(const std::string& input, const std::string& prefix);
  * @brief Strip the given postfix from an input string, if it's present.
  *
  * @param input Input string.
- * @param prefix postfix to strip.
+ * @param postfix postfix to strip.
  * @return Input string with given postfix stripped, if it was present.
  */
 std::string StripPostfix(const std::string& input, const std::string& postfix);
