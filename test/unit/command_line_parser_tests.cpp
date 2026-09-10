@@ -996,6 +996,14 @@ TEST_F(CommandLineParserTests, ParseRejectsUnknownOption)
     EXPECT_THAT(parser->GetParseError(), ::testing::HasSubstr("--nonsense"));
   }
 
+  {  // an option misspelled past recognition, which reaches the parser as a free standing value
+    auto parser = create_parser();
+    std::array<const char*, 4> argv{"progname", "nonsense", "--size", "128"};
+    EXPECT_FALSE(parser->Parse(4, argv.data()));
+    EXPECT_THAT(parser->GetParseError(), ::testing::AllOf(::testing::HasSubstr("nonsense"),
+                                                          ::testing::HasSubstr("Unexpected")));
+  }
+
   {  // an unknown option that swallows the value after it
     auto parser = create_parser();
     std::array<const char*, 3> argv{"progname", "--nonsense", "42"};
@@ -1148,6 +1156,76 @@ TEST_F(CommandLineParserTests, LeadingDashCountIsNotChecked)
 
   // the value was taken, so refusing the spelling would contradict the parsing
   EXPECT_EQ(parser.GetValue<int>("--size"), 64);
+}
+
+//! An application that offers no positional option takes no free standing values.
+TEST_F(CommandLineParserTests, FreeStandingValueNeedsAPositionalOption)
+{
+  {  // no positional option is offered, so a value has nowhere to go
+    CommandLineParser parser;
+    (void)parser.AddOption({"--size"}, "Size").SetParameter(true);
+
+    const int argc = 4;
+    std::array<const char*, argc> argv{"progname", "--size", "64", "stray"};
+    EXPECT_FALSE(parser.Parse(argc, argv.data()));
+    EXPECT_EQ(parser.GetParseError(), std::string("Unexpected argument 'stray'"));
+  }
+
+  {  // the first free standing value is the one reported, whatever precedes it
+    CommandLineParser parser;
+    (void)parser.AddOption({"-v", "--verbose"}, "Verbose output");
+
+    const int argc = 4;
+    std::array<const char*, argc> argv{"progname", "-v", "first", "second"};
+    EXPECT_FALSE(parser.Parse(argc, argv.data()));
+    EXPECT_EQ(parser.GetParseError(), std::string("Unexpected argument 'first'"));
+  }
+
+  {  // a parser offering nothing at all
+    CommandLineParser parser;
+
+    const int argc = 2;
+    std::array<const char*, argc> argv{"progname", "stray"};
+    EXPECT_FALSE(parser.Parse(argc, argv.data()));
+    EXPECT_THAT(parser.GetParseError(), ::testing::HasSubstr("stray"));
+  }
+
+  {  // offering one positional option lets any number of values through
+    CommandLineParser parser;
+    (void)parser.AddOption({"-v", "--verbose"}, "Verbose output");
+    parser.AddPositionalOption("FILE...", "Files to read");
+
+    const int argc = 5;
+    std::array<const char*, argc> argv{"progname", "a.xml", "-v", "b.xml", "c.xml"};
+    EXPECT_TRUE(parser.Parse(argc, argv.data()));
+    EXPECT_TRUE(parser.GetParseError().empty());
+    EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"a.xml", "b.xml", "c.xml"}));
+  }
+
+  {  // the value of a parameter option is not a free standing one: the option takes it, so it
+     // never reaches the positional values and there is nothing to refuse
+    CommandLineParser parser;
+    (void)parser.AddOption({"--size"}, "Size").SetParameter(true);
+
+    const int argc = 3;
+    std::array<const char*, argc> argv{"progname", "--size", "64"};
+    EXPECT_TRUE(parser.Parse(argc, argv.data()));
+    EXPECT_TRUE(parser.GetParseError().empty());
+
+    // where the 64 went, and that it left nothing behind
+    EXPECT_EQ(parser.GetValue<int>("--size"), 64);
+    EXPECT_EQ(parser.GetPositionalOptionCount(), 0U);
+  }
+
+  {  // the same 64 after an option that takes no value has nothing to belong to, and is refused
+    CommandLineParser parser;
+    (void)parser.AddOption({"--verbose"}, "Verbose output");
+
+    const int argc = 3;
+    std::array<const char*, argc> argv{"progname", "--verbose", "64"};
+    EXPECT_FALSE(parser.Parse(argc, argv.data()));
+    EXPECT_EQ(parser.GetParseError(), std::string("Unexpected argument '64'"));
+  }
 }
 
 //! An unknown option reaches main as a failure, with the usage string alongside it.
@@ -1355,10 +1433,10 @@ footer
   EXPECT_EQ(parser.GetUsageString(), expected);
 }
 
-//! Single positional argument in the command line. No pre-registered options.
 TEST_F(CommandLineParserTests, PositionalArgument)
 {
   CommandLineParser parser;
+  parser.AddPositionalOption("<value>");
 
   const int argc = 2;
   std::array<const char*, argc> argv{"progname", "abc"};
@@ -1377,10 +1455,11 @@ TEST_F(CommandLineParserTests, PositionalArgument)
   EXPECT_EQ(parser.GetPositionalValues(), std::vector<std::string>({"abc"}));
 }
 
-//! Two positional arguments in the command line. No pre-registered options.
 TEST_F(CommandLineParserTests, TwoPositionalArguments)
 {
   CommandLineParser parser;
+  parser.AddPositionalOption("<first>");
+  parser.AddPositionalOption("<second>");
 
   const int argc = 3;
   std::array<const char*, argc> argv{"progname", "abc", "42"};

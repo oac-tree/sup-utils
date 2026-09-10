@@ -129,6 +129,9 @@ struct CommandLineParser::CommandLineParserImpl
   //! options.
   std::optional<std::string> FindUnknownOption() const;
 
+  //! Returns the number of positional options added to the parser.
+  std::size_t CountPositionalOptions() const;
+
   //! Returns the reason why the options don't add up, or an empty string if they do.
   std::string GetValidationError() const;
 };
@@ -485,6 +488,13 @@ std::optional<std::string> CommandLineParser::CommandLineParserImpl::FindUnknown
   return *unknown_names.begin();
 }
 
+std::size_t CommandLineParser::CommandLineParserImpl::CountPositionalOptions() const
+{
+  const auto predicate = [](const std::unique_ptr<CommandLineOption>& option)
+  { return option->IsPositional(); };
+  return static_cast<std::size_t>(std::count_if(m_options.begin(), m_options.end(), predicate));
+}
+
 std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
 {
   // A misspelled option is reported first.
@@ -492,6 +502,12 @@ std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
   if (unknown_option.has_value())
   {
     return "Unknown option '" + *unknown_option + "'";
+  }
+
+  // An application offering no positional option takes no free standing values.
+  if ((CountPositionalOptions() == 0U) && (GetPositionalValueCount() > 0U))
+  {
+    return "Unexpected argument '" + m_parser.pos_args().at(1U) + "'";
   }
 
   for (const auto& option : m_options)

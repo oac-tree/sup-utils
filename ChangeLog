@@ -2,6 +2,7 @@ Changes for 1.11.0:
 
 - sup-platform: added IsOnCodac, IsOnValgrind and ScaleTimeout, so tests can adapt to the environment they run in.
 - sup-cli: an option that was not added to the parser makes the parsing fail, instead of being silently ignored (bugfix).
+- sup-cli: a free standing value makes the parsing fail if no positional option was added to hold it (bugfix).
 - sup-cli: added ParseOrReport, which reports the outcome of the parsing on behalf of main.
 - sup-cli: CommandLineParser::GetValue<T> accurately converts scalars; overload with fallback.
 - sup-cli: IsSet is applicable only for defined options and throws on unknown flags.

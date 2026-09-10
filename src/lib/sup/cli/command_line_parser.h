@@ -57,9 +57,9 @@ namespace cli
  *
  * See usage examples in test/cli-example folder.
  *
- * An option that was not added to the parser is a failure and is reported by GetParseError: a
- * misspelled option is refused rather than passed over. Free standing values are not checked
- * this way, they remain available through GetPositionalValues however many of them were given.
+ * An argument that the parser cannot recognize is a failure and is reported by GetParseError:
+ * - an option that was not added to the parser
+ * - a free standing value given to an application that offers no positional option to hold it.
  */
 class CommandLineParser
 {
@@ -115,6 +115,11 @@ public:
    *
    * @details Positional options are matched to the values found in the command line in the order
    * they were added, so marking one required means that a value has to reach it.
+   *
+   * Offering one positional option is what lets free standing values through at all, and it is
+   * not a limit on how many of them are accepted: a variadic option such as "FILE..." is added
+   * once and collects every value. An application that adds none takes no values, and the
+   * parsing fails if it is given one.
    */
   CommandLineOption& AddPositionalOption(const std::string& option_name,
                                          const std::string& description = {});
