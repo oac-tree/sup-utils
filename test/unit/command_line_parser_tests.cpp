@@ -968,6 +968,210 @@ TEST_F(CommandLineParserTests, ParseErrorAndHelpRequested)
   }
 }
 
+//! An option that was never added to the parser is refused, and not passed over.
+TEST_F(CommandLineParserTests, ParseRejectsUnknownOption)
+{
+  auto create_parser = []()
+  {
+    auto result = std::make_unique<CommandLineParser>();
+    (void)result->AddHelpOption();
+    (void)result->AddOption({"-v", "--verbose"}, "Verbose output");
+    (void)result->AddOption({"-s", "--size"}, "Size").SetParameter(true).SetDefaultValue("64");
+    return result;
+  };
+
+  {  // a bare unknown option, which Argh records as a flag
+    auto parser = create_parser();
+    std::array<const char*, 2> argv{"progname", "--nonsense"};
+    EXPECT_FALSE(parser->Parse(2, argv.data()));
+    EXPECT_FALSE(parser->IsHelpRequested());
+    EXPECT_THAT(parser->GetParseError(), ::testing::AllOf(::testing::HasSubstr("--nonsense"),
+                                                          ::testing::HasSubstr("Unknown option")));
+  }
+
+  {  // an unknown option followed by a known one, so it never takes a value
+    auto parser = create_parser();
+    std::array<const char*, 4> argv{"progname", "--nonsense", "--size", "128"};
+    EXPECT_FALSE(parser->Parse(4, argv.data()));
+    EXPECT_THAT(parser->GetParseError(), ::testing::HasSubstr("--nonsense"));
+  }
+
+  {  // an unknown option that swallows the value after it
+    auto parser = create_parser();
+    std::array<const char*, 3> argv{"progname", "--nonsense", "42"};
+    EXPECT_FALSE(parser->Parse(3, argv.data()));
+
+    // the option is named, and not the value that trailed it
+    EXPECT_THAT(parser->GetParseError(), ::testing::HasSubstr("--nonsense"));
+    EXPECT_THAT(parser->GetParseError(), ::testing::Not(::testing::HasSubstr("42")));
+  }
+
+  {  // the "=value" form, which Argh records as a parameter rather than a flag
+    auto parser = create_parser();
+    std::array<const char*, 2> argv{"progname", "--nonsense=42"};
+    EXPECT_FALSE(parser->Parse(2, argv.data()));
+
+    // the tail is not part of the option being reported
+    EXPECT_THAT(parser->GetParseError(), ::testing::HasSubstr("--nonsense"));
+    EXPECT_THAT(parser->GetParseError(), ::testing::Not(::testing::HasSubstr("42")));
+  }
+
+  {  // a single dash spelling
+    auto parser = create_parser();
+    std::array<const char*, 2> argv{"progname", "-x"};
+    EXPECT_FALSE(parser->Parse(2, argv.data()));
+    EXPECT_THAT(parser->GetParseError(), ::testing::HasSubstr("-x"));
+  }
+
+  {  // a misspelled option is reported as such, and not as the option it was meant to be
+    auto parser = create_parser();
+    std::array<const char*, 3> argv{"progname", "--siz", "128"};
+    EXPECT_FALSE(parser->Parse(3, argv.data()));
+    EXPECT_THAT(parser->GetParseError(), ::testing::HasSubstr("--siz"));
+
+    // the option it was meant to be would otherwise have looked like a missing one
+    EXPECT_THAT(parser->GetParseError(), ::testing::Not(::testing::HasSubstr("missing")));
+  }
+
+  {  // the option is named as it was spelled, and the first offending one of the run is the one
+    auto parser = create_parser();
+    std::array<const char*, 4> argv{"progname", "-v", "--Nonsense", "--other"};
+    EXPECT_FALSE(parser->Parse(4, argv.data()));
+    EXPECT_THAT(parser->GetParseError(), ::testing::HasSubstr("--Nonsense"));
+  }
+
+  {  // every option is a known one, whichever alias was used
+    auto parser = create_parser();
+    std::array<const char*, 4> argv{"progname", "-v", "--size", "128"};
+    EXPECT_TRUE(parser->Parse(4, argv.data()));
+    EXPECT_TRUE(parser->GetParseError().empty());
+  }
+
+  {  // a second parsing forgets the unknown option the first one reported
+    auto parser = create_parser();
+    std::array<const char*, 2> bad_argv{"progname", "--nonsense"};
+    EXPECT_FALSE(parser->Parse(2, bad_argv.data()));
+    EXPECT_FALSE(parser->GetParseError().empty());
+
+    std::array<const char*, 2> good_argv{"progname", "-v"};
+    EXPECT_TRUE(parser->Parse(2, good_argv.data()));
+    EXPECT_TRUE(parser->GetParseError().empty());
+  }
+}
+
+//! Help is answered even when the rest of the command line doesn't add up, so that a user who
+//! misspelled an option and asked for help gets the help.
+TEST_F(CommandLineParserTests, UnknownOptionDoesNotHideHelp)
+{
+  CommandLineParser parser;
+  (void)parser.AddHelpOption();
+
+  const int argc = 3;
+  std::array<const char*, argc> argv{"progname", "--nonsense", "--help"};
+  EXPECT_FALSE(parser.Parse(argc, argv.data()));
+  EXPECT_TRUE(parser.IsHelpRequested());
+  EXPECT_TRUE(parser.GetParseError().empty());
+}
+
+//! A negative number is a value and not an unknown option.
+TEST_F(CommandLineParserTests, NegativeValueIsNotAnUnknownOption)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"--offset"}, "Offset").SetParameter(true);
+  parser.AddPositionalOption("<count>", "count");
+
+  const int argc = 4;
+  std::array<const char*, argc> argv{"progname", "--offset", "-1.5", "-42"};
+  EXPECT_TRUE(parser.Parse(argc, argv.data()));
+  EXPECT_TRUE(parser.GetParseError().empty());
+  EXPECT_DOUBLE_EQ(parser.GetValue<double>("--offset"), -1.5);
+  EXPECT_EQ(parser.GetPositionalValue<int>(0), -42);
+}
+
+//! Positional values are not options, and are not checked against the registered option names
+//! however many of them were given.
+TEST_F(CommandLineParserTests, UnknownOptionCheckLeavesPositionalValuesAlone)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"--verbose"}, "Verbose output");
+  parser.AddPositionalOption("<target>", "target");
+
+  // one positional option was registered, and two free standing values are given
+  const int argc = 5;
+  std::array<const char*, argc> argv{"progname", "target.xml", "--verbose", "extra", "nonsense"};
+  EXPECT_TRUE(parser.Parse(argc, argv.data()));
+  EXPECT_TRUE(parser.GetParseError().empty());
+  EXPECT_EQ(parser.GetPositionalValues(),
+            std::vector<std::string>({"target.xml", "extra", "nonsense"}));
+}
+
+//! Arguments made of dashes alone, which Argh records under a name it doesn't strip.
+TEST_F(CommandLineParserTests, UnknownOptionMadeOfDashesOnly)
+{
+  auto create_parser = []()
+  {
+    auto result = std::make_unique<CommandLineParser>();
+    (void)result->AddOption({"--size"}, "Size").SetParameter(true);
+    result->AddPositionalOption("<file>", "file");
+    return result;
+  };
+
+  {  // a lone dash, which some applications use to mean the standard input
+    auto parser = create_parser();
+    std::array<const char*, 2> argv{"progname", "-"};
+    EXPECT_FALSE(parser->Parse(2, argv.data()));
+    EXPECT_EQ(parser->GetParseError(), std::string("Unknown option '-'"));
+  }
+
+  {  // a double dash, which this parser gives no end-of-options meaning to
+    auto parser = create_parser();
+    std::array<const char*, 3> argv{"progname", "--", "file.xml"};
+    EXPECT_FALSE(parser->Parse(3, argv.data()));
+
+    // told apart from the lone dash, rather than both collapsing to an empty name
+    EXPECT_EQ(parser->GetParseError(), std::string("Unknown option '--'"));
+  }
+}
+
+//! The number of leading dashes is not what tells options apart: Argh strips them all before it
+//! matches a name, so a spelling with too many of them reaches the option it names, and is not
+//! reported as an unknown one.
+TEST_F(CommandLineParserTests, LeadingDashCountIsNotChecked)
+{
+  CommandLineParser parser;
+  (void)parser.AddOption({"--size"}, "Size").SetParameter(true);
+
+  const int argc = 3;
+  std::array<const char*, argc> argv{"progname", "---size", "64"};
+  EXPECT_TRUE(parser.Parse(argc, argv.data()));
+  EXPECT_TRUE(parser.GetParseError().empty());
+
+  // the value was taken, so refusing the spelling would contradict the parsing
+  EXPECT_EQ(parser.GetValue<int>("--size"), 64);
+}
+
+//! An unknown option reaches main as a failure, with the usage string alongside it.
+TEST_F(CommandLineParserTests, ParseOrReportOnUnknownOption)
+{
+  CommandLineParser parser;
+  (void)parser.AddHelpOption();
+  (void)parser.AddOption({"-f", "--file"}).SetParameter(true);
+
+  const int argc = 2;
+  std::array<const char*, argc> argv{"progname", "--nonsense"};
+
+  std::ostringstream out;
+  std::ostringstream err;
+  const auto result = ParseOrReport(parser, argc, argv.data(), out, err);
+
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(result.value(), EXIT_FAILURE);
+  EXPECT_TRUE(out.str().empty());
+  EXPECT_THAT(err.str(), ::testing::AllOf(::testing::HasSubstr("--nonsense"),
+                                          ::testing::HasSubstr("Unknown option"),
+                                          ::testing::HasSubstr("--file")));
+}
+
 //! Only the option created by AddHelpOption counts as the help option.
 TEST_F(CommandLineParserTests, HelpRequestedNeedsAHelpOption)
 {

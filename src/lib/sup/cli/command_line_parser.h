@@ -56,6 +56,10 @@ namespace cli
  *     Free standing values, e.g: config.json
  *
  * See usage examples in test/cli-example folder.
+ *
+ * An option that was not added to the parser is a failure and is reported by GetParseError: a
+ * misspelled option is refused rather than passed over. Free standing values are not checked
+ * this way, they remain available through GetPositionalValues however many of them were given.
  */
 class CommandLineParser
 {

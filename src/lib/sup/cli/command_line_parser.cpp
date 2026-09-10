@@ -30,7 +30,10 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <iterator>
 #include <memory>
+#include <optional>
+#include <set>
 #include <string>
 
 namespace
@@ -39,6 +42,21 @@ template <typename A, typename B>
 bool Contains(const A& container, const B& element)
 {
   return std::find(container.begin(), container.end(), element) != container.end();
+}
+
+//! Removes the leading dashes from an option name.
+std::string TrimLeadingDashes(const std::string& name)
+{
+  const auto pos = name.find_first_not_of('-');
+  return (pos == std::string::npos) ? name : name.substr(pos);
+}
+
+//! Returns the part of a command line argument that denotes an option: without the leading dashes,
+//! and without the "=value" tail.
+std::string GetArgumentOptionName(const std::string& argument)
+{
+  const auto name = TrimLeadingDashes(argument);
+  return name.substr(0U, name.find('='));
 }
 
 //! Reports an option name that doesn't denote any of the registered options.
@@ -58,6 +76,8 @@ struct CommandLineParser::CommandLineParserImpl
 {
   std::vector<std::unique_ptr<CommandLineOption>> m_options;
   argh::parser m_parser;
+  //! Caching CLI parts as they were given, program name is not included
+  std::vector<std::string> m_cli_parts;
   std::string m_header;
   std::string m_footer;
   const CommandLineOption* m_help_option{nullptr};
@@ -101,6 +121,13 @@ struct CommandLineParser::CommandLineParserImpl
 
   //! Returns the number of positional values found, excluding the program name.
   std::size_t GetPositionalValueCount() const;
+
+  //! Returns the names of all non-positional options (without the leading dashes).
+  std::set<std::string> GetKnownOptionNames() const;
+
+  //! Returns the first option in the command line that doesn't denote any of the registered
+  //! options.
+  std::optional<std::string> FindUnknownOption() const;
 
   //! Returns the reason why the options don't add up, or an empty string if they do.
   std::string GetValidationError() const;
@@ -178,13 +205,15 @@ bool CommandLineParser::Parse(std::int32_t argc, const char* const* argv)
 
   p_impl->m_parser.parse(argc, argv);
 
+  // Need to save all CLI parts in cache, to report unknown later (skipping program name)
+  p_impl->m_cli_parts = std::vector<std::string>(argv + (argc > 0), argv + argc);
+
   p_impl->m_parsed = true;
   p_impl->m_parse_error.clear();
 
   if (IsHelpRequested())
   {
-    // Help is not a failure, but the application is expected to print the usage string and stop
-    // rather than carry on, hence the negative result with no error to report.
+    // Help is not a failure, but the application is expected to print the usage string and stop.
     return false;
   }
 
@@ -302,6 +331,7 @@ std::string CommandLineParser::GetPositionalValueAsText(std::size_t index) const
 CommandLineParser::CommandLineParserImpl::CommandLineParserImpl()
     : m_options()
     , m_parser()
+    , m_cli_parts()
     , m_header()
     , m_footer()
     , m_help_option(nullptr)
@@ -394,8 +424,76 @@ bool CommandLineParser::CommandLineParserImpl::IsParameterArgumentsProvided(
   return option.HasDefaultValue() ? true : !IsFlagOptionSet(option);
 }
 
+std::set<std::string> CommandLineParser::CommandLineParserImpl::GetKnownOptionNames() const
+{
+  std::set<std::string> result;
+  for (const auto& option : m_options)
+  {
+    if (option->IsPositional())
+    {
+      // Positional options never appear in the command line by name.
+      continue;
+    }
+    for (const auto& option_name : option->GetOptionNames())
+    {
+      (void)result.insert(TrimLeadingDashes(option_name));
+    }
+  }
+  return result;
+}
+
+std::optional<std::string> CommandLineParser::CommandLineParserImpl::FindUnknownOption() const
+{
+  const auto known_names = GetKnownOptionNames();
+
+  // Collecting what Argh thinks is a known option, and deducing unkown options from it.
+  std::set<std::string> unknown_names;
+  for (const auto& name : m_parser.flags())
+  {
+    if (known_names.find(name) == known_names.end())
+    {
+      (void)unknown_names.insert(name);
+    }
+  }
+  for (const auto& param : m_parser.params())
+  {
+    if (known_names.find(param.first) == known_names.end())
+    {
+      (void)unknown_names.insert(param.first);
+    }
+  }
+
+  if (unknown_names.empty())
+  {
+    return {};
+  }
+
+  // The names above are sorted and stripped of their dashes, which is not how the user typed them.
+  // Walking the command line again to find first offending option of the run, spelled the way it
+  // was given.
+  for (const auto& part : m_cli_parts)
+  {
+    if (!part.empty() && (part.front() == '-')
+        && (unknown_names.find(GetArgumentOptionName(part)) != unknown_names.end()))
+    {
+      // the "=value" tail is not part of the option being reported
+      return part.substr(0U, part.find('='));
+    }
+  }
+
+  // Falling back on the recorded unknown name.
+  return *unknown_names.begin();
+}
+
 std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
 {
+  // A misspelled option is reported first.
+  const auto unknown_option = FindUnknownOption();
+  if (unknown_option.has_value())
+  {
+    return "Unknown option '" + *unknown_option + "'";
+  }
+
   for (const auto& option : m_options)
   {
     if (option->IsPositional())
@@ -414,7 +512,7 @@ std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
     }
   }
 
-  // Checking that the number of remaining values in command line matche the number of required
+  // Checking that the number of remaining values in command line matches the number of required
   // positional options.
   const auto value_count = GetPositionalValueCount();
   std::size_t index = 0U;
