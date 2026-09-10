@@ -209,7 +209,8 @@ bool CommandLineParser::Parse(std::int32_t argc, const char* const* argv)
   p_impl->m_parser.parse(argc, argv);
 
   // Need to save all CLI parts in cache, to report unknown later (skipping program name)
-  p_impl->m_cli_parts = std::vector<std::string>(argv + (argc > 0), argv + argc);
+  p_impl->m_cli_parts =
+      (argc > 1) ? std::vector<std::string>(argv + 1, argv + argc) : std::vector<std::string>{};
 
   p_impl->m_parsed = true;
   p_impl->m_parse_error.clear();
