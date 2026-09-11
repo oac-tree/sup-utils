@@ -132,6 +132,12 @@ struct CommandLineParser::CommandLineParserImpl
   //! Returns the number of positional options added to the parser.
   std::size_t CountPositionalOptions() const;
 
+  //! Returns the reason why the named options don't add up, or an empty string if they do.
+  std::string GetNamedOptionsError() const;
+
+  //! Returns the reason why the positional options don't add up, or an empty string if they do.
+  std::string GetPositionalOptionsError() const;
+
   //! Returns the reason why the options don't add up, or an empty string if they do.
   std::string GetValidationError() const;
 };
@@ -497,27 +503,14 @@ std::size_t CommandLineParser::CommandLineParserImpl::CountPositionalOptions() c
   return static_cast<std::size_t>(std::count_if(m_options.begin(), m_options.end(), predicate));
 }
 
-std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
+std::string CommandLineParser::CommandLineParserImpl::GetNamedOptionsError() const
 {
-  // A misspelled option is reported first.
-  const auto unknown_option = FindUnknownOption();
-  if (unknown_option.has_value())
-  {
-    return "Unknown option '" + *unknown_option + "'";
-  }
-
-  // An application offering no positional option takes no free standing values.
-  if ((CountPositionalOptions() == 0U) && (GetPositionalValueCount() > 0U))
-  {
-    return "Unexpected argument '" + m_parser.pos_args().at(1U) + "'";
-  }
-
   for (const auto& option : m_options)
   {
     if (option->IsPositional())
     {
       // Positional options never appear in the command line by name, so IsSet has no answer for
-      // them: they are checked below, against the values that were found.
+      // them: they are checked separately, against the values that were found.
       continue;
     }
     if (!IsParameterArgumentsProvided(*option))
@@ -530,6 +523,11 @@ std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
     }
   }
 
+  return {};
+}
+
+std::string CommandLineParser::CommandLineParserImpl::GetPositionalOptionsError() const
+{
   // Checking that the number of remaining values in command line matches the number of required
   // positional options.
   const auto value_count = GetPositionalValueCount();
@@ -548,6 +546,30 @@ std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
   }
 
   return {};
+}
+
+std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
+{
+  // A misspelled option is reported first.
+  const auto unknown_option = FindUnknownOption();
+  if (unknown_option.has_value())
+  {
+    return "Unknown option '" + *unknown_option + "'";
+  }
+
+  // An application offering no positional option takes no free standing values.
+  if ((CountPositionalOptions() == 0U) && (GetPositionalValueCount() > 0U))
+  {
+    return "Unexpected argument '" + m_parser.pos_args().at(1U) + "'";
+  }
+
+  const auto named_options_error = GetNamedOptionsError();
+  if (!named_options_error.empty())
+  {
+    return named_options_error;
+  }
+
+  return GetPositionalOptionsError();
 }
 
 std::optional<int> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
