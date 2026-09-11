@@ -438,7 +438,8 @@ std::set<std::string> CommandLineParser::CommandLineParserImpl::GetKnownOptionNa
       // Positional options never appear in the command line by name.
       continue;
     }
-    for (const auto& option_name : option->GetOptionNames())
+    const auto option_names = option->GetOptionNames();
+    for (const auto& option_name : option_names)
     {
       (void)result.insert(TrimLeadingDashes(option_name));
     }
