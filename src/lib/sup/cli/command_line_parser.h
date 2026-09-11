@@ -307,7 +307,7 @@ T CommandLineParser::GetPositionalValue(std::size_t index) const
  * @param err Stream for the error message.
  * @return The value main should return, or an empty optional if the application should carry on.
  */
-std::optional<int> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
+std::optional<std::int32_t> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
                                  const char* const* argv, std::ostream& out, std::ostream& err);
 
 /**
@@ -315,7 +315,7 @@ std::optional<int> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
  *
  * Same as above with std::cout and std::cerr.
  */
-std::optional<int> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
+std::optional<std::int32_t> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
                                  const char* const* argv);
 
 }  // namespace cli

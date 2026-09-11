@@ -572,7 +572,7 @@ std::string CommandLineParser::CommandLineParserImpl::GetValidationError() const
   return GetPositionalOptionsError();
 }
 
-std::optional<int> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
+std::optional<std::int32_t> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
                                  const char* const* argv, std::ostream& out, std::ostream& err)
 {
   if (parser.Parse(argc, argv))
@@ -591,7 +591,7 @@ std::optional<int> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
   return EXIT_FAILURE;
 }
 
-std::optional<int> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
+std::optional<std::int32_t> ParseOrReport(CommandLineParser& parser, std::int32_t argc,
                                  const char* const* argv)
 {
   return ParseOrReport(parser, argc, argv, std::cout, std::cerr);
